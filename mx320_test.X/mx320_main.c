@@ -30,6 +30,9 @@
 #pragma config CP = OFF                 // Code Protect (Protection Disabled)
 
 
+#define _SUPPRESS_PLIB_WARNING
+#define _DISABLE_OPENADC10_CONFIGPORT_WARNING
+#define SYSTEM_FREQ_HZ 80000000
 /* 
  * File:   mx320_main.c
  * Author: root
@@ -52,6 +55,11 @@ int main(int argc, char** argv)
 	unsigned char cylon = 0xff;
 	long alive_led = 0;
 	unsigned char LED_UP = TRUE;
+	unsigned short a;
+	int b;
+
+	SYSTEMConfig(SYSTEM_FREQ_HZ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
+	INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
 
 	PORTSetPinsDigitalOut(IOPORT_F, BIT_0); // spare digital output
 	mPORTFSetBits(BIT_0); //
@@ -60,9 +68,26 @@ int main(int argc, char** argv)
 	PORTSetPinsDigitalOut(IOPORT_E, 0xFF); // spare digital output
 	mPORTESetBits(0xFF); //
 
+	PORTSetPinsDigitalIn(IOPORT_D, BIT_6 | BIT_7);
+	OpenOC1(OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, 0, 0);
+	OpenTimer2(T2_ON | T2_PS_1_1 | T2_SOURCE_INT, 0xFFFF);
+
+
 	while (1) {
-		for (i = 0; i <= 30000; i++) {
-			a = b;
+		for (b = 0; b < 100; b++)
+			Nop();
+		SetDCOC1PWM(a++);
+	}
+
+	while (1) {
+		if (PORTReadBits(IOPORT_D, BIT_7)) {
+			for (i = 0; i <= 15000; i++) {
+				a = b;
+			}
+		} else {
+			for (i = 0; i <= 30000; i++) {
+				a = b;
+			}
 		}
 
 		if (j++ >= 1) { // delay a bit ok
@@ -73,10 +98,10 @@ int main(int argc, char** argv)
 			}
 
 			if (LED_UP && (alive_led != 0)) {
-				alive_led = alive_led * 2;
+				alive_led = alive_led << 1;
 				cylon = cylon << 1;
 			} else {
-				if (alive_led != 0) alive_led = alive_led / 2;
+				if (alive_led != 0) alive_led = alive_led >> 1;
 				cylon = cylon >> 1;
 			}
 			if (alive_led < 2) {
