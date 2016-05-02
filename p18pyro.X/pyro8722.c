@@ -181,17 +181,17 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "mandm_defs.h"
+#include "pyro_defs.h"
 #include "xlcd.h"
 #include "config.h"
-#include "mandm.h"
+#include "pyro.h"
 #include "crit.h"
 #include "mandm_msg.h"
 #include "hwconf.h"
 #include "power.h"
 #include "model.h"
-#include "mandm_vector.h"
-#include "mandm_shared.h"
+#include "pyro_vector.h"
+#include "pyro_shared.h"
 #include "daq.h"
 
 void clr_lcd(void);
