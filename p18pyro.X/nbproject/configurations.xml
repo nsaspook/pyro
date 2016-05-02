@@ -10,6 +10,7 @@
       <itemPath>pyro_vector.h</itemPath>
       <itemPath>crit.h</itemPath>
       <itemPath>pyro_defs.h</itemPath>
+      <itemPath>pyro_msg.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"

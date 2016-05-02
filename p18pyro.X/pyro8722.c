@@ -183,13 +183,10 @@
 
 #include "pyro_defs.h"
 #include "xlcd.h"
-#include "config.h"
 #include "pyro.h"
 #include "crit.h"
 #include "mandm_msg.h"
 #include "hwconf.h"
-#include "power.h"
-#include "model.h"
 #include "pyro_vector.h"
 #include "pyro_shared.h"
 #include "daq.h"
