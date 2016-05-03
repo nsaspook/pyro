@@ -117,8 +117,6 @@ void tick_handler(void) // This is the high priority ISR routine
 		HID_IDLE_FLAG = FALSE;
 	}
 
-	if (!mode.v24 && !mode.qei) DRIVE_V24 = LOW; //fixed // 24vdc off if flag not set
-
 	if (PIR2bits.EEIF) { // EEPROM write complete flag
 		V.eeprom_count++; // just keep count
 		MPULED = !MPULED; //  flash led

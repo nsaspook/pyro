@@ -125,6 +125,8 @@ extern "C" {
 
 #define	LPCHANC		8               // digital filter channels
 
+#include "ringbufs.h"
+
 #ifdef	__cplusplus
 }
 #endif
