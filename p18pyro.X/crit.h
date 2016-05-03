@@ -1,8 +1,8 @@
 #ifndef CRIT_H_INCLUDED
 #define CRIT_H_INCLUDED
 #include <p18cxxx.h>
-#include "mandm.h"
-#include "mandm_defs.h"
+#include "pyro.h"
+#include "pyro_defs.h"
 #include <timers.h>
 #include <EEP.h>
 

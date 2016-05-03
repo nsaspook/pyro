@@ -1,5 +1,5 @@
 /* High and Low ISR codes, some glue routines */
-#include "mandm_vector.h"
+#include "pyro_vector.h"
 
 #pragma tmpdata ISRHtmpdata
 #pragma interrupt tick_handler nosave=section (".tmpdata")
@@ -147,9 +147,6 @@ void tick_handler(void) // This is the high priority ISR routine
 		V.timerint_count++; // set 1 second clock counter.
 
 		V.display_count++; // display VC screen  display timer
-		if (V.display_count > DISPSEC) { // turn off LCD after DISPSEC seconds
-			//					D_UPDATE=FALSE;
-		}
 
 		if (DIPSW3 == HIGH) { // cycle LCD display
 			DISPLAY_MODE = TRUE;
@@ -162,31 +159,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		if (worker_timer-- <= 1) { // check worker thread go flag
 			WORKERFLAG = TRUE;
 			worker_timer = WORKSEC;
-
-			if (DISPLAY_MODE) {
-				vc_count++;
-				if (vc_count >= VC_MAX) vc_count = NULL0;
-				switch (vc_count) {
-				case VS0:
-					dsi = VC0;
-					break;
-				case VS1:
-					dsi = VC1;
-					break;
-				case VS2:
-					dsi = VC2;
-					break;
-				default:
-					dsi = VC0;
-					break;
-				}
-			}
 		}
-		// check the LED blink flags
-		if (V.blink & 0b00000001) LED_0 = !LED_0;
-		if (V.blink & 0b00000010) LED_1 = !LED_1;
-		if (V.blink & 0b00000100) LED_2 = !LED_2;
-		if (V.blink & 0b00001000) LED_3 = !LED_3;
 	}
 
 	// Serial port communications to the host and terminal
@@ -283,24 +256,6 @@ void tick_handler(void) // This is the high priority ISR routine
 			DLED_2 = ON;
 			ALARMOUT = LOW;
 			button.B2 = 1;
-			if (!mode.emo) {
-				if (!mode.cal) {
-					LED_1 = HIGH;
-					mode.cal = TRUE;
-				}
-			} else {
-				LED_1 = LOW;
-				mode.cal = FALSE;
-				ERELAYS = R_ALL_OFF;
-			}
-			if (emo_bumps++ > MAX_EMO) { // reset emo_bumps to zero every second to stop random EMO stops
-				LED_3 = HIGH;
-				LED_1 = LOW;
-				mode.emo = TRUE;
-				mode.cal = FALSE;
-				ERELAYS = R_ALL_OFF;
-				emo_bumps = 0;
-			}
 		}
 		HID_IDLE_FLAG = FALSE;
 	}
@@ -328,22 +283,6 @@ void tick_handler(void) // This is the high priority ISR routine
 			}
 		}
 		V.lowint_count++; // low int trigger entropy counter
-		//FIXME watchout for int uint conversions that make negative number high
-		// check for currrent overloads using the current sensors
-		if (FALSE && (((int32_t) R.current_x > (int32_t) MAX_MOTOR_CURRENT_H) || ((int32_t) R.current_y > (int32_t) MAX_MOTOR_CURRENT_L) || ((int32_t) R.current_z > (int32_t) MAX_MOTOR_CURRENT_L))) { // over-current errors
-			LED_3 = HIGH;
-			LED_1 = LOW;
-			mode.emo = TRUE;
-			mode.cal = FALSE;
-			ERELAYS = R_ALL_OFF;
-			emo_bumps = MAX_EMO + 1;
-			emodump.emo[0] = R.current_x;
-			emodump.emo[1] = R.current_y;
-			emodump.emo[2] = R.current_z;
-			emodump.emo[3] = R.pos_x;
-			emodump.emo[4] = R.pos_y;
-			emodump.emo[5] = R.pos_z;
-		}
 
 		if (V.buzzertime == 0u) {
 			ALARMOUT = LOW;
@@ -362,94 +301,16 @@ void tick_handler(void) // This is the high priority ISR routine
 			V.voice2time--;
 		}
 
-		if (++qei1.ticks >= QEITICKS) { // check for stopped motor encoders
-			qei1.movement = STOP;
-			qei1.ticks = QEITICKS;
-			qei1.last_c = qei1.c; // remember where we stopped at
-			qei1.band = 0;
-		} else {
-			qei1.band = qei1.c - qei1.last_c; // relative movement
-		}
-
-		if (++knob1.ticks >= KNOBTICKS) { // check for stopped encoders
-			knob1.movement = STOP;
-			knob1.ticks = KNOBTICKS;
-			knob1.last_c = knob1.c; // remember where we stopped at
-			knob1.band = 0;
-			DLED_4 = OFF;
-		} else {
-			knob1.band = knob1.c - knob1.last_c; // relative movement
-			DLED_4 = ON;
-		}
-
-		if (++knob2.ticks >= KNOBTICKS) {
-			knob2.movement = STOP;
-			knob2.ticks = KNOBTICKS;
-			knob2.last_c = knob2.c; // remember where we stopped at
-			knob2.band = 0;
-			DLED_5 = OFF;
-		} else {
-			if (knob2.band != (knob2.c - knob2.last_c)) { // move pot setting with constant knob movement
-				band_max = knob2.band / POT_BAND_RATIO;
-				if (band_max > POT_BAND_MAX_P) band_max = POT_BAND_MAX_P;
-				if (band_max < POT_BAND_MAX_N) band_max = POT_BAND_MAX_N;
-				motordata[knob_to_pot].pot.scaled_set += band_max;
-			}
-			knob2.band = knob2.c - knob2.last_c; // relative movement
-			if (knob2.band > EMO_BAND) {
-				mode.emo = FALSE;
-				LED_3 = LOW;
-			}
-			DLED_5 = ON;
-		}
-
-		// constrain set limits
-		if (motordata[knob_to_pot].pot.pos_set < 0) motordata[knob_to_pot].pot.pos_set = 0;
-		if (motordata[knob_to_pot].pot.pos_set > ACTUAL) motordata[knob_to_pot].pot.pos_set = ACTUAL;
-		if (motordata[knob_to_pot].pot.scaled_set < 0) motordata[knob_to_pot].pot.scaled_set = 0;
-		if (motordata[knob_to_pot].pot.scaled_set > SCALED) motordata[knob_to_pot].pot.scaled_set = SCALED;
-		if (!mode.qei) { // use ADC position feedback
-			motordata[knob_to_pot].pot.error = motordata[knob_to_pot].pot.pos_set - motordata[knob_to_pot].pot.pos_actual;
-		} else { // use digital encoder position feedback
-			motordata[knob_to_pot].pot.error = knob2.c - qei1.c; // find the raw encoder/encoder diff
-		}
-
-		// slowing resistor logic
-		if (!mode.slow_bypass) {
-			if ((motordata[knob_to_pot].pot.error < TRACK_DB_H_S) && (motordata[knob_to_pot].pot.error > TRACK_DB_L_S)) {
-				if (mode.v24) motordata[knob_to_pot].slow = TRUE;
-			} else {
-				motordata[knob_to_pot].slow = FALSE;
-			}
-			if (slow_timer == 0) {
-				if ((mode.free || mode.cal || mode.on_off_only) && (!motordata[knob_to_pot].slow_only)) {
-					POWER_S = R_ON; // free is fast with 5vdc drive or slow with higher voltage.
-				} else {
-					if (motordata[knob_to_pot].slow) {
-						POWER_S = R_OFF;
-					} else {
-						if (!motordata[knob_to_pot].slow_only) POWER_S = R_ON;
-					}
-				}
-			}
-		}
-		// House keeping fuctions
+		// House keeping functions
 		// mode.idle FLAG updates
-		if (HID_IDLE_FLAG) {
-			if (hid_idle++ >= MAX_IDLE) {
-				mode.idle = TRUE; // after MAX_IDLE counts without movement we are idle
-				DLED_7 = LOW;
-				hid_idle = MAX_IDLE;
-			}
-		}
+
 		if (!HID_IDLE_FLAG) {
 			HID_IDLE_FLAG = TRUE;
 			mode.idle = FALSE; // something moved so we are not idle
 			DLED_7 = HIGH;
 			hid_idle = 0;
 		}
-		// Alarm checks
-		if (almctr > MAXALM - 2) almctr = MAXALM - 2; // check for alarm message overrun.
+		
 		// WORKSEC time events
 		if (WORKERFLAG && SYSTEM_STABLE) { // WORKSEC time,
 			WORKERFLAG = FALSE;

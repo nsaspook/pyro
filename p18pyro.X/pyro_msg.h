@@ -1,7 +1,7 @@
-#ifndef MANDM_MSG_H_INCLUDED
-#define MANDM_MSG_H_INCLUDED
+#ifndef PYRO_MSG_H_INCLUDED
+#define PYRO_MSG_H_INCLUDED
 
-#include "mandm_defs.h"
+#include "pyro_defs.h"
 
 /* spinner defines */
 #define MAX_SHAPES  6
@@ -84,50 +84,6 @@ xxx37\
 xxx38\
 xxx39\
 ";
-
-const rom int8_t \
-menuselect_free[MAX_MENU + 1][22] = {
-	" V80 Manipulator   F",
-	" E220 Manipulator  F",
-	" GSD Manipulator   F",
-	" V80 Var Mass-Slit F",
-	" E220 QEI MOTOR    F",
-	" Vista Mass-Slit   F",
-	" Varian Valves     F",
-	" Test Procedure    F",
-	" vista 1           F",
-	" vista 2           F",
-	" vista 3           F",
-	" vista 4           F",
-	" vista 5           F",
-	" Vista Mass-Slit   F",
-	" V810 Manipulator  F",
-	" vista 8           F",
-	" vista 9           F",
-	" vista 10          F"
-};
-
-const rom int8_t \
-menuselect_track[MAX_MENU + 1][22] = {
-	" V80 Manipulator   T",
-	" E220 Manipulator  T",
-	" GSD Manipulator   T",
-	" V80 Var Mass-Slit T",
-	" E220 QEI MOTOR    T",
-	" Vista Mass-Slit   T",
-	" Varian Valves     T",
-	" Test Procedure    T",
-	" Exit              T",
-	" V80 Manipulator   T",
-	" E220 Manipulator  T",
-	" GSD Manipulator   T",
-	" vista 5           T",
-	" Vista Mass-Slit   T",
-	" V810 Manipulator  T",
-	" Varian Valves     T",
-	" Test Procedure    T",
-	" Exit              T"
-};
 
 const rom int8_t \
 lowbatt0[] = "\n\r Reducing battey Ah rating due to possible discharged battery.\n\r",
@@ -219,5 +175,5 @@ chrgcode0[] = " C0  Charging stopped, Battery overvolt limit.\r\n",
 	charger4[] = " C21  AC Power Charger is OFF\r\n",
 	charger99[] = "";
 
-#endif /* MANDM_MSG_H_INCLUDED */
+#endif /* PYRO_MSG_H_INCLUDED */
 

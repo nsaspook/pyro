@@ -3,13 +3,11 @@
  */
 //FIXME there is way too much stuff in globals
 
-#ifndef MANDM_VECTOR_H_INCLUDED
-#define MANDM_VECTOR_H_INCLUDED
+#ifndef PYRO_VECTOR_H_INCLUDED
+#define PYRO_VECTOR_H_INCLUDED
 #include <p18cxxx.h>
-#include "mandm.h"
-#include "mandm_shared.h"
-#include "config.h"
-#include "power.h"
+#include "pyro.h"
+#include "pyro_shared.h"
 #include <usart.h>
 #include <timers.h>
 
@@ -53,5 +51,5 @@ extern volatile enum answer_t {
 extern volatile uint8_t IDLEFLAG;
 
 /* END IDLE_LOOP EXTRAS */
-#endif /* MANDM_VECTOR_H_INCLUDED */
+#endif /* PYRO_VECTOR_H_INCLUDED */
 

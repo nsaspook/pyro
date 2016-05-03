@@ -1,6 +1,6 @@
 /* Switch on and off ISR enables */
 #include "crit.h"
-#include "mandm.h"
+#include "pyro.h"
 
 volatile void s_crit(uint8_t mode) // Start critical section of code that needs protection for the ISR
 { // remember old high and low int bits so they can be restored correctly
