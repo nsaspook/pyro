@@ -49,6 +49,24 @@ void config_pic(uint16_t hw_config)
 		TRISJ = 0; // internal diag LEDS
 		LATJ = 0xff;
 
+		// SPI pin setup
+		TRISCbits.TRISC3 = LOW; //outputs
+		TRISCbits.TRISC5 = LOW; 
+		TRISDbits.TRISD4 = LOW;
+		TRISDbits.TRISD6 = LOW;
+		TRISCbits.TRISC4 = HIGH; // inputs
+		TRISDbits.TRISD5 = HIGH;
+		
+		OpenSPI1(SPI_FOSC_64, MODE_00, SMPEND); // 1MHz
+		SSP1CON1 |= SPI_FOSC_64; // set clock to low speed
+
+		OpenSPI2(SPI_FOSC_64, MODE_00, SMPEND); // 1MHz
+		SSP2CON1 |= SPI_FOSC_64; // set clock to low speed
+		
+		/* clear SPI module possible flags */
+		PIR1bits.SSP1IF = LOW;
+		PIR3bits.SSP2IF = LOW;
+
 		/*
 		 * Open the USARTs configured as
 		 * 8N1, 38400,38400 baud, in send and receive INT mode

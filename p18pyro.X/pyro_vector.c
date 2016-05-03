@@ -16,6 +16,16 @@ void tick_handler(void) // This is the high priority ISR routine
 	_asm nop _endasm // asm code to disable compiler optimizations
 	V.highint_count++; // high int counter
 
+	if (PIE1bits.SSP1IE && PIR1bits.SSP1IF) { // send data to SPI bus 1
+		spi_link.int_count++;
+		PIR1bits.SSP1IF = LOW;
+	}
+
+	if (PIE3bits.SSP2IE && PIR3bits.SSP2IF) { // send data to SPI bus 2
+		spi_link.int_count++;
+		PIR3bits.SSP2IF = LOW;
+	}
+
 	if (INTCON3bits.INT3IF) { // motor QEI input
 		INTCON3bits.INT3IF = LOW;
 		if (TMR4 > V.qei_counts) V.qei_counts = TMR4; // if timer4 is not 0 then update
@@ -308,7 +318,7 @@ void tick_handler(void) // This is the high priority ISR routine
 			DLED_7 = HIGH;
 			hid_idle = 0;
 		}
-		
+
 		// WORKSEC time events
 		if (WORKERFLAG && SYSTEM_STABLE) { // WORKSEC time,
 			WORKERFLAG = FALSE;

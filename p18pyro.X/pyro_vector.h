@@ -38,6 +38,7 @@ extern volatile struct qeitype qei1;
 extern volatile struct buttontype button;
 extern volatile struct modetype mode;
 extern volatile struct QuadEncoderType OldEncoder;
+extern volatile struct spi_link_type spi_link;
 
 extern volatile enum movement_t {
 	CW, STOP, CCW

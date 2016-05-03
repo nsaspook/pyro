@@ -1,6 +1,7 @@
 #ifndef HWCONF_H_INCLUDED
 #define HWCONF_H_INCLUDED
 #include <p18cxxx.h>
+#include <spi.h>
 #include "pyro.h"
 #include <usart.h>
 #include <timers.h>
