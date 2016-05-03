@@ -190,6 +190,7 @@
 #include "pyro_vector.h"
 #include "pyro_shared.h"
 #include "daq.h"
+#include "ringbufs.h"
 
 void clr_lcd(void);
 int8_t *ahfp(int32_t, int8_t *);
@@ -246,12 +247,18 @@ uint8_t spinners(uint8_t, uint8_t);
 
 #pragma udata gpr13
 far int8_t bootstr2[MESG_W + 1];
+
+
 #pragma udata gpr1
 int8_t termstr[32];
-uint8_t csd[SD_18], cid[SD_18], HCRIT[CRIT_8], LCRIT[CRIT_8];
+volatile struct ringBufS_t ring_buf3, ring_buf4;
+uint8_t HCRIT[CRIT_8], LCRIT[CRIT_8];
 float smooth[LPCHANC];
 #pragma udata gpr2
+volatile struct L_data L;
+volatile struct spi_link_type spi_link;
 
+volatile struct ringBufS_t ring_buf5, ring_buf6;
 #pragma udata gpr3
 far int8_t hms_string[16];
 int16_t a10_x, a10_y, a10_z, worktick;
@@ -284,7 +291,7 @@ uint32_t Vin = 0, chrg_v = 0, vbatol_t = 0, solar_t = 0, rawp[MAX_MFC], rawa[MAX
 volatile uint8_t IDLEFLAG = FALSE, knob_to_pot = 0;
 int32_t iw = 0, ip = 0;
 #pragma udata gpr8
-volatile struct motortype motordata[3], *motor_ptr;
+volatile struct ringBufS_t ring_buf1, ring_buf2;
 #pragma udata gpr9
 volatile struct knobtype knob1, knob2;
 
@@ -337,9 +344,9 @@ uint8_t spinners(uint8_t shape, uint8_t reset)
 	return c;
 }
 
-void term_time (void)
+void term_time(void)
 {
-	
+
 }
 
 /*	lp_filters
@@ -374,13 +381,10 @@ float lp_filter(float new, int16_t bn, int16_t slow) // low pass filter, slow ra
 	return lp_x;
 }
 
-
-
 void main(void) // Lets Party
 {
 	static uint8_t eep_char = 0;
 	static uint8_t z = 0;
-	static uint8_t menu_pos;
 
 
 #ifdef	__18F8722
@@ -419,7 +423,20 @@ void main(void) // Lets Party
 		putrs2USART("\x1b[7m Possible EEPROM write error. \x1b[0m\r\n");
 	}
 
+	/* setup the link buffers first */
+	L.rx1b = &ring_buf1;
+	L.tx1b = &ring_buf2;
+	L.rx2b = &ring_buf3;
+	L.tx2b = &ring_buf4;
+	spi_link.tx1b = &ring_buf5;
+	spi_link.tx1a = &ring_buf6;
 
+	ringBufS_init(L.rx1b);
+	ringBufS_init(L.tx1b);
+	ringBufS_init(L.rx2b);
+	ringBufS_init(L.tx2b);
+	ringBufS_init(spi_link.tx1b);
+	ringBufS_init(spi_link.tx1a);
 
 	if (DIPSW2 == HIGH) { // enable RS232 extra debug
 		RS232_DEBUG = TRUE;

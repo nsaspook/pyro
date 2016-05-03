@@ -23,8 +23,8 @@ extern "C" {
 #if defined(__18CXX)
 #define NULL0           (uint8_t)0
 #endif
-#define	H		1
-#define	L		2
+#define	Hpri		1
+#define	Lpri		2
 #define	HL		3
 #define	TIMEROFFSET		26474           // timer0 16bit counter value for 1 second to overflow
 #define	TIMER3REG		3048            // timer3 value for 20Hz clock
@@ -125,7 +125,7 @@ extern "C" {
 
 #define	LPCHANC		8               // digital filter channels
 
-#include "ringbufs.h"
+
 
 #ifdef	__cplusplus
 }

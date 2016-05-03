@@ -11,6 +11,8 @@
       <itemPath>crit.h</itemPath>
       <itemPath>pyro_defs.h</itemPath>
       <itemPath>pyro_msg.h</itemPath>
+      <itemPath>ringbufs.h</itemPath>
+      <itemPath>pyro.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -24,6 +26,7 @@
       <itemPath>pyro8722.c</itemPath>
       <itemPath>pyro_vector.c</itemPath>
       <itemPath>crit.c</itemPath>
+      <itemPath>ringbufs.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

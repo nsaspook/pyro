@@ -14,6 +14,7 @@ extern "C" {
 
 #include "pyro_defs.h"
 #include <GenericTypeDefs.h>
+#include  "ringbufs.h"
 
 #ifdef INTTYPES
 #include <stdint.h>
@@ -156,6 +157,28 @@ typedef struct V_data { // ISR used, mainly for non-atomic mod problems
 	volatile uint32_t clock20, commint_count, status_count, c1rx_int;
 	volatile uint8_t blink, buzzertime, voice1time, voice2time, qei_counts;
 } V_data;
+
+typedef struct L_data { // light link state data
+	uint8_t ctmu_data : 1;
+	uint8_t ctmu_data_temp : 1;
+	uint8_t boot_code : 1;
+	uint8_t adc_chan;
+	uint8_t tx1_dac, tx2_dac;
+	struct ringBufS_t *rx1b, *tx1b, *rx2b, *tx2b;
+	uint16_t ctmu_adc, ctmu_adc_zero, pic_temp, checksum;
+} L_data;
+
+struct spi_link_type { // internal state table
+	uint8_t SPI_LCD : 1;
+	uint8_t SPI_AUX : 1;
+	uint8_t LCD_TIMER : 1;
+	uint8_t LCD_DATA : 1;
+	uint16_t delay;
+	uint8_t config;
+	struct ringBufS_t *tx1b, *tx1a;
+	int32_t int_count;
+};
+
 #ifdef	__cplusplus
 }
 #endif
