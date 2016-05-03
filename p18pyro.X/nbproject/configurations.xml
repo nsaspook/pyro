@@ -13,6 +13,7 @@
       <itemPath>pyro_msg.h</itemPath>
       <itemPath>ringbufs.h</itemPath>
       <itemPath>pyro.h</itemPath>
+      <itemPath>../../mandm/mandm/xlcd.h</itemPath>
     </logicalFolder>
     <logicalFolder name="f1" displayName="info" projectFiles="true">
       <itemPath>ET-BASE 8722 ICD2 ENG.pdf</itemPath>
@@ -25,6 +26,18 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="lcd" projectFiles="true">
+        <itemPath>../../mandm/mandm/xlcd/busyxlcd.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/openxlcd.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/putrxlcd.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/putsxlcd.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/readaddr.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/readdata.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/setcgram.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/setddram.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/wcmdxlcd.c</itemPath>
+        <itemPath>../../mandm/mandm/xlcd/writdata.c</itemPath>
+      </logicalFolder>
       <itemPath>daq.c</itemPath>
       <itemPath>hwconf.c</itemPath>
       <itemPath>pyro8722.c</itemPath>
@@ -74,7 +87,7 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <C18>
-        <property key="code-model" value="ms"/>
+        <property key="code-model" value="ml"/>
         <property key="data-model" value="oa-"/>
         <property key="default-char-unsigned" value="false"/>
         <property key="enable-all-optimizations" value="true"/>

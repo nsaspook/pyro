@@ -331,7 +331,14 @@ void tick_handler(void) // This is the high priority ISR routine
 #pragma interruptlow work_handler
 
 void work_handler(void) // This is the low priority ISR routine, the high ISR routine will be called during this code section
-{
+{	// PWM4 ISR routines, ONLY FOR TESTING
+	if (PIE3bits.TMR4IE && PIR3bits.TMR4IF) { // PWM4 post int
+		PIR3bits.TMR4IF = LOW;
+		T4CONbits.TMR4ON = 0; // timeout, stop timer
+		TMR4 = 0;
+		V.pwm4int_count++;
+	}
+	
 }
 
 void idle_loop(void) // idle processe to allow for better isr triggers and background networking

@@ -104,17 +104,12 @@
  * PORTA		analog inputs
  * adc0	systemvoltage	PIC Controller 5vdc supply voltage
  * adc1	motorvoltage	24vdv PS monitor from relay
- * adc2	current_x
- * adc11 current_y
- * adc4	current_z
  * PORTB		HID Qencoder and switch inputs
  * PORTC		HID leds
  * PORTD		configuration switch input
  * PORTE		motor control relays
  * PORTF		analog inputs
- * adc5	rawp1 X pot RF0
- * adc6 rawp2 Y pot RF1
- * adc7 rawp3 Z pot RF2
+
  * adc8 Ground REF	zero adc charge cap RF3
  * adc3 VREF from 5vdc reference chip REF02AP
  * adc_cal[11-14]	current sensors zero offset stored in eeprom 11=x, 12=y, 13=z, 14=future
@@ -124,8 +119,6 @@
  * PORTG		Alarm and Voice outputs
  *
  *
- * frederick.brooks@microchip.com Copyright 2014
- * Microchip Gresham, Oregon
  */
 
 
@@ -192,57 +185,6 @@
 #include "daq.h"
 #include "ringbufs.h"
 
-void clr_lcd(void);
-int8_t *ahfp(int32_t, int8_t *);
-int8_t *voltfp(uint32_t, int8_t *);
-int8_t *voltfps(uint32_t, int8_t *);
-int8_t *voltfpi(int32_t, int8_t *);
-void MputsXLCD(int8_t *);
-
-void fail_safe(void);
-int8_t *hms(uint32_t);
-int8_t *hm(uint32_t);
-float lp_filter(float, int16_t, int16_t);
-void putc2(uint8_t c);
-void hold_process(void); // hold monitor progrsm
-void system_data(void); // send system variables to rs-232 terminal
-void system_help(void); // send system help menu to rs-232 terminal
-void exerciser(void); // test calibrated assy
-int16_t e220_qei_exer(uint8_t);
-int16_t nonqei_exer(uint8_t);
-uint8_t check_alarm(uint8_t, const rom int8_t*);
-int32_t ABSL(int32_t);
-int16_t ABSI(int16_t);
-void LCD_VC_puts(uint8_t, uint8_t, uint8_t);
-void wdttime(uint32_t);
-uint8_t checktime(uint32_t, uint8_t);
-uint8_t checktime_select(uint32_t, uint8_t);
-uint8_t checktime_motor(uint32_t, uint8_t);
-uint8_t checktime_cal(uint32_t, uint8_t);
-uint8_t checktime_eep(uint32_t, uint8_t);
-uint8_t checktime_track(uint32_t, uint8_t);
-void wdtdelay(uint32_t);
-void update_hist(void);
-void term_time(void);
-void viision_m_display(void);
-void help_m_display(void);
-void viision_ms_display(void);
-void v810_ms_display(void);
-void varian_v_display(void);
-void e220_m_display(void);
-void e220_qei_display(void);
-void gsd_m_display(void);
-void default_display(void);
-void Set_Cursor(void);
-void run_demos(uint8_t);
-void run_cal(void);
-void display_cal(void);
-void init_motordata(uint8_t);
-int16_t track_motor(void);
-void init_lcd(void);
-uint8_t check_cable(uint8_t *);
-void fail_all_motors(uint8_t);
-void nav_menu(void);
 uint8_t spinners(uint8_t, uint8_t);
 
 #pragma udata gpr13
@@ -250,7 +192,7 @@ far int8_t bootstr2[MESG_W + 1];
 
 
 #pragma udata gpr1
-int8_t termstr[32];
+
 volatile struct ringBufS_t ring_buf3, ring_buf4;
 uint8_t HCRIT[CRIT_8], LCRIT[CRIT_8];
 float smooth[LPCHANC];
@@ -260,7 +202,7 @@ volatile struct spi_link_type spi_link;
 
 volatile struct ringBufS_t ring_buf5, ring_buf6;
 #pragma udata gpr3
-far int8_t hms_string[16];
+
 int16_t a10_x, a10_y, a10_z, worktick;
 volatile uint8_t critc_level = 0, KEYNUM = 0, C2RAW, glitch_count, cdelay, SLOW_STATUS;
 volatile uint8_t TIMERFLAG = FALSE, PRIPOWEROK = TRUE, FORCEOUT = FALSE, WORKERFLAG = FALSE,
@@ -310,7 +252,6 @@ volatile struct QuadEncoderType OldEncoder;
 uint8_t lcd18 = 200;
 volatile struct qeitype qei1;
 volatile int32_t slow_timer = 0;
-struct emodefaulttype emodump;
 volatile struct buttontype button;
 
 /* ISR vectors */
@@ -329,6 +270,55 @@ void work_int(void)
 	_asm goto work_handler _endasm // low
 }
 #pragma code
+
+void DelayFor18TCY(void)
+{
+	static uint8_t n;
+	_asm nop _endasm // asm code to disable compiler optimizations
+	for (n = 0; n < lcd18; n++) Nop(); // works at 200 (slow white) or 24 (fast blue)
+	//    lcdhits_18tcy++;
+}
+
+//------------------------------------------
+
+void DelayPORXLCD(void) // works with 15
+{
+	Delay10KTCYx(15); // Delay of 15ms
+	return;
+}
+
+//------------------------------------------
+
+void DelayXLCD(void) // works with 5
+{
+	Delay10KTCYx(5); // Delay of 5ms
+	return;
+}
+
+void wdtdelay(uint32_t delay)
+{
+	static uint32_t dcount;
+	for (dcount = 0; dcount <= delay; dcount++) { // delay a bit
+		Nop();
+		ClrWdt(); // reset the WDT timer
+	};
+}
+
+void wdttime(uint32_t delay) // delay = ~ .05 seconds
+{
+	static uint32_t dcount, timetemp, clocks_hz;
+	s_crit(HL);
+	dcount = V.clock20;
+	e_crit();
+	clocks_hz = dcount + delay;
+
+	do { // wait until delay
+		s_crit(HL);
+		timetemp = V.clock20;
+		e_crit();
+		ClrWdt();
+	} while (timetemp < clocks_hz);
+}
 
 /* Misc ACSII spinner character generator, stores position for each shape */
 uint8_t spinners(uint8_t shape, uint8_t reset)

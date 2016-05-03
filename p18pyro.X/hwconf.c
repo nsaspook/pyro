@@ -99,12 +99,9 @@ void config_pic(uint16_t hw_config)
 		OpenTimer3(TIMER_INT_ON & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 &
 			T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
 		PR4 = 0xFF;
-		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16); // no int, only for pwm
-		//	OpenPWM4(0xFF);
-		//	T3CONbits.T3CCP1 = 1; // Bits for Timer4 for PWM
-		//	T3CONbits.T3CCP2 = 1; // same
-		//	PIE3bits.TMR4IE = LOW; // TIMER4 int enable bit
-		//	SetDCPWM4(512); // 0.1% power
+		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16); // for lamp scanner
+		IPR3bits.TMR4IP = LOW; // make it low pri level
+		PIE3bits.TMR4IE = HIGH; // TIMER4 int enable bit
 
 		INTCONbits.RBIE = HIGH; // enable PORTB interrupts 1=enable
 		INTCON2bits.RBIP = HIGH; // Set the PORTB interrupt-on-change as a high priority interrupt
@@ -129,11 +126,11 @@ void config_pic(uint16_t hw_config)
 		INTCONbits.RBIF = LOW; // reset B flag
 		INTCON2bits.RBPU = LOW; // enable input pullup. 0=on
 
-		WriteTimer0(TIMEROFFSET); //      start timer0 at 1 second ticks
-		WriteTimer3(TIMER3REG); //  low int worker thread timer  about 20hz                                                           //
+		WriteTimer0(TIMEROFFSET); // start timer0 at 1 second ticks
+		WriteTimer3(TIMER3REG); // worker thread timer  about 20hz                                                           //
 
 		/*      work int thread setup */
-		IPR2bits.TMR3IP = HIGH; // make it low level
+		IPR2bits.TMR3IP = HIGH; // make it high pri level
 		PIE2bits.TMR3IE = HIGH; // enable int
 
 		/* EEPROM write int enable */
