@@ -14,6 +14,10 @@
       <itemPath>ringbufs.h</itemPath>
       <itemPath>pyro.h</itemPath>
     </logicalFolder>
+    <logicalFolder name="f1" displayName="info" projectFiles="true">
+      <itemPath>ET-BASE 8722 ICD2 ENG.pdf</itemPath>
+      <itemPath>pic18f8722.pdf</itemPath>
+    </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
@@ -44,7 +48,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>C18</languageToolchain>
-        <languageToolchainVersion></languageToolchainVersion>
+        <languageToolchainVersion>3.40</languageToolchainVersion>
         <platform>2</platform>
       </toolsSet>
       <compileType>
