@@ -34,16 +34,13 @@ void tick_handler(void) // This is the high priority ISR routine
 		V.b3++;
 		// not a very good position counter, relies on a 1/16 A channel hardware divider and a B channel logic level latch
 		LATJ = LATJ | 0b00001111; // clear diag 0..3 leds on PORTJ
-		DLED_3 = ON;
 		qei1.ticks = 0;
 		if (QEI1_B) {
 			--qei1.c;
 			qei1.cw = TRUE;
-			DLED_1 = ON;
 		} else {
 			++qei1.c;
 			qei1.cw = FALSE;
-			DLED_0 = ON;
 		}
 		if (QHOME) qei1.home = TRUE;
 		if (QBACK) qei1.back_stop = TRUE;
@@ -68,13 +65,11 @@ void tick_handler(void) // This is the high priority ISR routine
 					knob1.cw = TRUE;
 					knob1.ccw = FALSE;
 					knob1.movement = CW;
-					DLED_1 = ON;
 				} else {
 					--knob1.c;
 					knob1.cw = FALSE;
 					knob1.ccw = TRUE;
 					knob1.movement = CCW;
-					DLED_0 = ON;
 				}
 			} else {
 				OldEncoder.A1 = ENC_A1;
@@ -101,13 +96,11 @@ void tick_handler(void) // This is the high priority ISR routine
 					knob2.cw = TRUE;
 					knob2.ccw = FALSE;
 					knob2.movement = CW;
-					DLED_3 = ON;
 				} else {
 					--knob2.c;
 					knob2.cw = FALSE;
 					knob2.ccw = TRUE;
 					knob2.movement = CCW;
-					DLED_2 = ON;
 				}
 			} else {
 				OldEncoder.A2 = ENC_A2;
@@ -241,7 +234,6 @@ void tick_handler(void) // This is the high priority ISR routine
 		INTCONbits.INT0IF = LOW;
 		V.b0++;
 		if (SYSTEM_STABLE && (PB0 == 0u)) {
-			DLED_0 = ON;
 			button.B0 = 1;
 		}
 		HID_IDLE_FLAG = FALSE;
@@ -251,7 +243,6 @@ void tick_handler(void) // This is the high priority ISR routine
 		INTCON3bits.INT1IF = LOW;
 		V.b1++;
 		if (SYSTEM_STABLE && (PB1 == 0u)) {
-			DLED_1 = ON;
 			button.B1 = 1;
 		}
 		HID_IDLE_FLAG = FALSE;
@@ -261,19 +252,10 @@ void tick_handler(void) // This is the high priority ISR routine
 		INTCON3bits.INT2IF = LOW;
 		V.b2++;
 		if (SYSTEM_STABLE && (PB2 == 0u)) {
-			DLED_2 = ON;
 			ALARMOUT = LOW;
 			button.B2 = 1;
 		}
 		HID_IDLE_FLAG = FALSE;
-	}
-
-	// PWM4 ISR routines, ONLY FOR TESTING
-	if (PIE3bits.TMR4IE && PIR3bits.TMR4IF) { // PWM4 post int
-		PIR3bits.TMR4IF = LOW;
-		T4CONbits.TMR4ON = 0; // timeout, stop timer
-		TMR4 = 0;
-		V.pwm4int_count++;
 	}
 
 	// moved from the low isr to here
@@ -315,7 +297,6 @@ void tick_handler(void) // This is the high priority ISR routine
 		if (!HID_IDLE_FLAG) {
 			HID_IDLE_FLAG = TRUE;
 			mode.idle = FALSE; // something moved so we are not idle
-			DLED_7 = HIGH;
 			hid_idle = 0;
 		}
 
@@ -331,14 +312,15 @@ void tick_handler(void) // This is the high priority ISR routine
 #pragma interruptlow work_handler
 
 void work_handler(void) // This is the low priority ISR routine, the high ISR routine will be called during this code section
-{	// PWM4 ISR routines, ONLY FOR TESTING
+{ // projector lamp scan converter
 	if (PIE3bits.TMR4IE && PIR3bits.TMR4IF) { // PWM4 post int
 		PIR3bits.TMR4IF = LOW;
-		T4CONbits.TMR4ON = 0; // timeout, stop timer
-		TMR4 = 0;
+		PR4 = 0xff;
 		V.pwm4int_count++;
+		DLED_0 = !DLED_0;
+		DLED_1 = !DLED_1;
 	}
-	
+
 }
 
 void idle_loop(void) // idle processe to allow for better isr triggers and background networking

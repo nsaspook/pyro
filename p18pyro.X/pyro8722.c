@@ -14,7 +14,7 @@
 #pragma config BORV = 3         // Brown-out Voltage bits (Max setting)
 
 // CONFIG2H
-#pragma config WDT = ON         // Watchdog Timer (WDT enabled)
+#pragma config WDT = OFF         // Watchdog Timer (WDT enabled)
 #pragma config WDTPS = 1024     // Watchdog Timer Postscale Select bits (1:1024)
 
 // CONFIG3L
@@ -428,79 +428,9 @@ void main(void) // Lets Party
 	ringBufS_init(spi_link.tx1b);
 	ringBufS_init(spi_link.tx1a);
 
-	if (DIPSW2 == HIGH) { // enable RS232 extra debug
-		RS232_DEBUG = TRUE;
-		putrs2USART(" RS232 DEBUG Enabled \r\n");
-	}
-
-	if (DIPSW1 == HIGH) { // clear data
-		term_time();
-		putrs2USART(" Init Controller Data \r\n");
-		write_data_eeprom(0, 1, 0, 0); // data, number of data slots, postion, offset from eeprom address 0
-
-		term_time();
-		putrs2USART(" Init ADC Cal EEPROM Data \r\n");
-		for (z = 0; z < ADC_SLOTS; z++) {
-			write_data_eeprom(ADC_NULL, ADC_SLOTS, z, 8); // data, number of data slots, postion, offset from eeprom address 0
-		}
-	}
-
-	term_time();
-	putrs2USART(" Read Controller eeprom data \r\n");
-	if (read_data_eeprom(0, 0) == CHECKMARK) { // load Controller types from EEPROM
-		eep_char = read_data_eeprom(2, 0);
-	} else {
-		term_time();
-		putrs2USART(" Invalid Controller eeprom data \r\n"); // init eeprom data
-		write_data_eeprom(0, 1, 0, 0); // data, number of data slots, postion, offset from eeprom address 0
-		term_time();
-		putrs2USART(" Controller eeprom data saved\r\n"); // init eeprom data
-	}
-
-	term_time();
-	putrs2USART(" Read ADC eeprom data \r\n");
-	if (read_data_eeprom(0, 8) == CHECKMARK) { // load ADC cal data from EEPROM
-		for (z = 0; z < ADC_SLOTS; z++) {
-			adc_cal[z] = read_data_eeprom(10, z);
-		}
-	} else {
-		term_time();
-		putrs2USART(" Invalid ADC eeprom data \r\n"); // init eeprom data
-		for (z = 0; z < ADC_SLOTS; z++) {
-			write_data_eeprom(adc_cal[z], ADC_SLOTS, z, 8);
-		}
-		term_time();
-		putrs2USART(" ADC eeprom data saved\r\n"); // init eeprom data
-	}
-
-	if (DIPSW3 == HIGH) { // failsafe mode
-
-		while (TRUE); // Don't  continue
-	}
-
 	zero_amploc(); // zero input current sensor
 	term_time();
 	putrs2USART(" Read ADC data inputs \r\n");
-	ADC_read();
-
-	if (DIPSW1 == HIGH) { // set default hist and SD data
-		term_time();
-		putrs2USART(" Init History Data \r\n");
-	}
-
-	if (DIPSW4 == HIGH) { // Set select to 8 bits
-		term_time();
-		putrs2USART(" Use 4 bit selection codes\r\n");
-		cable_type = 0x0f;
-	}
-
-	INTCONbits.GIEH = LOW;
-	INTCONbits.GIEL = LOW;
-	while (!PB2);
-	INTCONbits.GIEH = HIGH;
-	INTCONbits.GIEL = HIGH;
-
-
 	ADC_read();
 	srand((uint16_t) R.systemvoltage); // set random seed
 
@@ -512,7 +442,6 @@ void main(void) // Lets Party
 	/* Loop forever */
 	while (TRUE) {
 		ADC_read();
-
 		ClrWdt(); // reset the WDT timer
 
 	}

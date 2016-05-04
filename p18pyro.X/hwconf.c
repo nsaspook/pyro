@@ -148,6 +148,7 @@ void config_pic(uint16_t hw_config)
 		/* Enable all high/low priority interrupts */
 		INTCONbits.GIEH = HIGH;
 		INTCONbits.GIEL = HIGH;
+		DLED_1=LOW;
 	}
 }
 
