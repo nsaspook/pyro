@@ -17,10 +17,6 @@ void idle_loop(void);
 void P1wait(void);
 void P2wait(void);
 void Clear_All_Buttons(void);
-void buzzer_ticks(uint8_t);
-void voice1_ticks(uint8_t);
-void voice2_ticks(uint8_t);
-void slow_timer_start(void);
 
 /* BEGIN HIGH ISR */
 

@@ -100,7 +100,7 @@ void config_pic(uint16_t hw_config)
 			T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
 		PR4 = 0xFF;
 		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16); // for lamp scanner
-		IPR3bits.TMR4IP = LOW; // make it low pri level
+		IPR3bits.TMR4IP = HIGH; // make it high pri level
 		PIE3bits.TMR4IE = HIGH; // TIMER4 int enable bit
 
 		INTCONbits.RBIE = HIGH; // enable PORTB interrupts 1=enable
@@ -127,10 +127,10 @@ void config_pic(uint16_t hw_config)
 		INTCON2bits.RBPU = LOW; // enable input pullup. 0=on
 
 		WriteTimer0(TIMEROFFSET); // start timer0 at 1 second ticks
-		WriteTimer3(TIMER3REG); // worker thread timer  about 20hz                                                           //
+		WriteTimer3(TIMER3REG); // worker thread timer about 20hz                                                           //
 
 		/*      work int thread setup */
-		IPR2bits.TMR3IP = HIGH; // make it high pri level
+		IPR2bits.TMR3IP = LOW; // make it low pri level
 		PIE2bits.TMR3IE = HIGH; // enable int
 
 		/* EEPROM write int enable */
