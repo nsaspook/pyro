@@ -318,7 +318,6 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 		PR4 = 0xff;
 		V.pwm4int_count++;
 		DLED_0 = !DLED_0;
-		DLED_1 = !DLED_1;
 	}
 
 }
