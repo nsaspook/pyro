@@ -441,14 +441,14 @@ void main(void) // Lets Party
 	L.rx2b = &ring_buf3;
 	L.tx2b = &ring_buf4;
 	spi_link.tx1b = &ring_buf5;
-	spi_link.tx1a = &ring_buf6;
+	spi_link.rx1b = &ring_buf6;
 
 	ringBufS_init(L.rx1b);
 	ringBufS_init(L.tx1b);
 	ringBufS_init(L.rx2b);
 	ringBufS_init(L.tx2b);
 	ringBufS_init(spi_link.tx1b);
-	ringBufS_init(spi_link.tx1a);
+	ringBufS_init(spi_link.rx1b);
 
 	/*      Work thread start */
 	start_workerthread();
@@ -463,11 +463,15 @@ void main(void) // Lets Party
 			DLED_2 = LOW;
 		} else {
 			DLED_2 = HIGH;
-			adc_result = ringBufS_get(L.rx1b);
+			adc_result = ringBufS_get(L.rx1b); // get the analog voltages
+			// do something
+			ringBufS_put(spi_link.tx1b, (adc_result>>13)); // send control data to SPI devices (DAC)
 		}
 
 		if (SSPCON1bits.WCOL || SSPCON1bits.SSPOV) { // check for overruns/collisions
-			SSPCON1bits.WCOL = SSPCON1bits.SSPOV = LOW;
+			SSPCON1bits.WCOL = (SSPCON1bits.SSPOV = LOW);
+			ringBufS_flush(spi_link.tx1b, 1); // dump the spi buffers
+			ringBufS_flush(spi_link.rx1b, 1);
 		}
 	}
 }

@@ -104,10 +104,6 @@ typedef struct qeitype {
 	} movement;
 } volatile qeitype;
 
-typedef struct ccstype {
-	uint8_t pick, boi, boc, alert, bn;
-} volatile ccstype;
-
 struct almtype {
 	uint8_t alm_flag, alm_count;
 };
@@ -158,24 +154,17 @@ typedef struct V_data { // ISR used, mainly for non-atomic mod problems
 	volatile uint8_t blink, buzzertime, voice1time, voice2time, qei_counts;
 } V_data;
 
-typedef struct L_data { // light link state data
-	uint8_t ctmu_data : 1;
-	uint8_t ctmu_data_temp : 1;
+typedef struct L_data { // link state data
 	uint8_t boot_code : 1;
-	uint8_t adc_chan;
-	uint8_t tx1_dac, tx2_dac;
+	uint16_t adc_chan;
+	uint16_t tx1_dac, tx2_dac;
 	struct ringBufS_t *rx1b, *tx1b, *rx2b, *tx2b;
-	uint16_t ctmu_adc, ctmu_adc_zero, pic_temp, checksum;
 } L_data;
 
 struct spi_link_type { // internal state table
-	uint8_t SPI_LCD : 1;
-	uint8_t SPI_AUX : 1;
-	uint8_t LCD_TIMER : 1;
-	uint8_t LCD_DATA : 1;
 	uint16_t delay;
 	uint8_t config;
-	struct ringBufS_t *tx1b, *tx1a;
+	struct ringBufS_t *tx1b, *rx1b;
 	int32_t int_count;
 };
 

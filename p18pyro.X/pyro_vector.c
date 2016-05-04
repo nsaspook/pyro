@@ -10,14 +10,13 @@ void tick_handler(void) // This is the high priority ISR routine
 	static int16_t rx_tmp = 0;
 	static union Timers timer;
 
-	_asm nop _endasm // asm code to disable compiler optimizations
+	DLED_0 = HIGH;
 	V.highint_count++; // high int counter
 
 	if (PIE1bits.ADIE && PIR1bits.ADIF) { // ADC conversion complete flag
 		V.adc_count++; // just keep count
 		PIR1bits.ADIF = LOW;
-		ringBufS_put(L.rx1b, ADRES + (L.adc_chan << 13));
-		SSPBUF = L.adc_chan;
+		ringBufS_put(L.rx1b, ADRES + (L.adc_chan << 13)); // add channel data to the 16 bit variable
 		if (!(L.adc_chan & 0x07)) {
 			DLED_3 = HIGH; // pulse high on ADC channel zero
 		} else {
@@ -34,7 +33,6 @@ void tick_handler(void) // This is the high priority ISR routine
 		PIR3bits.TMR4IF = LOW;
 		PR4 = 0x11;
 		V.pwm4int_count++;
-		DLED_0 = !DLED_0;
 
 		/*
 		 *  scan 8 ADC channels
@@ -44,11 +42,19 @@ void tick_handler(void) // This is the high priority ISR routine
 			if (adc_switch++) // trigger the conversion on the next timer int so the channel mux can settle
 				ADCON0bits.GO = HIGH; // and begin A/D conv, will set adc int flag when done.
 		}
+
+		/*
+		 * send SPI data
+		 */
+		if (!ringBufS_empty(spi_link.tx1b)) {
+			SSP1BUF = ringBufS_get(spi_link.tx1b); // transfer the 8 bit data buffer
+		}
 	}
 
-	if (PIE1bits.SSP1IE && PIR1bits.SSP1IF) { // send data to SPI bus 1
+	if (PIE1bits.SSP1IE && PIR1bits.SSP1IF) { // get data from SPI bus 1
 		spi_link.int_count++;
 		PIR1bits.SSP1IF = LOW;
+		ringBufS_put(spi_link.rx1b, SSP1BUF);
 		DLED_7 = !DLED_7;
 	}
 
@@ -184,7 +190,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		}
 		HID_IDLE_FLAG = FALSE;
 	}
-
+	DLED_0 = LOW;
 }
 #pragma	tmpdata
 
@@ -194,16 +200,17 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 { // projector lamp scan converter
 	static union Timers timerl;
 
+	DLED_1 = HIGH;
+	V.lowint_count++; // low int trigger entropy counter
+
 	if (PIR2bits.TMR3IF) { //      Timer3 int handler
 		PIR2bits.TMR3IF = LOW; // clear int flag
 		timerl.lt = TIMER3REG; // Save the 16-bit value in local
 		TMR3H = timerl.bt[HIGH]; // Write high byte to Timer3 High byte
 		TMR3L = timerl.bt[LOW]; // Write low byte to Timer3 Low byte
 		V.clock20++;
-		DLED_1 = !DLED_1;
-		V.lowint_count++; // low int trigger entropy counter
 	}
-
+	DLED_1 = LOW;
 }
 
 void idle_loop(void) // idle processe to allow for better isr triggers and background networking
