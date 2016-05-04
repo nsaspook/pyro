@@ -167,6 +167,7 @@
 //	***
 
 #include <p18cxxx.h>
+#include "xlcd.h"
 #include <delays.h>
 #include <string.h>
 #include <stdlib.h>
@@ -174,7 +175,6 @@
 #include <math.h>
 
 #include "pyro_defs.h"
-#include "xlcd.h"
 #include "pyro.h"
 #include "crit.h"
 #include "pyro_msg.h"
@@ -370,6 +370,23 @@ float lp_filter(float new, int16_t bn, int16_t slow) // low pass filter, slow ra
 	return lp_x;
 }
 
+void init_lcd(void)
+{
+	lcd18 = 200;
+	wdtdelay(10000); // delay for power related LCD setup glitch
+	OpenXLCD(FOUR_BIT & LINES_5X7);
+	while (BusyXLCD());
+	wdtdelay(10000); // delay for power related LCD setup glitch
+	OpenXLCD(FOUR_BIT & LINES_5X7);
+	while (BusyXLCD());
+	WriteCmdXLCD(0xc); // blink, cursor off
+	while (BusyXLCD());
+	WriteCmdXLCD(0x1); // clear screen
+	wdtdelay(10000);
+	LCD_OK = TRUE;
+	lcd18 = 24;
+}
+
 void main(void) // Lets Party
 {
 	static uint8_t eep_char = 0;
@@ -385,6 +402,8 @@ void main(void) // Lets Party
 	start_pic(PIC_8722); // configure external hardware to the correct startup conditions
 #endif
 
+	init_lcd();
+	putrsXLCD("Pyro Control");
 
 #ifdef	__18F8722
 	if (STKPTRbits.STKFUL) {
@@ -445,6 +464,10 @@ void main(void) // Lets Party
 		} else {
 			DLED_2 = HIGH;
 			adc_result = ringBufS_get(L.rx1b);
+		}
+
+		if (SSPCON1bits.WCOL || SSPCON1bits.SSPOV) { // check for overruns/collisions
+			SSPCON1bits.WCOL = SSPCON1bits.SSPOV = LOW;
 		}
 	}
 }

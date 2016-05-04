@@ -17,8 +17,9 @@ void tick_handler(void) // This is the high priority ISR routine
 		V.adc_count++; // just keep count
 		PIR1bits.ADIF = LOW;
 		ringBufS_put(L.rx1b, ADRES + (L.adc_chan << 13));
+		SSPBUF = L.adc_chan;
 		if (!(L.adc_chan & 0x07)) {
-			DLED_3 = HIGH;	// pulse high on ADC channel zero
+			DLED_3 = HIGH; // pulse high on ADC channel zero
 		} else {
 			DLED_3 = LOW;
 		}
@@ -48,11 +49,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	if (PIE1bits.SSP1IE && PIR1bits.SSP1IF) { // send data to SPI bus 1
 		spi_link.int_count++;
 		PIR1bits.SSP1IF = LOW;
-	}
-
-	if (PIE3bits.SSP2IE && PIR3bits.SSP2IF) { // send data to SPI bus 2
-		spi_link.int_count++;
-		PIR3bits.SSP2IF = LOW;
+		DLED_7 = !DLED_7;
 	}
 
 	if (INTCON3bits.INT3IF) { // motor QEI input
