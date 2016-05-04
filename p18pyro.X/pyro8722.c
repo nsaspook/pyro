@@ -14,7 +14,7 @@
 #pragma config BORV = 3         // Brown-out Voltage bits (Max setting)
 
 // CONFIG2H
-#pragma config WDT = OFF         // Watchdog Timer (WDT enabled)
+#pragma config WDT = ON         // Watchdog Timer (WDT enabled)
 #pragma config WDTPS = 1024     // Watchdog Timer Postscale Select bits (1:1024)
 
 // CONFIG3L
@@ -374,6 +374,7 @@ void main(void) // Lets Party
 {
 	static uint8_t eep_char = 0;
 	static uint8_t z = 0;
+	static uint16_t adc_result;
 
 
 #ifdef	__18F8722
@@ -439,7 +440,12 @@ void main(void) // Lets Party
 	/* Loop forever */
 	while (TRUE) {
 		ClrWdt(); // reset the WDT timer
-
+		if (ringBufS_empty(L.rx1b)) {
+			DLED_2 = LOW;
+		} else {
+			DLED_2 = HIGH;
+			adc_result = ringBufS_get(L.rx1b);
+		}
 	}
 }
 

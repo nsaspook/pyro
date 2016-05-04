@@ -16,7 +16,6 @@ void tick_handler(void) // This is the high priority ISR routine
 	if (PIE1bits.ADIE && PIR1bits.ADIF) { // ADC conversion complete flag
 		V.adc_count++; // just keep count
 		PIR1bits.ADIF = LOW;
-		DLED_2 = !DLED_2;
 		ringBufS_put(L.rx1b, ADRES + (L.adc_chan << 13));
 		if (!(L.adc_chan & 0x07)) {
 			DLED_3 = HIGH;	// pulse high on ADC channel zero
