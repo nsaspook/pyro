@@ -275,7 +275,6 @@ void DelayFor18TCY(void)
 	static uint8_t n;
 	_asm nop _endasm // asm code to disable compiler optimizations
 	for (n = 0; n < lcd18; n++) Nop(); // works at 200 (slow white) or 24 (fast blue)
-	//    lcdhits_18tcy++;
 }
 
 //------------------------------------------
@@ -464,8 +463,9 @@ void main(void) // Lets Party
 		} else {
 			DLED_2 = HIGH;
 			adc_result = ringBufS_get(L.rx1b); // get the analog voltages
+			ADC_Update(adc_result, adc_result >> 13);
 			// do something
-			ringBufS_put(spi_link.tx1b, (adc_result>>13)); // send control data to SPI devices (DAC)
+			ringBufS_put(spi_link.tx1b, (adc_result >> 13)); // send control data to SPI devices (DAC)
 		}
 
 		if (SSPCON1bits.WCOL || SSPCON1bits.SSPOV) { // check for overruns/collisions

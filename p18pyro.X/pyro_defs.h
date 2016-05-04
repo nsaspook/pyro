@@ -27,7 +27,7 @@ extern "C" {
 #define	Lpri		2
 #define	HL		3
 #define	TIMEROFFSET		26474           // timer0 16bit counter value for 1 second to overflow
-#define	TIMER3REG		31500            // timer3 value for 20Hz clock, orig value 3048
+#define	TIMER3REG		3048            // timer3 value for 20Hz clock, orig value 3048
 #define	TIMEOFF		60      	// seconds in 1 min
 #define	WORKSEC		10      	// run every this time seconds
 #define FT20		20              // default value for fast ticks
@@ -106,6 +106,8 @@ extern "C" {
 #define QENC2BITS	0b11000000	// PORTB 6..7
 
 	/*	ADC gain offsets	mV per bit step defines */
+#define ADC_5V_MV 	488             // 5vdc 
+#define ADC_24V_MV 	2350            // 24vdc
 #define ADC0_MV 	490             // 5vdc monitor
 #define ADC1_MV 	2350            // 24 vdc monitor (relay contact)
 #define ADC2_MV 	488
@@ -116,7 +118,7 @@ extern "C" {
 #define ADC7_MV 	488
 #define ADC8_MV 	488		// Ground REF connection
 #define	ADC_SLOTS	15		// 14 ADC data slots + 1 checksum at the end
-#define ADC_INDEX	10		// max adc gain array select number
+#define ADC_INDEX	8		// max adc array select number
 #define ADC_NULL	127             // zero offset value
 	/* The number of samples must be high to sample several complete PWM cycles to get stable voltage and current measurements at lower ranges. */
 #define ADC_SAMP_F	16

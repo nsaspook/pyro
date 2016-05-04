@@ -11,10 +11,8 @@
 
 void ADC_zero(void);
 void ADC_read(void);
-void zero_amploc(void); // set sensor ADC zero value
+void ADC_Update(uint16_t, uint8_t);
 void do_sim(void);
-void Reset_Change_Count(void); // the motor adc change counter
-uint8_t Change_Count(void); // check for ADC readings being stable.
 
 extern const rom int8_t adcg0[], adcg1[], adcg2[], adcg3[], adcg4[], zero0[], zero1[], zero2[], zero3[];
 extern uint32_t Vin, rawp[MAX_MFC], vbatol_t, solar_t, rawa[MAX_MFC];
@@ -23,6 +21,7 @@ extern volatile uint8_t C2RAW, PRIPOWEROK, KEYNUM, SYSTEM_STABLE;
 extern int16_t a10_x, a10_y, a10_z;
 extern struct R_data R;
 extern struct C_data C;
+extern volatile struct L_data L;
 extern struct emodefaulttype emodump;
 extern volatile struct modetype mode;
 

@@ -1,8 +1,6 @@
 /* Read analog voltage and current inputs */
 #include "daq.h"
 
-static int change_count = 0;
-
 /* switch to ADC chan 8 (shorted to ground) to reset ADC measurement cap to zero before next measurement */
 void ADC_zero(void)
 {
@@ -13,20 +11,12 @@ void ADC_zero(void)
 	while (BusyADC());
 }
 
-void Reset_Change_Count(void) // counts for ADC value change while motor/resistor is moving
+void ADC_Update(uint16_t adc_val, uint8_t chan)
 {
-	change_count = 0;
-	R.change_x = R.pos_x;
-	R.change_y = R.pos_y;
-	R.change_z = R.pos_z;
-	R.stable_x = FALSE;
-	R.stable_y = FALSE;
-	R.stable_z = FALSE;
-}
-
-BYTE Change_Count(void) // Set the stable flag for non-moving motors or inactive motors
-{
-	return FALSE; // wait for CHANGE_COUNT times
+	if (chan >= ADC_INDEX)
+		return;
+	L.adc_raw[chan]=adc_val;
+	L.adc_val[chan]=adc_val* (ADC_5V_MV - ADC_NULL + adc_cal[chan]); //      voltage correction factor;
 }
 
 void ADC_read(void) // update all voltage/current readings and set load current in 'currentload' variable
@@ -191,9 +181,3 @@ void ADC_read(void) // update all voltage/current readings and set load current 
 	ClrWdt(); // reset the WDT timer
 }
 
-void zero_amploc(void) // set zero current setpoint from ADC reading from a10_x a10_z a10_y, write to EEPROM
-{
-	static uint8_t z;
-
-	adc_cal[11] = adc_cal[12] = adc_cal[13] = adc_cal[14] = ADC_NULL; // reset offsets to zero (ADC_NULL)
-}

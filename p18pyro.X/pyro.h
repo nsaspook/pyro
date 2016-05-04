@@ -148,16 +148,16 @@ typedef struct C_data { // set only in adc_read
 } C_data;
 
 typedef struct V_data { // ISR used, mainly for non-atomic mod problems
-	volatile uint32_t buttonint_count, timerint_count, eeprom_count, highint_count, lowint_count, c1_int, c2_int, hunt_count;
+	volatile uint32_t buttonint_count, timerint_count, eeprom_count, highint_count, lowint_count, c1_int, c2_int;
 	volatile uint32_t pwm4int_count, worker_count, b0, b1, b2, b3, display_count, lcdhits, lcdhits_18tcy, adc_count;
 	volatile uint32_t clock20, commint_count, status_count, c1rx_int;
-	volatile uint8_t blink, buzzertime, voice1time, voice2time, qei_counts;
 } V_data;
 
 typedef struct L_data { // link state data
 	uint8_t boot_code : 1;
 	uint16_t adc_chan;
-	uint16_t tx1_dac, tx2_dac;
+	uint32_t adc_val[ADC_INDEX];
+	uint16_t adc_raw[ADC_INDEX];
 	struct ringBufS_t *rx1b, *tx1b, *rx2b, *tx2b;
 } L_data;
 
