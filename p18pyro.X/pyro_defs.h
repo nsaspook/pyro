@@ -58,12 +58,12 @@ extern "C" {
 #define	DIPSW7		PORTDbits.RD6
 #define	DIPSW8		PORTDbits.RD7
 
-#define	DLED_0		LATJbits.LATJ0      // LOW is ON
-#define	DLED_1		LATJbits.LATJ1
-#define DLED_2 		LATJbits.LATJ2
-#define DLED_3 		LATJbits.LATJ3      // motor QEI is moving
-#define DLED_4		LATJbits.LATJ4      // knob 1 moving
-#define DLED_5		LATJbits.LATJ5      // knob 2 moving
+#define	DLED_0		LATJbits.LATJ0		// LOW is ON, state sequencer clock
+#define	DLED_1		LATJbits.LATJ1		// lamp line scanner
+#define DLED_2 		LATJbits.LATJ2		// ADC converstions
+#define DLED_3 		LATJbits.LATJ3 
+#define DLED_4		LATJbits.LATJ4 
+#define DLED_5		LATJbits.LATJ5
 #define DLED_6		LATJbits.LATJ6
 #define DLED_7 		LATJbits.LATJ7
 

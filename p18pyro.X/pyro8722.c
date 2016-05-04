@@ -98,7 +98,7 @@
  * TImer1		Not used
  * Timer2		Not used
  * Timer3		work thread , background I/O clock ~20HZ
- * TImer4		PWM Period clock
+ * TImer4		State machine Period clock ~1khz
 
  * 0..8 analog channels are active
  * PORTA		analog inputs
@@ -111,7 +111,6 @@
  * PORTF		analog inputs
 
  * adc8 Ground REF	zero adc charge cap RF3
- * adc3 VREF from 5vdc reference chip REF02AP
  * adc_cal[11-14]	current sensors zero offset stored in eeprom 11=x, 12=y, 13=z, 14=future
  * cal table with checksum as last data item in adc_cal[]
  * PORTH0		run flasher led onboard, 4x20 LCD status panel
@@ -413,6 +412,9 @@ void main(void) // Lets Party
 		putrs2USART("\x1b[7m Possible EEPROM write error. \x1b[0m\r\n");
 	}
 
+	/* state machine setups */
+	L.adc_chan = 0;
+
 	/* setup the link buffers first */
 	L.rx1b = &ring_buf1;
 	L.tx1b = &ring_buf2;
@@ -428,20 +430,14 @@ void main(void) // Lets Party
 	ringBufS_init(spi_link.tx1b);
 	ringBufS_init(spi_link.tx1a);
 
-	zero_amploc(); // zero input current sensor
-	term_time();
-	putrs2USART(" Read ADC data inputs \r\n");
-	ADC_read();
-	srand((uint16_t) R.systemvoltage); // set random seed
-
 	/*      Work thread start */
 	start_workerthread();
 
 	SYSTEM_STABLE = TRUE;
+	srand((uint16_t) R.systemvoltage); // set random seed
 
 	/* Loop forever */
 	while (TRUE) {
-		ADC_read();
 		ClrWdt(); // reset the WDT timer
 
 	}

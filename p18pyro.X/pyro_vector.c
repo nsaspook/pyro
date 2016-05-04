@@ -6,14 +6,26 @@
 
 void tick_handler(void) // This is the high priority ISR routine
 {
-	static uint8_t c1, c2, emo_bumps = 0, HID_IDLE_FLAG = TRUE, b_read = 0;
-	static uint8_t ZAP = FALSE;
-	static uint8_t worker_timer = WORKSEC, fast_ticks = FT20;
+	static uint8_t c1, c2, adc_switch = 0, HID_IDLE_FLAG = TRUE, b_read = 0;
 	static int16_t rx_tmp = 0;
 	static union Timers timer;
 
 	_asm nop _endasm // asm code to disable compiler optimizations
 	V.highint_count++; // high int counter
+
+	if (PIE1bits.ADIE && PIR1bits.ADIF) { // ADC conversion complete flag
+		V.adc_count++; // just keep count
+		PIR1bits.ADIF = LOW;
+		DLED_2 = !DLED_2;
+		ringBufS_put(L.rx1b, ADRES + (L.adc_chan << 13));
+		if (!(L.adc_chan & 0x07)) {
+			DLED_3 = HIGH;	// pulse high on ADC channel zero
+		} else {
+			DLED_3 = LOW;
+		}
+		L.adc_chan++; // next ADC channel
+		adc_switch = 0;
+	}
 
 	/*
 	 * ~1khz state machine sequencer timer
@@ -23,6 +35,15 @@ void tick_handler(void) // This is the high priority ISR routine
 		PR4 = 0x11;
 		V.pwm4int_count++;
 		DLED_0 = !DLED_0;
+
+		/*
+		 *  scan 8 ADC channels
+		 */
+		if (!ADCON0bits.GO) {
+			SetChanADC(L.adc_chan & 0x07); // set the current channel
+			if (adc_switch++) // trigger the conversion on the next timer int so the channel mux can settle
+				ADCON0bits.GO = HIGH; // and begin A/D conv, will set adc int flag when done.
+		}
 	}
 
 	if (PIE1bits.SSP1IE && PIR1bits.SSP1IF) { // send data to SPI bus 1
@@ -93,11 +114,6 @@ void tick_handler(void) // This is the high priority ISR routine
 		V.eeprom_count++; // just keep count
 		MPULED = !MPULED; //  flash led
 		PIR2bits.EEIF = LOW;
-	}
-
-	if (PIE1bits.ADIE && PIR1bits.ADIF) { // ADC conversion complete flag
-		V.adc_count++; // just keep count    							// set output bit to zero
-		PIR1bits.ADIF = LOW;
 	}
 
 	if (INTCONbits.TMR0IF) { // check timer0 irq 1 second timer int handler
