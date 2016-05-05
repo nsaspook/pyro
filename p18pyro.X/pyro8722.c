@@ -187,7 +187,7 @@
 uint8_t spinners(uint8_t, uint8_t);
 
 #pragma udata gpr13
-far int8_t bootstr2[MESG_W + 1];
+far int8_t bootstr2[MESG_W + 1], f1[MESG_W], f2[MESG_W];
 
 
 #pragma udata gpr1
@@ -201,7 +201,7 @@ volatile struct spi_link_type spi_link;
 
 volatile struct ringBufS_t ring_buf5, ring_buf6;
 #pragma udata gpr3
-
+far int8_t hms_string[16];
 int16_t a10_x, a10_y, a10_z, worktick;
 volatile uint8_t critc_level = 0, KEYNUM = 0, C2RAW, glitch_count, cdelay, SLOW_STATUS;
 volatile uint8_t TIMERFLAG = FALSE, PRIPOWEROK = TRUE, FORCEOUT = FALSE, WORKERFLAG = FALSE,
@@ -236,9 +236,8 @@ volatile struct ringBufS_t ring_buf1, ring_buf2;
 #pragma udata gpr9
 volatile struct knobtype knob1, knob2;
 
-/* ADC voltage/current default calibration values , adjusted with D command */
-// adc_cal[11-14]				current sensors zero offset stored in eeprom 11=x, 12=y, 13=z, 14=future
-uint8_t adc_cal[] = {127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 0};
+/* ADC voltage default calibration values  */
+uint8_t adc_cal[] = {128, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 0};
 uint8_t CRITC = 0, LCD_OK = FALSE, cable_type = 0x07, TLOG = FALSE;
 
 volatile enum answer_t {
@@ -332,6 +331,98 @@ uint8_t spinners(uint8_t shape, uint8_t reset)
 	return c;
 }
 
+int8_t* hms(uint32_t sec) // convert int32_t (seconds) to time string
+{
+	static uint32_t h = 0, m = 0, s = 0;
+
+	if (sec > MAXSECONDS) sec = MAXSECONDS; // max time in seconds
+	s = sec;
+	h = (s / 3600);
+	s = s - (h * 3600);
+	m = (s / 60);
+	s = s - (m * 60);
+	sprintf(hms_string, "%01lu:%02lu:%02lu", h, m, s);
+	return hms_string;
+}
+
+int8_t* hm(uint32_t sec) // convert int32_t (seconds) to time string
+{
+	static uint32_t h = 0, m = 0, s = 0;
+	if (sec > MAXSECONDS) sec = MAXSECONDS; // max time in seconds
+	s = sec;
+	h = (s / 3600);
+	s = s - (h * 3600);
+	m = (s / 60);
+	s = s - (m * 60);
+	sprintf(hms_string, "%01lu:%02lu", h, m);
+	return hms_string;
+}
+
+int16_t ABSI(int16_t i)
+{
+	if (i < 0)
+		return -i;
+	else
+		return i;
+}
+
+int32_t ABSL(int32_t i)
+{
+	if (i < 0)
+		return -i;
+	else
+		return i;
+}
+
+int8_t* voltfp(uint32_t millvolts, int8_t *strprt) // convert uint32_t (millvolts) to voltage string
+{
+	voltfrak = (float) millvolts / 1000;
+	iw = (int32_t) ((float) voltfrak);
+	ip = (int32_t) ((float) voltfrak * 100) - iw * 100;
+	sprintf(strprt, "%d.%02d", (int16_t) iw, (int16_t) ip);
+	return strprt;
+}
+
+int8_t* voltfps(uint32_t millvolts, int8_t *strprt) // convert uint32_t (millvolts) to voltage string (short)
+{
+	voltfrak = (float) millvolts / 1000;
+	iw = (int32_t) ((float) voltfrak);
+	ip = (int32_t) ((float) voltfrak * 10) - iw * 10;
+	sprintf(strprt, "%d.%01d", (int16_t) iw, (int16_t) ip);
+	return strprt;
+}
+
+int8_t* voltfpi(int32_t millvolts, int8_t *strprt) // convert int32_t (mill volts/watts/current) to string (integer with Kilo)
+{
+	sign = ' '; // init sign
+	if (millvolts < 0)
+		sign = '-';
+	voltfrak = (float) millvolts / 1000;
+	iw = (int32_t) ((float) voltfrak);
+	ip = (int32_t) ((float) voltfrak * 10) - iw * 10;
+	if (ABSL(iw) < 1500) {
+		sprintf(strprt, "%c%li", sign, ABSL(iw));
+	} else {
+		voltfrak = voltfrak / 1000;
+		iw = (int32_t) ((float) voltfrak);
+		ip = (int32_t) ((float) voltfrak * 100) - iw * 100;
+		sprintf(strprt, "%c%li.%02lik", sign, ABSL(iw), ABSL(ip));
+	}
+	return strprt;
+}
+
+int8_t* ahfp(int32_t millah, int8_t *strprt) // convert int32_t (.1 of Ah) to Ah string
+{
+	sign = ' '; // init sign
+	if (millah < 0)
+		sign = '-';
+	ahfrak = (float) millah / 10;
+	iw = (int32_t) ((float) ahfrak);
+	ip = (int32_t) ((float) ahfrak * 10) - iw * 10;
+	sprintf(strprt, "%c%d.%01d", sign, ABSI(iw), ABSI(ip));
+	return strprt;
+}
+
 void term_time(void)
 {
 
@@ -388,9 +479,8 @@ void init_lcd(void)
 
 void main(void) // Lets Party
 {
-	static uint8_t eep_char = 0;
-	static uint8_t z = 0;
-	static uint16_t adc_result;
+	static uint8_t eep_char = 0, adc_index = 0;
+	static uint16_t adc_result = 0, adc_val = 0, z;
 
 
 #ifdef	__18F8722
@@ -460,12 +550,27 @@ void main(void) // Lets Party
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
 			DLED_2 = LOW;
+			if (!z++) {
+				s_crit(HL);
+				SetDDRamAddr(LL2); // move to  line
+				while (BusyXLCD());
+				voltfp(L.adc_val[adc_index], f1);
+
+				sprintf(bootstr2, "S %sV,R %uC %d        ", f1, L.adc_raw[adc_index], adc_index); // display Power info
+				e_crit();
+				bootstr2[20] = NULL0; // make sure we have a string terminator
+				putsXLCD(bootstr2);
+				while (BusyXLCD());
+				LATH &= 0b00000001;
+			}
 		} else {
 			DLED_2 = HIGH;
 			adc_result = ringBufS_get(L.rx1b); // get the analog voltages
-			ADC_Update(adc_result, adc_result >> 13);
+			adc_val = adc_result & 0x03ff;
+			adc_index = adc_result >> 13;
+			ADC_Update(adc_val, adc_index);
 			// do something
-			ringBufS_put(spi_link.tx1b, (adc_result >> 13)); // send control data to SPI devices (DAC)
+			ringBufS_put(spi_link.tx1b, adc_index); // send control data to SPI devices (DAC)
 		}
 
 		if (SSPCON1bits.WCOL || SSPCON1bits.SSPOV) { // check for overruns/collisions

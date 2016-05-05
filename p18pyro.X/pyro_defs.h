@@ -16,7 +16,7 @@ extern "C" {
 #define CHECKMARK		0x59		// EEPROM checkmark
 #define CHECKMARK_CRC	0x59595959ul		// 32 bit crc checkmark
 
-#define MESG_W          250			// message string buffer
+#define MESG_W          80			// message string buffer
 #define CRIT_8          8               // 8 levels
 #define CRITC1          1               // The first CRITC level
 #define MAX_MFC         3u               // number of MFC that will control
@@ -106,17 +106,8 @@ extern "C" {
 #define QENC2BITS	0b11000000	// PORTB 6..7
 
 	/*	ADC gain offsets	mV per bit step defines */
-#define ADC_5V_MV 	488             // 5vdc 
-#define ADC_24V_MV 	2350            // 24vdc
-#define ADC0_MV 	490             // 5vdc monitor
-#define ADC1_MV 	2350            // 24 vdc monitor (relay contact)
-#define ADC2_MV 	488
-#define ADC3_MV 	488
-#define ADC4_MV 	488
-#define ADC5_MV 	488
-#define ADC6_MV 	488
-#define ADC7_MV 	488
-#define ADC8_MV 	488		// Ground REF connection
+#define ADC_5V_MV 	488UL             // 5vdc 
+#define ADC_24V_MV 	2350UL            // 24vdc
 #define	ADC_SLOTS	15		// 14 ADC data slots + 1 checksum at the end
 #define ADC_INDEX	8		// max adc array select number
 #define ADC_NULL	127             // zero offset value
@@ -126,7 +117,11 @@ extern "C" {
 #define ADC_CHAN_DELAY	100		// delay in 10X chip cycles after switching ADC channels
 
 #define	LPCHANC		8               // digital filter channels
-
+#define MAXSECONDS      315576000ul     // 10 years
+#define	LL1		0x00                    // LCD line addresses
+#define	LL2		0x40
+#define LL3		0x14
+#define	LL4		0x54
 
 
 #ifdef	__cplusplus

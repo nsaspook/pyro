@@ -155,7 +155,7 @@ typedef struct V_data { // ISR used, mainly for non-atomic mod problems
 
 typedef struct L_data { // link state data
 	uint8_t boot_code : 1;
-	uint16_t adc_chan;
+	uint16_t adc_chan; // must be 16 bit value
 	uint32_t adc_val[ADC_INDEX];
 	uint16_t adc_raw[ADC_INDEX];
 	struct ringBufS_t *rx1b, *tx1b, *rx2b, *tx2b;
