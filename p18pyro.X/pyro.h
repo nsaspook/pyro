@@ -110,6 +110,22 @@ typedef struct V_data { // ISR used, mainly for non-atomic mod problems
 	volatile uint32_t clock20, commint_count, status_count, c1rx_int;
 } V_data;
 
+// LCD structs
+typedef struct D_data {
+	uint16_t state:8;	// data/cmd state machine sequence
+	uint16_t :4;
+	uint16_t cmd:1;		// LCD control bit
+	uint16_t index:3;
+} D_data;
+
+/* used to hold 16-bit LCD buffer and control bits*/
+union lcd_buf_type
+{
+  uint16_t buf;
+  struct D_data map;
+};
+
+// ADC structs
 typedef struct A_data {
 	uint16_t :8;		// dummy space
 	uint16_t :4;

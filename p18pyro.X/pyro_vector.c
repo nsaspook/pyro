@@ -9,6 +9,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	static int16_t rx_tmp = 0;
 	static union Timers timer;
 	static union adc_buf_type adc_buf;
+	static union lcd_buf_type lcd_buf;
 
 	_asm nop _endasm // asm code to disable compiler optimizations
 	DLED_0 = HIGH;
@@ -49,8 +50,14 @@ void tick_handler(void) // This is the high priority ISR routine
 		/*
 		 * send SPI data
 		 */
-		if (!ringBufS_empty(spi_link.tx1b)) {
+		if (!ringBufS_empty(spi_link.tx1b)) { // SPI send 
 			SSP1BUF = ringBufS_get(spi_link.tx1b); // transfer the 8 bit data buffer
+		}
+		
+		if (!ringBufS_empty(L.tx1b)) {	// LCD send
+			
+		} else {
+			lcd_buf.map.state
 		}
 	}
 
