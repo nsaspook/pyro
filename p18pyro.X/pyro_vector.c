@@ -52,10 +52,11 @@ void tick_handler(void) // This is the high priority ISR routine
 	}
 
 	if (PIE1bits.SSP1IE && PIR1bits.SSP1IF) { // get data from SPI bus 1
+		DLED_7 = HIGH;
 		spi_link.int_count++;
 		PIR1bits.SSP1IF = LOW;
 		ringBufS_put(spi_link.rx1b, SSP1BUF);
-		DLED_7 = !DLED_7;
+		DLED_7 = LOW;
 	}
 
 	if (INTCON3bits.INT3IF) { // motor QEI input

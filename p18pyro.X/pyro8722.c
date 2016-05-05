@@ -189,7 +189,6 @@ uint8_t spinners(uint8_t, uint8_t);
 #pragma udata gpr13
 far int8_t bootstr2[MESG_W + 1], f1[MESG_W], f2[MESG_W];
 
-
 #pragma udata gpr1
 
 volatile struct ringBufS_t ring_buf3, ring_buf4;
@@ -202,7 +201,6 @@ volatile struct spi_link_type spi_link;
 volatile struct ringBufS_t ring_buf5, ring_buf6;
 #pragma udata gpr3
 far int8_t hms_string[16];
-int16_t a10_x, a10_y, a10_z, worktick;
 volatile uint8_t critc_level = 0, KEYNUM = 0, C2RAW, glitch_count, cdelay, SLOW_STATUS;
 volatile uint8_t TIMERFLAG = FALSE, PRIPOWEROK = TRUE, FORCEOUT = FALSE, WORKERFLAG = FALSE,
 	FAILSAFE = FALSE, SYSTEM_STABLE = FALSE, HOLD_PROC = FALSE,
@@ -210,25 +208,20 @@ volatile uint8_t TIMERFLAG = FALSE, PRIPOWEROK = TRUE, FORCEOUT = FALSE, WORKERF
 	UPDATE_EEP = FALSE, RESET_ZEROS = FALSE, SYS_DATA = FALSE, MOD_DATA = FALSE, SYS_HELP = FALSE, SET_TLOG = FALSE,
 	WDT_TO = FALSE, EEP_ER = FALSE, TWEAK = FALSE, TEST_SPINNERS = FALSE;
 #pragma udata gpr4
-volatile uint8_t almctr, RS232_DEBUG = FALSE;
 volatile uint32_t critc_count = 0;
-volatile struct modetype mode;
 #pragma udata gpr5
 
 int8_t sign = ' ';
 float lp_speed = 0.0, lp_x = 0.0;
-struct R_data R;
-struct C_data C;
 struct V_data V;
 const rom int8_t *build_date = __DATE__, *build_time = __TIME__;
 #pragma udata gpr6
 
-volatile uint8_t dsi = 0, msi = 0, help_pos = 0; //      LCD display string index to console 0
 float t1 = 0.0, t2 = 0.0, t3 = 0.0, t4 = 0.0, t5 = 0.0, t6 = 0.0, t7 = 0.0, t_time = 0.0;
 float voltfrak = 0.0;
 float ahfrak = 0.0;
 #pragma udata gpr7
-uint32_t Vin = 0, chrg_v = 0, vbatol_t = 0, solar_t = 0, rawp[MAX_MFC], rawa[MAX_MFC];
+//uint32_t Vin = 0, chrg_v = 0, vbatol_t = 0, solar_t = 0, rawp[MAX_MFC], rawa[MAX_MFC];
 volatile uint8_t IDLEFLAG = FALSE, knob_to_pot = 0;
 int32_t iw = 0, ip = 0;
 #pragma udata gpr8
@@ -238,7 +231,7 @@ volatile struct knobtype knob1, knob2;
 
 /* ADC voltage default calibration values  */
 uint8_t adc_cal[] = {128, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 0};
-uint8_t CRITC = 0, LCD_OK = FALSE, cable_type = 0x07, TLOG = FALSE;
+uint8_t CRITC = 0, LCD_OK = FALSE;
 
 volatile enum answer_t {
 	WAIT_M, YES_M, NO_M
@@ -543,7 +536,7 @@ void main(void) // Lets Party
 	start_workerthread();
 
 	SYSTEM_STABLE = TRUE;
-	srand((uint16_t) R.systemvoltage); // set random seed
+	srand((uint16_t) 1957); // set random seed
 
 	/* Loop forever */
 	while (TRUE) {
