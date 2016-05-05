@@ -1,6 +1,13 @@
 #include <p18cxxx.h>
 #include "xlcd.h"
 
+
+void S_WriteDataXLCD(char data)
+{
+	ringBufS_put(L.tx1b, data);
+	return;
+}
+
 /********************************************************************
  *       Function Name:  WriteDataXLCD                               *
  *       Return Value:   void                                        *

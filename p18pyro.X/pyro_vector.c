@@ -10,6 +10,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	static union Timers timer;
 	static union adc_buf_type adc_buf;
 	static union lcd_buf_type lcd_buf;
+	static int8_t data;
 
 	_asm nop _endasm // asm code to disable compiler optimizations
 	DLED_0 = HIGH;
@@ -53,11 +54,47 @@ void tick_handler(void) // This is the high priority ISR routine
 		if (!ringBufS_empty(spi_link.tx1b)) { // SPI send 
 			SSP1BUF = ringBufS_get(spi_link.tx1b); // transfer the 8 bit data buffer
 		}
-		
-		if (!ringBufS_empty(L.tx1b)) {	// LCD send
-			
+
+		if (!ringBufS_empty(L.tx1b) || lcd_buf.map.state) { // LCD send, 4bit , upper nibble
+			switch (lcd_buf.map.state) {
+			case 0:
+				DLED_5 = HIGH;
+				lcd_buf.buf = ringBufS_get(L.tx1b);
+				data = lcd_buf.buf;
+				lcd_buf.map.state = 0;
+				TRIS_DATA_PORT &= 0x0f;
+				DATA_PORT &= 0x0f;
+				DATA_PORT |= data & 0xf0;
+				RS_PIN = 1; // Set control bits
+				RW_PIN = 0;
+				lcd_buf.map.state++;
+				break;
+			case 1:
+				E_PIN = 1; // Clock nibble into LCD
+				DLED_5 = LOW;
+				lcd_buf.map.state++;
+				break;
+			case 2:
+				E_PIN = 0;
+				DATA_PORT &= 0x0f;
+				DATA_PORT |= ((data << 4)&0xf0);
+				lcd_buf.map.state++;
+				break;
+			case 3:
+				E_PIN = 1; // Clock nibble into LCD
+				lcd_buf.map.state++;
+				break;
+			case 4:
+				E_PIN = 0;
+				TRIS_DATA_PORT |= 0xf0;
+				lcd_buf.map.state=0;
+				break;
+			default:
+				lcd_buf.map.state = 0;
+				break;
+			}
 		} else {
-			lcd_buf.map.state
+			lcd_buf.map.state = 0;
 		}
 	}
 

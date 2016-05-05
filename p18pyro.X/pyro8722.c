@@ -505,9 +505,9 @@ void main(void) // Lets Party
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
 			if (!z++) {
-				
-				SetDDRamAddr(LL2); // move to  line
-				while (BusyXLCD());
+//				while (BusyXLCD());
+//				SetDDRamAddr(LL2); // move to  line
+//				while (BusyXLCD());
 				
 				voltfp(L.adc_val[adc_buf.map.index], f1);
 				sprintf(bootstr2, "S %sV,R %uC %d        ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index); // display Power info				
@@ -515,7 +515,7 @@ void main(void) // Lets Party
 				DLED_4 = HIGH;
 				putsXLCD(bootstr2);
 				DLED_4 = LOW;
-				while (BusyXLCD());
+				//while (BusyXLCD());
 				LATH &= 0b00000001;
 				
 			}

@@ -1,6 +1,8 @@
 #ifndef __XLCD_H
 #define __XLCD_H
 #include "p18cxxx.h"
+#include "ringbufs.h"
+#include "pyro.h"
 /* PIC18 XLCD peripheral routines.
  *
  *   Notes:
@@ -108,6 +110,11 @@ void WriteCmdXLCD(PARAM_SCLASS unsigned char);
  */
 void WriteDataXLCD(PARAM_SCLASS char);
 
+/* S_WriteDataXLCD
+ * Writes a data byte to the LCD via a buffer
+ */
+void S_WriteDataXLCD(PARAM_SCLASS char);
+
 /* putcXLCD
  * A putc is a write
  */
@@ -127,5 +134,7 @@ void putrsXLCD(PARAM_SCLASS const MEM_MODEL rom char *);
 extern void DelayFor18TCY(void);
 extern void DelayPORXLCD(void);
 extern void DelayXLCD(void);
+
+extern volatile struct L_data L;
 
 #endif

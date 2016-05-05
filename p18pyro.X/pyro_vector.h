@@ -11,7 +11,8 @@
 #include <usart.h>
 #include <timers.h>
 #include <adc.h>
-#include  "ringbufs.h"
+#include "ringbufs.h"
+#include "xlcd.h"
 
 void tick_handler(void);
 void work_handler(void);
