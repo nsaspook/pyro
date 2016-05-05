@@ -77,7 +77,7 @@
 // CONFIG7H
 #pragma config EBTRB = OFF      // Boot Block Table Read Protection bit (Boot Block (000000-007FFF, 000FFF or 001FFFh) not protected from table reads executed in other blocks)
 
-#define	__MANDM_C			//	This is the main program
+#define	__PYRO_C			//	This is the main program
 
 /*
  *
@@ -89,8 +89,9 @@
  *
  * R: structure, real values from measurements
  * C: structure, calculated values from measurements or programs
- * B: structure
  * V: structure, Volatile varables modified in the ISR in a possible non-atomic fashion
+ * A: structure ADC buffer data
+ * S: structure SPI buffer data 
  *
  * USART1		Data Link channel 38400
  * USART2 		is the host comm port 38400
@@ -100,18 +101,17 @@
  * Timer3		work thread , background I/O clock ~20HZ
  * TImer4		State machine Period clock ~1khz
 
- * 0..8 analog channels are active
+ * 0..11 analog channels are active
  * PORTA		analog inputs
  * adc0	systemvoltage	PIC Controller 5vdc supply voltage
- * adc1	motorvoltage	24vdv PS monitor from relay
+ * adc1	motorvoltage	24vdv PS monitor for relay
  * PORTB		HID Qencoder and switch inputs
  * PORTC		HID leds
  * PORTD		configuration switch input
- * PORTE		motor control relays
+ * PORTE		relays
  * PORTF		analog inputs
 
- * adc8 Ground REF	zero adc charge cap RF3
- * adc_cal[11-14]	current sensors zero offset stored in eeprom 11=x, 12=y, 13=z, 14=future
+ * adc8 Ground REF	zero adc charge cap
  * cal table with checksum as last data item in adc_cal[]
  * PORTH0		run flasher led onboard, 4x20 LCD status panel
  * PORTJ		alarm and diag leds
@@ -125,46 +125,7 @@
  *
  * This application is designed for use with the
  * ET-BASE PIC8722 board, 4*20 LCD display
- *
- * RS-232 host commands 38400baud 8n1
-
- * K		lockup controller causing WDT timer to reboot
- * Z		reset command parser
- * ?		Send help menu to rs-232 terminal
- * $		fuse blown error. (NOT DONE YET)
- * ^		reset current sensor zero calibration
- * !		hold program in present date
- * #		System Status
- *
  */
-
-
-//	***
-//	0.5     mandm software.
-//	1.5     Find source of LCD glitching, might be ISR related.
-//	1.8     First production release
-//	1.9     Change relay drive from low on to HIGH on for uln2803 buffers. OMRON relays also rewired.
-//	2.0     On V2 hardware with DPDT relays add shorting motor function for brakes and EMI reduction
-//	2.1     Motor QEI isr code and inputs. Use B3 input for A input isr trigger and QEI1_B for B input, use cable codes 8+
-//              buzzer and voice box functions to G0 and G3
-//	2.5     Bug fixes
-//	3.0     Fix bug in free movement CCW drive
-//      3.1     Change to use extern VREF for ADC, move input from adc3 to adc11, connect 5vdc vref TI REF02AP chip to input adc3
-//		Use BOREN to reset cpu when using the external VREF
-//      3.2	adjust timeouts for slower motors (RMS)
-//      3.3     Mostly bug fixes and motor preset moves after calibration.
-
-//	***
-//  dipswitch settings PORTD
-//  1       Clear controller data
-//  2       on=RS-232 logging DEBUG mode,// log debug text to comm2 port at 38400
-//  3       on=FAIL-SAFE MODE, just turn on all motors.	    Cycle LCD display to debug screens.
-//  4
-//  5       0 selection bit
-//  6       1
-//  7       2
-//  8       3
-//	***
 
 #include <p18cxxx.h>
 #include "xlcd.h"
@@ -472,8 +433,9 @@ void init_lcd(void)
 
 void main(void) // Lets Party
 {
-	static uint8_t eep_char = 0, adc_index = 0;
-	static uint16_t adc_result = 0, adc_val = 0, z;
+
+	static uint16_t z;
+	static union adc_buf_type adc_buf;
 
 
 #ifdef	__18F8722
@@ -542,28 +504,28 @@ void main(void) // Lets Party
 	while (TRUE) {
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
-			DLED_2 = LOW;
 			if (!z++) {
+				DLED_4 = HIGH;
 				s_crit(HL);
 				SetDDRamAddr(LL2); // move to  line
 				while (BusyXLCD());
-				voltfp(L.adc_val[adc_index], f1);
+				voltfp(L.adc_val[adc_buf.map.index], f1);
 
-				sprintf(bootstr2, "S %sV,R %uC %d        ", f1, L.adc_raw[adc_index], adc_index); // display Power info
+				sprintf(bootstr2, "S %sV,R %uC %d        ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index); // display Power info
 				e_crit();
 				bootstr2[20] = NULL0; // make sure we have a string terminator
 				putsXLCD(bootstr2);
 				while (BusyXLCD());
 				LATH &= 0b00000001;
+				DLED_4 = LOW;
 			}
 		} else {
 			DLED_2 = HIGH;
-			adc_result = ringBufS_get(L.rx1b); // get the analog voltages
-			adc_val = adc_result & 0x03ff;
-			adc_index = adc_result >> 13;
-			ADC_Update(adc_val, adc_index);
+			adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages
+			ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
 			// do something
-			ringBufS_put(spi_link.tx1b, adc_index); // send control data to SPI devices (DAC)
+			ringBufS_put(spi_link.tx1b, adc_buf.map.index); // send control data to SPI devices (DAC)
+			DLED_2 = LOW;
 		}
 
 		if (SSPCON1bits.WCOL || SSPCON1bits.SSPOV) { // check for overruns/collisions

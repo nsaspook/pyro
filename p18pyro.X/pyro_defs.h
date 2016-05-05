@@ -58,9 +58,9 @@ extern "C" {
 #define	DIPSW7		PORTDbits.RD6
 #define	DIPSW8		PORTDbits.RD7
 
-#define	DLED_0		LATJbits.LATJ0		// LOW is ON, state sequencer clock
-#define	DLED_1		LATJbits.LATJ1		// lamp line scanner
-#define DLED_2 		LATJbits.LATJ2		// ADC converstions
+#define	DLED_0		LATJbits.LATJ0
+#define	DLED_1		LATJbits.LATJ1
+#define DLED_2 		LATJbits.LATJ2
 #define DLED_3 		LATJbits.LATJ3 
 #define DLED_4		LATJbits.LATJ4 
 #define DLED_5		LATJbits.LATJ5
@@ -111,6 +111,8 @@ extern "C" {
 #define	ADC_SLOTS	15		// 14 ADC data slots + 1 checksum at the end
 #define ADC_INDEX	8		// max adc array select number
 #define ADC_NULL	127             // zero offset value
+#define ADC_MASK	0x03ff		// 10 bits of real adc data
+#define ADC_CHAN_MASK	0x07		// number os scanned adc channels
 	/* The number of samples must be high to sample several complete PWM cycles to get stable voltage and current measurements at lower ranges. */
 #define ADC_SAMP_F	16
 #define ADC_SAMP_S	64

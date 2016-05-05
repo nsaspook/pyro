@@ -5,9 +5,10 @@
 
 void tick_handler(void) // This is the high priority ISR routine
 {
-	static uint8_t c1, c2, adc_switch = 0, HID_IDLE_FLAG = TRUE, b_read = 0;
+	static uint8_t c1, c2, adc_trigger = FALSE, HID_IDLE_FLAG = TRUE, b_read = 0;
 	static int16_t rx_tmp = 0;
 	static union Timers timer;
+	static union adc_buf_type adc_buf;
 
 	_asm nop _endasm // asm code to disable compiler optimizations
 	DLED_0 = HIGH;
@@ -16,14 +17,16 @@ void tick_handler(void) // This is the high priority ISR routine
 	if (PIE1bits.ADIE && PIR1bits.ADIF) { // ADC conversion complete flag
 		V.adc_count++; // just keep count
 		PIR1bits.ADIF = LOW;
-		ringBufS_put(L.rx1b, ADRES + (L.adc_chan << 13)); // add channel data to the 16 bit variable
-		if (!(L.adc_chan & 0x07)) {
+		adc_buf.buf = ADRES;
+		adc_buf.map.index = L.adc_chan; // add channel data to the 16 bit variable
+		ringBufS_put(L.rx1b, adc_buf.buf);
+		if (!(L.adc_chan & ADC_CHAN_MASK)) {
 			DLED_3 = HIGH; // pulse high on ADC channel zero
 		} else {
 			DLED_3 = LOW;
 		}
 		L.adc_chan++; // next ADC channel
-		adc_switch = 0;
+		adc_trigger = FALSE; // reset the skip flag
 	}
 
 	/*
@@ -35,11 +38,11 @@ void tick_handler(void) // This is the high priority ISR routine
 		V.pwm4int_count++;
 
 		/*
-		 *  scan 8 ADC channels
+		 *  scan ADC channels
 		 */
 		if (!ADCON0bits.GO) {
-			ADCON0bits.CHS = L.adc_chan & 0x07; // set the current channel
-			if (adc_switch++) // trigger the conversion on the next timer int so the channel mux can settle
+			ADCON0bits.CHS = L.adc_chan & ADC_CHAN_MASK; // set the current channel
+			if (adc_trigger++) // trigger the conversion on the next timer int so the channel mux can settle
 				ADCON0bits.GO = HIGH; // and begin A/D conv, will set adc int flag when done.
 		}
 

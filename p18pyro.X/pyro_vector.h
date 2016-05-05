@@ -28,14 +28,11 @@ extern volatile uint8_t TIMERFLAG, SYSTEM_STABLE, COOLING,
 extern volatile uint8_t GLITCH_CHECK, cdelay, knob_to_pot;
 extern volatile int32_t slow_timer;
 
-extern struct C_data C;
 extern struct V_data V;
 extern volatile struct L_data L;
-extern struct emodefaulttype emodump;
 extern volatile struct knobtype knob1, knob2;
 extern volatile struct qeitype qei1;
 extern volatile struct buttontype button;
-extern volatile struct modetype mode;
 extern volatile struct QuadEncoderType OldEncoder;
 extern volatile struct spi_link_type spi_link;
 

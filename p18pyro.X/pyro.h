@@ -32,13 +32,6 @@ typedef signed long int32_t;
 typedef signed long long int64_t;
 #endif
 
-typedef void (*display_func)(void);
-
-struct modetype {
-	volatile uint8_t demos, move, free, operate, demos_init, slow, emo, v24, cal, on_off_only, idle, locked, info_only, qei, slow_bypass, change;
-	display_func display;
-};
-
 struct QuadEncoderType {
 	int16_t unused : 4; // RB[0:3]
 	int16_t A1 : 1; // RB4
@@ -104,29 +97,6 @@ typedef struct qeitype {
 	} movement;
 } volatile qeitype;
 
-struct almtype {
-	uint8_t alm_flag, alm_count;
-};
-
-struct almbuffertype {
-	uint32_t time;
-	uint8_t alm_num, bn;
-};
-
-struct datadefaulttype {
-	uint32_t data_default;
-};
-
-struct emodefaulttype {
-	int32_t emo[6];
-	int32_t peak[6];
-};
-
-
-struct timeruntype {
-	uint32_t hour, day, weeks;
-};
-
 #if defined(__18CXX)
 #define BCRELAYS	PORTE
 #define IORELAYS	PORTJ
@@ -134,24 +104,25 @@ struct timeruntype {
 #define	EXTIO		PORTB
 #endif
 
-typedef struct R_data { // set only in adc_read
-	int32_t thermo_batt;
-	uint32_t systemvoltage, motorvoltage, pos_x, pos_y, pos_z, change_x, change_y, change_z, max_x, max_y, max_z;
-	int32_t current_x, current_y, current_z;
-	uint8_t stable_x, stable_y, stable_z;
-} R_data;
-
-typedef struct C_data { // set only in adc_read
-	int32_t currentload;
-	int16_t temp_drate;
-	float t_comp;
-} C_data;
-
 typedef struct V_data { // ISR used, mainly for non-atomic mod problems
 	volatile uint32_t buttonint_count, timerint_count, eeprom_count, highint_count, lowint_count, c1_int, c2_int;
 	volatile uint32_t pwm4int_count, worker_count, b0, b1, b2, b3, display_count, lcdhits, lcdhits_18tcy, adc_count;
 	volatile uint32_t clock20, commint_count, status_count, c1rx_int;
 } V_data;
+
+typedef struct A_data {
+	uint16_t :8;		// dummy space
+	uint16_t :4;
+	uint16_t config:1;	// adc control bit
+	uint16_t index:3;	//adc channel select
+} A_data;
+
+/* used to hold 16-bit adc buffer, index and control bits*/
+union adc_buf_type
+{
+  uint16_t buf;
+  struct A_data map;
+};
 
 typedef struct L_data { // link state data
 	uint8_t boot_code : 1;
