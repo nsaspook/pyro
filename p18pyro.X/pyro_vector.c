@@ -1,8 +1,7 @@
 /* High and Low ISR codes, some glue routines */
 #include "pyro_vector.h"
 
-#pragma tmpdata ISRHtmpdata
-#pragma interrupt tick_handler nosave=section (".tmpdata")
+#pragma interrupt tick_handler
 
 void tick_handler(void) // This is the high priority ISR routine
 {
@@ -10,6 +9,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	static int16_t rx_tmp = 0;
 	static union Timers timer;
 
+	_asm nop _endasm // asm code to disable compiler optimizations
 	DLED_0 = HIGH;
 	V.highint_count++; // high int counter
 
@@ -38,7 +38,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		 *  scan 8 ADC channels
 		 */
 		if (!ADCON0bits.GO) {
-			SetChanADC(L.adc_chan & 0x07); // set the current channel
+			ADCON0bits.CHS = L.adc_chan & 0x07; // set the current channel
 			if (adc_switch++) // trigger the conversion on the next timer int so the channel mux can settle
 				ADCON0bits.GO = HIGH; // and begin A/D conv, will set adc int flag when done.
 		}
@@ -192,7 +192,6 @@ void tick_handler(void) // This is the high priority ISR routine
 	}
 	DLED_0 = LOW;
 }
-#pragma	tmpdata
 
 #pragma interruptlow work_handler
 
