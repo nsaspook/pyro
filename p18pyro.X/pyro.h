@@ -112,13 +112,11 @@ extern "C" {
 
 	// LCD structs
 
-	typedef struct D_data {
-		uint16_t state : 8; // data/cmd state machine sequence
-		uint16_t slow : 1;
-uint16_t:
-		3;
+	typedef struct D_data { // bitmap
+		uint16_t buf : 8; // data/cmd
+		uint16_t slow : 1; // long delay for clear and home
 		uint16_t cmd : 1; // LCD control bit
-		uint16_t index : 3;
+		uint16_t state : 3; // state machine sequence
 	} D_data;
 
 	/* used to hold 16-bit LCD buffer and control bits*/
@@ -130,10 +128,8 @@ uint16_t:
 	// ADC structs
 
 	typedef struct A_data {
-uint16_t:
-		8; // dummy space
-uint16_t:
-		4;
+		uint16_t dummy8 :8; // dummy space for adc data
+		uint16_t dummy4 :4; // C18 limits bitmaps to 8
 		uint16_t config : 1; // adc control bit
 		uint16_t index : 3; //adc channel select
 	} A_data;
