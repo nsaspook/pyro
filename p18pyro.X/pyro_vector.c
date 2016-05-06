@@ -32,7 +32,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	}
 
 	/*
-	 * ~1khz state machine sequencer timer
+	 * several khz state machine sequencer timer
 	 */
 	if (PIE3bits.TMR4IE && PIR3bits.TMR4IF) {
 		PIR3bits.TMR4IF = LOW;
@@ -74,20 +74,24 @@ void tick_handler(void) // This is the high priority ISR routine
 				lcd_buf.map.state++;
 				break;
 			case 1:
+				DLED_5 = !DLED_5;
 				E_PIN = 1; // Clock nibble into LCD
 				lcd_buf.map.state++;
 				break;
 			case 2:
+				DLED_5 = !DLED_5;
 				E_PIN = 0;
 				DATA_PORT &= 0x0f;
 				DATA_PORT |= ((data << 4)&0xf0);
 				lcd_buf.map.state++;
 				break;
 			case 3:
+				DLED_5 = !DLED_5;
 				E_PIN = 1; // Clock nibble into LCD
 				lcd_buf.map.state++;
 				break;
 			case 4:
+				DLED_5 = !DLED_5;
 				E_PIN = 0;
 				TRIS_DATA_PORT |= 0xf0;
 				/* fall-through to default people */
@@ -96,7 +100,7 @@ void tick_handler(void) // This is the high priority ISR routine
 				DLED_5 = LOW;
 				break;
 			}
-			PR4 = TIMER4_FAST;
+			PR4 = TIMER4_FAST; // pump the LCD faster than normal
 		} else {
 			lcd_buf.map.state = 0;
 		}
