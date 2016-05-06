@@ -8,6 +8,7 @@ void S_WriteCmdXLCD(unsigned char cmd)
 	while (ringBufS_full(L.tx1b));
 	lcd_buf.buf = cmd;
 	lcd_buf.map.cmd = 1;
+	lcd_buf.map.slow = 1;
 	ringBufS_put(L.tx1b, lcd_buf.buf);
 	return;
 }

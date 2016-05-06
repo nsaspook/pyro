@@ -30,6 +30,7 @@ extern "C" {
 #define	TIMER3REG		3048            // timer3 value for 20Hz clock, orig value 3048
 #define TIMER4_NORM	0x11
 #define TIMER4_FAST	0x07
+#define LCD_SLOW	8		// timer ticks for slow commands
 #define	TIMEOFF		60      	// seconds in 1 min
 #define	WORKSEC		10      	// run every this time seconds
 #define FT20		20              // default value for fast ticks

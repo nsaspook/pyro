@@ -10,7 +10,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	static union Timers timer;
 	static union adc_buf_type adc_buf;
 	static union lcd_buf_type lcd_buf;
-	static int8_t data;
+	static int8_t data, slow = 0;
 
 	_asm nop _endasm // asm code to disable compiler optimizations
 	DLED_0 = HIGH;
@@ -62,6 +62,7 @@ void tick_handler(void) // This is the high priority ISR routine
 				lcd_buf.buf = ringBufS_get(L.tx1b);
 				data = lcd_buf.buf;
 				lcd_buf.map.state = 0;
+				lcd_buf.map.skip = 0;
 				TRIS_DATA_PORT &= 0x0f;
 				DATA_PORT &= 0x0f;
 				DATA_PORT |= data & 0xf0;
@@ -91,16 +92,27 @@ void tick_handler(void) // This is the high priority ISR routine
 				lcd_buf.map.state++;
 				break;
 			case 4:
-				DLED_5 = !DLED_5;
-				E_PIN = 0;
-				TRIS_DATA_PORT |= 0xf0;
+				if (!lcd_buf.map.skip) { // don't repeat if we're in slow time
+					DLED_5 = !DLED_5;
+					E_PIN = 0;
+					TRIS_DATA_PORT |= 0xf0;
+				}
 				/* fall-through to default people */
 			default:
-				lcd_buf.map.state = 0;
-				DLED_5 = LOW;
+				if (lcd_buf.map.slow) { // stay in this state until the slow flag clears below
+					lcd_buf.map.skip = 1;
+					if (slow++ >= LCD_SLOW) { // for home and clear commands >3ms delay
+						lcd_buf.map.slow = 0;
+						slow = 0;
+					}
+				} else {
+					lcd_buf.map.state = 0;
+					DLED_5 = LOW;
+				}
 				break;
 			}
-			PR4 = TIMER4_FAST; // pump the LCD faster than normal
+			if (!lcd_buf.map.slow)
+				PR4 = TIMER4_FAST; // pump the LCD faster than normal
 		} else {
 			lcd_buf.map.state = 0;
 		}

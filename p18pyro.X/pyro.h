@@ -117,6 +117,7 @@ extern "C" {
 		uint16_t slow : 1; // long delay for clear and home
 		uint16_t cmd : 1; // LCD control bit
 		uint16_t state : 3; // state machine sequence
+		uint16_t skip:1; // slow cmd repeating flag
 	} D_data;
 
 	/* used to hold 16-bit LCD buffer and control bits*/
