@@ -3,6 +3,7 @@
 
 void S_WriteDataXLCD(char data)
 {
+	while (ringBufS_full(L.tx1b));
 	ringBufS_put(L.tx1b, data);
 	return;
 }

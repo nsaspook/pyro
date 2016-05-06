@@ -505,11 +505,11 @@ void main(void) // Lets Party
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
 			if (!z++) {
-				S_WriteCmdXLCD(0b10000000 | LL2); // SetDDRamAddr
 				voltfp(L.adc_val[adc_buf.map.index], f1);
 				sprintf(bootstr2, "S %sV,R %uC %d              ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index); // display Power info				
-				bootstr2[20] = NULL0; // make sure we have a string terminator
+				bootstr2[20] = NULL0; // limit the string to 20 chars
 				DLED_4 = HIGH;
+				S_WriteCmdXLCD(0b10000000 | LL2); // SetDDRamAddr
 				putsXLCD(bootstr2);
 				DLED_4 = LOW;
 			}

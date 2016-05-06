@@ -28,6 +28,8 @@ extern "C" {
 #define	HL		3
 #define	TIMEROFFSET		26474           // timer0 16bit counter value for 1 second to overflow
 #define	TIMER3REG		3048            // timer3 value for 20Hz clock, orig value 3048
+#define TIMER4_NORM	0x11
+#define TIMER4_FAST	0x07
 #define	TIMEOFF		60      	// seconds in 1 min
 #define	WORKSEC		10      	// run every this time seconds
 #define FT20		20              // default value for fast ticks

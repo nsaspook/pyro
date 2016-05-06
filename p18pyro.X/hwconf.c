@@ -100,9 +100,9 @@ void config_pic(uint16_t hw_config)
 
 		OpenTimer0(TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_256);
 		OpenTimer3(TIMER_INT_ON & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 &
-			T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
-		PR4 = 0xFF;
-		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16); // for lamp scanner
+			T1_OSC1EN_OFF & T1_SYNC_EXT_OFF); // for lamp scanner
+		PR4 = TIMER4_NORM;
+		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16); 
 		IPR3bits.TMR4IP = HIGH; // make it high pri level
 		PIE3bits.TMR4IE = HIGH; // TIMER4 int enable bit
 

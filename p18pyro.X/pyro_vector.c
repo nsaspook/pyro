@@ -36,7 +36,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	 */
 	if (PIE3bits.TMR4IE && PIR3bits.TMR4IF) {
 		PIR3bits.TMR4IF = LOW;
-		PR4 = 0x11;
+		PR4 = TIMER4_NORM;
 		V.pwm4int_count++;
 
 		/*
@@ -75,7 +75,6 @@ void tick_handler(void) // This is the high priority ISR routine
 				break;
 			case 1:
 				E_PIN = 1; // Clock nibble into LCD
-				DLED_5 = LOW;
 				lcd_buf.map.state++;
 				break;
 			case 2:
@@ -91,12 +90,13 @@ void tick_handler(void) // This is the high priority ISR routine
 			case 4:
 				E_PIN = 0;
 				TRIS_DATA_PORT |= 0xf0;
-				lcd_buf.map.state = 0;
-				break;
+				/* fall-through to default people */
 			default:
 				lcd_buf.map.state = 0;
+				DLED_5 = LOW;
 				break;
 			}
+			PR4 = TIMER4_FAST;
 		} else {
 			lcd_buf.map.state = 0;
 		}
