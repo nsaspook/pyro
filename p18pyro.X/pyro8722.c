@@ -447,7 +447,6 @@ void main(void) // Lets Party
 #endif
 
 	init_lcd();
-	putrsXLCD("Pyro Control");
 
 #ifdef	__18F8722
 	if (STKPTRbits.STKFUL) {
@@ -499,25 +498,26 @@ void main(void) // Lets Party
 
 	SYSTEM_STABLE = TRUE;
 	srand((uint16_t) 1957); // set random seed
+	putrsXLCD("Pyro Control");
 
 	/* Loop forever */
 	while (TRUE) {
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
 			if (!z++) {
-//				while (BusyXLCD());
-//				SetDDRamAddr(LL2); // move to  line
-//				while (BusyXLCD());
-				
+				//				while (BusyXLCD());
+				//				SetDDRamAddr(LL2); // move to  line
+				//				while (BusyXLCD());
+				S_WriteCmdXLCD(0b10000000 | LL2);
+
 				voltfp(L.adc_val[adc_buf.map.index], f1);
-				sprintf(bootstr2, "S %sV,R %uC %d        ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index); // display Power info				
+				sprintf(bootstr2, "S %sV,R %uC %d              ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index); // display Power info				
 				bootstr2[20] = NULL0; // make sure we have a string terminator
 				DLED_4 = HIGH;
 				putsXLCD(bootstr2);
 				DLED_4 = LOW;
-				//while (BusyXLCD());
 				LATH &= 0b00000001;
-				
+
 			}
 		} else {
 			DLED_2 = HIGH;

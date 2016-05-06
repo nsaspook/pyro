@@ -113,7 +113,8 @@ typedef struct V_data { // ISR used, mainly for non-atomic mod problems
 // LCD structs
 typedef struct D_data {
 	uint16_t state:8;	// data/cmd state machine sequence
-	uint16_t :4;
+	uint16_t slow:1;
+	uint16_t :3;
 	uint16_t cmd:1;		// LCD control bit
 	uint16_t index:3;
 } D_data;

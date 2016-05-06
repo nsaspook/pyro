@@ -105,6 +105,11 @@ char ReadDataXLCD(void);
  */
 void WriteCmdXLCD(PARAM_SCLASS unsigned char);
 
+/* WriteCmdXLCD
+ * Writes a command to the LCD via a buffer
+ */
+void S_WriteCmdXLCD(PARAM_SCLASS unsigned char);
+
 /* WriteDataXLCD
  * Writes a data byte to the LCD
  */

@@ -1,6 +1,17 @@
 #include <p18cxxx.h>
 #include "xlcd.h"
 
+void S_WriteCmdXLCD(unsigned char cmd)
+{
+	union lcd_buf_type lcd_buf;
+	
+	lcd_buf.buf=cmd;
+	lcd_buf.map.cmd=1;
+	ringBufS_put(L.tx1b, lcd_buf.buf);
+	return;
+}
+
+
 /********************************************************************
  *       Function Name:  WriteCmdXLCD                                *
  *       Return Value:   void                                        *

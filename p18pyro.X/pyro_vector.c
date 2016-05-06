@@ -65,7 +65,11 @@ void tick_handler(void) // This is the high priority ISR routine
 				TRIS_DATA_PORT &= 0x0f;
 				DATA_PORT &= 0x0f;
 				DATA_PORT |= data & 0xf0;
-				RS_PIN = 1; // Set control bits
+				if (lcd_buf.map.cmd) {
+					RS_PIN = 0; // Set control signals for command
+				} else {
+					RS_PIN = 1; // Set control bits for data
+				}
 				RW_PIN = 0;
 				lcd_buf.map.state++;
 				break;
@@ -87,7 +91,7 @@ void tick_handler(void) // This is the high priority ISR routine
 			case 4:
 				E_PIN = 0;
 				TRIS_DATA_PORT |= 0xf0;
-				lcd_buf.map.state=0;
+				lcd_buf.map.state = 0;
 				break;
 			default:
 				lcd_buf.map.state = 0;
