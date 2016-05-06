@@ -14,49 +14,49 @@
 void SetCGRamAddr(unsigned char CGaddr)
 {
 #ifdef BIT8                                     // 8-bit interface
-        TRIS_DATA_PORT = 0; // Make data port ouput
-        DATA_PORT = CGaddr | 0b01000000; // Write cmd and address to port
-        RW_PIN = 0; // Set control signals
-        RS_PIN = 0;
-        DelayFor18TCY();
-        E_PIN = 1; // Clock cmd and address in
-        DelayFor18TCY();
-        E_PIN = 0;
-        DelayFor18TCY();
-        TRIS_DATA_PORT = 0xff; // Make data port inputs
+	TRIS_DATA_PORT = 0; // Make data port ouput
+	DATA_PORT = CGaddr | 0b01000000; // Write cmd and address to port
+	RW_PIN = 0; // Set control signals
+	RS_PIN = 0;
+	DelayFor18TCY();
+	E_PIN = 1; // Clock cmd and address in
+	DelayFor18TCY();
+	E_PIN = 0;
+	DelayFor18TCY();
+	TRIS_DATA_PORT = 0xff; // Make data port inputs
 #else                                           // 4-bit interface
 #ifdef UPPER                                    // Upper nibble interface
-        TRIS_DATA_PORT &= 0x0f; // Make nibble input
-        DATA_PORT &= 0x0f; // and write upper nibble
-        DATA_PORT |= ((CGaddr | 0b01000000) & 0xf0);
+	TRIS_DATA_PORT &= 0x0f; // Make nibble input
+	DATA_PORT &= 0x0f; // and write upper nibble
+	DATA_PORT |= ((CGaddr | 0b01000000) & 0xf0);
 #else                                           // Lower nibble interface
-        TRIS_DATA_PORT &= 0xf0; // Make nibble input
-        DATA_PORT &= 0xf0; // and write upper nibble
-        DATA_PORT |= (((CGaddr | 0b01000000) >> 4) & 0x0f);
+	TRIS_DATA_PORT &= 0xf0; // Make nibble input
+	DATA_PORT &= 0xf0; // and write upper nibble
+	DATA_PORT |= (((CGaddr | 0b01000000) >> 4) & 0x0f);
 #endif
-        RW_PIN = 0; // Set control signals
-        RS_PIN = 0;
-        DelayFor18TCY();
-        E_PIN = 1; // Clock cmd and address in
-        DelayFor18TCY();
-        E_PIN = 0;
+	RW_PIN = 0; // Set control signals
+	RS_PIN = 0;
+	DelayFor18TCY();
+	E_PIN = 1; // Clock cmd and address in
+	DelayFor18TCY();
+	E_PIN = 0;
 #ifdef UPPER                                    // Upper nibble interface
-        DATA_PORT &= 0x0f; // Write lower nibble
-        DATA_PORT |= ((CGaddr << 4)&0xf0);
+	DATA_PORT &= 0x0f; // Write lower nibble
+	DATA_PORT |= ((CGaddr << 4)&0xf0);
 #else                                           // Lower nibble interface
-        DATA_PORT &= 0xf0; // Write lower nibble
-        DATA_PORT |= (CGaddr & 0x0f);
+	DATA_PORT &= 0xf0; // Write lower nibble
+	DATA_PORT |= (CGaddr & 0x0f);
 #endif
-        DelayFor18TCY();
-        E_PIN = 1; // Clock cmd and address in
-        DelayFor18TCY();
-        E_PIN = 0;
+	DelayFor18TCY();
+	E_PIN = 1; // Clock cmd and address in
+	DelayFor18TCY();
+	E_PIN = 0;
 #ifdef UPPER                                    // Upper nibble interface
-        TRIS_DATA_PORT |= 0xf0; // Make inputs
+	TRIS_DATA_PORT |= 0xf0; // Make inputs
 #else                                           // Lower nibble interface
-        TRIS_DATA_PORT |= 0x0f; // Make inputs
+	TRIS_DATA_PORT |= 0x0f; // Make inputs
 #endif
 #endif
-        return;
+	return;
 }
 

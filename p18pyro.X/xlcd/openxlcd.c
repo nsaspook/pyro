@@ -18,64 +18,64 @@
  ********************************************************************/
 void OpenXLCD(unsigned char lcdtype)
 {
-        // The data bits must be either a 8-bit port or the upper or
-        // lower 4-bits of a port. These pins are made into inputs
+	// The data bits must be either a 8-bit port or the upper or
+	// lower 4-bits of a port. These pins are made into inputs
 #ifdef BIT8                             // 8-bit mode, use whole port
-        DATA_PORT = 0;
-        TRIS_DATA_PORT = 0x00;
+	DATA_PORT = 0;
+	TRIS_DATA_PORT = 0x00;
 #else                                   // 4-bit mode
 #ifdef UPPER                            // Upper 4-bits of the port
-        DATA_PORT &= 0x0f;
-        TRIS_DATA_PORT &= 0x0F;
+	DATA_PORT &= 0x0f;
+	TRIS_DATA_PORT &= 0x0F;
 #else                                   // Lower 4-bits of the port
-        DATA_PORT &= 0xf0;
-        TRIS_DATA_PORT &= 0xF0;
+	DATA_PORT &= 0xf0;
+	TRIS_DATA_PORT &= 0xF0;
 #endif
 #endif
-        TRIS_RW = 0; // All control signals made outputs
-        TRIS_RS = 0;
-        TRIS_E = 0;
-        RW_PIN = 0; // R/W pin made low
-        RS_PIN = 0; // Register select pin made low
-        E_PIN = 0; // Clock pin made low
+	TRIS_RW = 0; // All control signals made outputs
+	TRIS_RS = 0;
+	TRIS_E = 0;
+	RW_PIN = 0; // R/W pin made low
+	RS_PIN = 0; // Register select pin made low
+	E_PIN = 0; // Clock pin made low
 
-        // Delay for 15ms to allow for LCD Power on reset
-        DelayPORXLCD();
-        //-------------------reset procedure through software----------------------
-        WriteCmdXLCD(0x30);
-        Delay10KTCYx(0x05);
+	// Delay for 15ms to allow for LCD Power on reset
+	DelayPORXLCD();
+	//-------------------reset procedure through software----------------------
+	WriteCmdXLCD(0x30);
+	Delay10KTCYx(0x05);
 
-        WriteCmdXLCD(0x30);
-        Delay10KTCYx(0x01);
-
-
-        WriteCmdXLCD(0x32);
-        while (BusyXLCD());
-        //------------------------------------------------------------------------------------------
+	WriteCmdXLCD(0x30);
+	Delay10KTCYx(0x01);
 
 
-        // Set data interface width, # lines, font
-        while (BusyXLCD()); // Wait if LCD busy
-        WriteCmdXLCD(lcdtype); // Function set cmd
+	WriteCmdXLCD(0x32);
+	while (BusyXLCD());
+	//------------------------------------------------------------------------------------------
 
-        // Turn the display on then off
-        while (BusyXLCD()); // Wait if LCD busy
-        WriteCmdXLCD(DOFF & CURSOR_OFF & BLINK_OFF); // Display OFF/Blink OFF
-        while (BusyXLCD()); // Wait if LCD busy
-        WriteCmdXLCD(DON & CURSOR_ON & BLINK_ON); // Display ON/Blink ON
 
-        // Clear display
-        while (BusyXLCD()); // Wait if LCD busy
-        WriteCmdXLCD(0x01); // Clear display
+	// Set data interface width, # lines, font
+	while (BusyXLCD()); // Wait if LCD busy
+	WriteCmdXLCD(lcdtype); // Function set cmd
 
-        // Set entry mode inc, no shift
-        while (BusyXLCD()); // Wait if LCD busy
-        WriteCmdXLCD(SHIFT_CUR_LEFT); // Entry Mode
+	// Turn the display on then off
+	while (BusyXLCD()); // Wait if LCD busy
+	WriteCmdXLCD(DOFF & CURSOR_OFF & BLINK_OFF); // Display OFF/Blink OFF
+	while (BusyXLCD()); // Wait if LCD busy
+	WriteCmdXLCD(DON & CURSOR_ON & BLINK_ON); // Display ON/Blink ON
 
-        // Set DD Ram address to 0
-        while (BusyXLCD()); // Wait if LCD busy
-        SetDDRamAddr(0x80); // Set Display data ram address to 0
+	// Clear display
+	while (BusyXLCD()); // Wait if LCD busy
+	WriteCmdXLCD(0x01); // Clear display
 
-        return;
+	// Set entry mode inc, no shift
+	while (BusyXLCD()); // Wait if LCD busy
+	WriteCmdXLCD(SHIFT_CUR_LEFT); // Entry Mode
+
+	// Set DD Ram address to 0
+	while (BusyXLCD()); // Wait if LCD busy
+	SetDDRamAddr(0x80); // Set Display data ram address to 0
+
+	return;
 }
 

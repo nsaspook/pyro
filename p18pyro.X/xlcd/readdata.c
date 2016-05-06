@@ -15,42 +15,42 @@
  ********************************************************************/
 char ReadDataXLCD(void)
 {
-        char data;
+	char data;
 
 #ifdef BIT8                             // 8-bit interface
-        RS_PIN = 1; // Set the control bits
-        RW_PIN = 1;
-        DelayFor18TCY();
-        E_PIN = 1; // Clock the data out of the LCD
-        DelayFor18TCY();
-        data = DATA_PORT; // Read the data
-        E_PIN = 0;
-        RS_PIN = 0; // Reset the control bits
-        RW_PIN = 0;
+	RS_PIN = 1; // Set the control bits
+	RW_PIN = 1;
+	DelayFor18TCY();
+	E_PIN = 1; // Clock the data out of the LCD
+	DelayFor18TCY();
+	data = DATA_PORT; // Read the data
+	E_PIN = 0;
+	RS_PIN = 0; // Reset the control bits
+	RW_PIN = 0;
 #else                                   // 4-bit interface
-        RW_PIN = 1;
-        RS_PIN = 1;
-        DelayFor18TCY();
-        E_PIN = 1; // Clock the data out of the LCD
-        DelayFor18TCY();
+	RW_PIN = 1;
+	RS_PIN = 1;
+	DelayFor18TCY();
+	E_PIN = 1; // Clock the data out of the LCD
+	DelayFor18TCY();
 #ifdef UPPER                            // Upper nibble interface
-        data = DATA_PORT & 0xf0; // Read the upper nibble of data
+	data = DATA_PORT & 0xf0; // Read the upper nibble of data
 #else                                   // Lower nibble interface
-        data = (DATA_PORT << 4)&0xf0; // read the upper nibble of data
+	data = (DATA_PORT << 4)&0xf0; // read the upper nibble of data
 #endif
-        E_PIN = 0; // Reset the clock line
-        DelayFor18TCY();
-        E_PIN = 1; // Clock the next nibble out of the LCD
-        DelayFor18TCY();
+	E_PIN = 0; // Reset the clock line
+	DelayFor18TCY();
+	E_PIN = 1; // Clock the next nibble out of the LCD
+	DelayFor18TCY();
 #ifdef UPPER                            // Upper nibble interface
-        data |= (DATA_PORT >> 4)&0x0f; // Read the lower nibble of data
+	data |= (DATA_PORT >> 4)&0x0f; // Read the lower nibble of data
 #else                                   // Lower nibble interface
-        data |= DATA_PORT & 0x0f; // Read the lower nibble of data
+	data |= DATA_PORT & 0x0f; // Read the lower nibble of data
 #endif
-        E_PIN = 0;
-        RS_PIN = 0; // Reset the control bits
-        RW_PIN = 0;
+	E_PIN = 0;
+	RS_PIN = 0; // Reset the control bits
+	RW_PIN = 0;
 #endif
-        return(data); // Return the data byte
+	return(data); // Return the data byte
 }
 

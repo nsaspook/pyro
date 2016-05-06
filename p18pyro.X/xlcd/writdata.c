@@ -1,7 +1,6 @@
 #include <p18cxxx.h>
 #include "xlcd.h"
 
-
 void S_WriteDataXLCD(char data)
 {
 	ringBufS_put(L.tx1b, data);
@@ -23,49 +22,49 @@ void S_WriteDataXLCD(char data)
 void WriteDataXLCD(char data)
 {
 #ifdef BIT8                             // 8-bit interface
-        TRIS_DATA_PORT = 0; // Make port output
-        DATA_PORT = data; // Write data to port
-        RS_PIN = 1; // Set control bits
-        RW_PIN = 0;
-        DelayFor18TCY();
-        E_PIN = 1; // Clock data into LCD
-        DelayFor18TCY();
-        E_PIN = 0;
-        RS_PIN = 0; // Reset control bits
-        TRIS_DATA_PORT = 0xff; // Make port input
+	TRIS_DATA_PORT = 0; // Make port output
+	DATA_PORT = data; // Write data to port
+	RS_PIN = 1; // Set control bits
+	RW_PIN = 0;
+	DelayFor18TCY();
+	E_PIN = 1; // Clock data into LCD
+	DelayFor18TCY();
+	E_PIN = 0;
+	RS_PIN = 0; // Reset control bits
+	TRIS_DATA_PORT = 0xff; // Make port input
 #else                                   // 4-bit interface
 #ifdef UPPER                            // Upper nibble interface
-        TRIS_DATA_PORT &= 0x0f;
-        DATA_PORT &= 0x0f;
-        DATA_PORT |= data & 0xf0;
+	TRIS_DATA_PORT &= 0x0f;
+	DATA_PORT &= 0x0f;
+	DATA_PORT |= data & 0xf0;
 #else                                   // Lower nibble interface
-        TRIS_DATA_PORT &= 0xf0;
-        DATA_PORT &= 0xf0;
-        DATA_PORT |= ((data >> 4)&0x0f);
+	TRIS_DATA_PORT &= 0xf0;
+	DATA_PORT &= 0xf0;
+	DATA_PORT |= ((data >> 4)&0x0f);
 #endif
-        RS_PIN = 1; // Set control bits
-        RW_PIN = 0;
-        DelayFor18TCY();
-        E_PIN = 1; // Clock nibble into LCD
-        DelayFor18TCY();
-        E_PIN = 0;
+	RS_PIN = 1; // Set control bits
+	RW_PIN = 0;
+	DelayFor18TCY();
+	E_PIN = 1; // Clock nibble into LCD
+	DelayFor18TCY();
+	E_PIN = 0;
 #ifdef UPPER                            // Upper nibble interface
-        DATA_PORT &= 0x0f;
-        DATA_PORT |= ((data << 4)&0xf0);
+	DATA_PORT &= 0x0f;
+	DATA_PORT |= ((data << 4)&0xf0);
 #else                                   // Lower nibble interface
-        DATA_PORT &= 0xf0;
-        DATA_PORT |= (data & 0x0f);
+	DATA_PORT &= 0xf0;
+	DATA_PORT |= (data & 0x0f);
 #endif
-        DelayFor18TCY();
-        E_PIN = 1; // Clock nibble into LCD
-        DelayFor18TCY();
-        E_PIN = 0;
+	DelayFor18TCY();
+	E_PIN = 1; // Clock nibble into LCD
+	DelayFor18TCY();
+	E_PIN = 0;
 #ifdef UPPER                            // Upper nibble interface
-        TRIS_DATA_PORT |= 0xf0;
+	TRIS_DATA_PORT |= 0xf0;
 #else                                   // Lower nibble interface
-        TRIS_DATA_PORT |= 0x0f;
+	TRIS_DATA_PORT |= 0x0f;
 #endif
 #endif
-        return;
+	return;
 }
 

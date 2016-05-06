@@ -20,82 +20,82 @@ extern "C" {
 #include <stdint.h>
 #else
 #define INTTYPES
-/*unsigned types*/
-typedef unsigned char uint8_t;
-typedef unsigned int uint16_t;
-typedef unsigned long uint32_t;
-typedef unsigned long long uint64_t;
-/*signed types*/
-typedef signed char int8_t;
-typedef signed int int16_t;
-typedef signed long int32_t;
-typedef signed long long int64_t;
+	/*unsigned types*/
+	typedef unsigned char uint8_t;
+	typedef unsigned int uint16_t;
+	typedef unsigned long uint32_t;
+	typedef unsigned long long uint64_t;
+	/*signed types*/
+	typedef signed char int8_t;
+	typedef signed int int16_t;
+	typedef signed long int32_t;
+	typedef signed long long int64_t;
 #endif
 
-struct QuadEncoderType {
-	int16_t unused : 4; // RB[0:3]
-	int16_t A1 : 1; // RB4
-	int16_t B1 : 1; // RB5
-	int16_t A2 : 1; // RB6
-	int16_t B2 : 1; // RB7
-	uint8_t OldPortB[2], byTemp[2];
-};
+	struct QuadEncoderType {
+		int16_t unused : 4; // RB[0:3]
+		int16_t A1 : 1; // RB4
+		int16_t B1 : 1; // RB5
+		int16_t A2 : 1; // RB6
+		int16_t B2 : 1; // RB7
+		uint8_t OldPortB[2], byTemp[2];
+	};
 
-struct buttontype {
-	int16_t B0 : 1; // RB0
-	int16_t B1 : 1; // RB1
-	int16_t B2 : 1; // RB2
-	int16_t B3 : 1; // RB3
-	int16_t unused : 4; // RB[4:7]
-};
+	struct buttontype {
+		int16_t B0 : 1; // RB0
+		int16_t B1 : 1; // RB1
+		int16_t B2 : 1; // RB2
+		int16_t B3 : 1; // RB3
+		int16_t unused : 4; // RB[4:7]
+	};
 
-struct blinktype {
-	int16_t B0 : 1; // LED0
-	int16_t B1 : 1; // LED1
-	int16_t B2 : 1; // LED2
-	int16_t B3 : 1; // LED3
-	int16_t S0 : 1; // LED0 saved
-	int16_t S1 : 1; // LED1 saved
-	int16_t S2 : 1; // LED2 saved
-	int16_t S3 : 1; // LED3 saved
-};
+	struct blinktype {
+		int16_t B0 : 1; // LED0
+		int16_t B1 : 1; // LED1
+		int16_t B2 : 1; // LED2
+		int16_t B3 : 1; // LED3
+		int16_t S0 : 1; // LED0 saved
+		int16_t S1 : 1; // LED1 saved
+		int16_t S2 : 1; // LED2 saved
+		int16_t S3 : 1; // LED3 saved
+	};
 
-typedef struct pottype {
+	typedef struct pottype {
 
-	enum movement_t {
-		CW, STOP, CCW
-	} movement;
+		enum movement_t {
+			CW, STOP, CCW
+		} movement;
 
-	int16_t pos_actual, pos_set, error, pos_actual_prev, pos_change; // in ADC counts
-	int16_t limit_change, limit_span, limit_offset, limit_offset_l, limit_offset_h; // AXIS limits for error checking
-	int16_t low, high, offset, span, cal_low, cal_high, cal_failed, cal_warn; // end of travel ADC count values
-	float scale_out, scale_in; // scaling factor from actual to scaled and back
-	int16_t scaled_actual, scaled_set, scaled_error; // 0..1023 value of pot for LCD readback
-} volatile pottype;
+		int16_t pos_actual, pos_set, error, pos_actual_prev, pos_change; // in ADC counts
+		int16_t limit_change, limit_span, limit_offset, limit_offset_l, limit_offset_h; // AXIS limits for error checking
+		int16_t low, high, offset, span, cal_low, cal_high, cal_failed, cal_warn; // end of travel ADC count values
+		float scale_out, scale_in; // scaling factor from actual to scaled and back
+		int16_t scaled_actual, scaled_set, scaled_error; // 0..1023 value of pot for LCD readback
+	} volatile pottype;
 
-typedef struct motortype {
-	uint8_t type, run, cw, axis, free, slow, active, reversed, v24, slow_only, on_off_only;
-	int16_t hunt_count, cal_pos;
-	struct pottype pot;
-} volatile motortype;
+	typedef struct motortype {
+		uint8_t type, run, cw, axis, free, slow, active, reversed, v24, slow_only, on_off_only;
+		int16_t hunt_count, cal_pos;
+		struct pottype pot;
+	} volatile motortype;
 
-typedef struct knobtype {
-	int32_t c, last_c, band; // count
-	uint8_t cw, ccw, ticks; // direction
+	typedef struct knobtype {
+		int32_t c, last_c, band; // count
+		uint8_t cw, ccw, ticks; // direction
 
-	enum movement_t {
-		CW, STOP, CCW
-	} movement;
-} volatile knobtype;
+		enum movement_t {
+			CW, STOP, CCW
+		} movement;
+	} volatile knobtype;
 
-typedef struct qeitype {
-	int32_t c, last_c, band, max; // count
-	uint8_t cw, ccw, ticks, home, back_stop, forward_stop; // directions
+	typedef struct qeitype {
+		int32_t c, last_c, band, max; // count
+		uint8_t cw, ccw, ticks, home, back_stop, forward_stop; // directions
 
-	enum movement_t {
-		CW, STOP, CCW
-	} movement;
-} volatile qeitype;
+		enum movement_t {
+			CW, STOP, CCW
+		} movement;
+	} volatile qeitype;
 
 #if defined(__18CXX)
 #define BCRELAYS	PORTE
@@ -104,57 +104,60 @@ typedef struct qeitype {
 #define	EXTIO		PORTB
 #endif
 
-typedef struct V_data { // ISR used, mainly for non-atomic mod problems
-	volatile uint32_t buttonint_count, timerint_count, eeprom_count, highint_count, lowint_count, c1_int, c2_int;
-	volatile uint32_t pwm4int_count, worker_count, b0, b1, b2, b3, display_count, lcdhits, lcdhits_18tcy, adc_count;
-	volatile uint32_t clock20, commint_count, status_count, c1rx_int;
-} V_data;
+	typedef struct V_data { // ISR used, mainly for non-atomic mod problems
+		volatile uint32_t buttonint_count, timerint_count, eeprom_count, highint_count, lowint_count, c1_int, c2_int;
+		volatile uint32_t pwm4int_count, worker_count, b0, b1, b2, b3, display_count, lcdhits, lcdhits_18tcy, adc_count;
+		volatile uint32_t clock20, commint_count, status_count, c1rx_int;
+	} V_data;
 
-// LCD structs
-typedef struct D_data {
-	uint16_t state:8;	// data/cmd state machine sequence
-	uint16_t slow:1;
-	uint16_t :3;
-	uint16_t cmd:1;		// LCD control bit
-	uint16_t index:3;
-} D_data;
+	// LCD structs
 
-/* used to hold 16-bit LCD buffer and control bits*/
-union lcd_buf_type
-{
-  uint16_t buf;
-  struct D_data map;
-};
+	typedef struct D_data {
+		uint16_t state : 8; // data/cmd state machine sequence
+		uint16_t slow : 1;
+uint16_t:
+		3;
+		uint16_t cmd : 1; // LCD control bit
+		uint16_t index : 3;
+	} D_data;
 
-// ADC structs
-typedef struct A_data {
-	uint16_t :8;		// dummy space
-	uint16_t :4;
-	uint16_t config:1;	// adc control bit
-	uint16_t index:3;	//adc channel select
-} A_data;
+	/* used to hold 16-bit LCD buffer and control bits*/
+	union lcd_buf_type {
+		uint16_t buf;
+		struct D_data map;
+	};
 
-/* used to hold 16-bit adc buffer, index and control bits*/
-union adc_buf_type
-{
-  uint16_t buf;
-  struct A_data map;
-};
+	// ADC structs
 
-typedef struct L_data { // link state data
-	uint8_t boot_code : 1;
-	uint16_t adc_chan; // must be 16 bit value
-	uint32_t adc_val[ADC_INDEX];
-	uint16_t adc_raw[ADC_INDEX];
-	struct ringBufS_t *rx1b, *tx1b, *rx2b, *tx2b;
-} L_data;
+	typedef struct A_data {
+uint16_t:
+		8; // dummy space
+uint16_t:
+		4;
+		uint16_t config : 1; // adc control bit
+		uint16_t index : 3; //adc channel select
+	} A_data;
 
-struct spi_link_type { // internal state table
-	uint16_t delay;
-	uint8_t config;
-	struct ringBufS_t *tx1b, *rx1b;
-	int32_t int_count;
-};
+	/* used to hold 16-bit adc buffer, index and control bits*/
+	union adc_buf_type {
+		uint16_t buf;
+		struct A_data map;
+	};
+
+	typedef struct L_data { // link state data
+		uint8_t boot_code : 1;
+		uint16_t adc_chan; // must be 16 bit value
+		uint32_t adc_val[ADC_INDEX];
+		uint16_t adc_raw[ADC_INDEX];
+		struct ringBufS_t *rx1b, *tx1b, *rx2b, *tx2b;
+	} L_data;
+
+	struct spi_link_type { // internal state table
+		uint16_t delay;
+		uint8_t config;
+		struct ringBufS_t *tx1b, *rx1b;
+		int32_t int_count;
+	};
 
 #ifdef	__cplusplus
 }

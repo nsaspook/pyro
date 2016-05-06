@@ -15,12 +15,12 @@
  ********************************************************************/
 void putrsXLCD(const rom char *buffer)
 {
-        while (*buffer) // Write data to LCD up to null
-        {
-                //while (BusyXLCD()); // Wait while LCD is busy
-                S_WriteDataXLCD(*buffer); // Write character to LCD
-                buffer++; // Increment buffer
-        }
-        return;
+	while (*buffer) // Write data to LCD up to null
+	{
+		//while (BusyXLCD()); // Wait while LCD is busy
+		S_WriteDataXLCD(*buffer); // Write character to LCD buffer
+		buffer++; // Increment buffer
+	}
+	return;
 }
 
