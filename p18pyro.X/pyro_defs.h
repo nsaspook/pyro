@@ -51,6 +51,10 @@ extern "C" {
 #define LOW_VECTOR      0x18                // ISR low address
 #define HIGH_VECTOR     0x8                 // ISR high address
 
+	/* spi select pins */
+#define DAC_0_CS	LATCbits.LATC0
+#define DAC_1_CS	LATCbits.LATC1
+	
 #define DIPSW		PORTD
 #define	DIPSW1		PORTDbits.RD0
 #define	DIPSW2		PORTDbits.RD1

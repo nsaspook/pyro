@@ -107,7 +107,7 @@ extern "C" {
 	typedef struct V_data { // ISR used, mainly for non-atomic mod problems
 		volatile uint32_t buttonint_count, timerint_count, eeprom_count, highint_count, lowint_count, c1_int, c2_int;
 		volatile uint32_t pwm4int_count, worker_count, b0, b1, b2, b3, display_count, lcdhits, lcdhits_18tcy, adc_count;
-		volatile uint32_t clock20, commint_count, status_count, c1rx_int;
+		volatile uint32_t clock20, commint_count, status_count, c1rx_int, lcd_count;
 	} V_data;
 
 	// LCD structs
@@ -120,7 +120,7 @@ extern "C" {
 		uint16_t skip : 1; // slow cmd repeating flag
 	} D_data;
 
-	/* used to hold 16-bit LCD buffer and control bits*/
+	/* used to hold 16-bit LCD buffer and control bits */
 	union lcd_buf_type {
 		uint16_t buf;
 		struct D_data map;
@@ -135,10 +135,24 @@ extern "C" {
 		uint16_t index : 3; //adc channel select
 	} A_data;
 
-	/* used to hold 16-bit adc buffer, index and control bits*/
+	/* used to hold 16-bit adc buffer, index and control bits */
 	union adc_buf_type {
 		uint16_t buf;
 		struct A_data map;
+	};
+	
+	// SPI structs
+
+	typedef struct S_data {
+		uint16_t buf : 8; // spi data
+		uint16_t cs : 1;  // set CS to disabled at end of command
+		uint16_t select : 1; //spi channel select
+	} S_data;
+
+	/* used to hold 16-bit spi buffer, index and control bits */
+	union spi_buf_type {
+		uint16_t buf;
+		struct S_data map;
 	};
 
 	typedef struct L_data { // link state data
@@ -153,7 +167,7 @@ extern "C" {
 		uint16_t delay;
 		uint8_t config;
 		struct ringBufS_t *tx1b, *rx1b;
-		int32_t int_count;
+		uint32_t count;
 	};
 
 #ifdef	__cplusplus

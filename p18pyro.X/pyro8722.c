@@ -148,19 +148,19 @@
 uint8_t spinners(uint8_t, uint8_t);
 
 #pragma udata gpr13
-far int8_t bootstr2[MESG_W + 1], f1[MESG_W], f2[MESG_W];
-
+far int8_t bootstr2[MESG_W + 1], f1[MESG_W];
 #pragma udata gpr1
 
-volatile struct ringBufS_t ring_buf3, ring_buf4;
+volatile struct ringBufS_t ring_buf3;
 uint8_t HCRIT[CRIT_8], LCRIT[CRIT_8];
 float smooth[LPCHANC];
 #pragma udata gpr2
 volatile struct L_data L;
-volatile struct spi_link_type spi_link;
+volatile struct spi_link_type spi_link = {0};
 
-volatile struct ringBufS_t ring_buf5, ring_buf6;
+volatile struct ringBufS_t ring_buf5;
 #pragma udata gpr3
+volatile struct ringBufS_t ring_buf6;
 far int8_t hms_string[16];
 volatile uint8_t critc_level = 0, KEYNUM = 0, C2RAW, glitch_count, cdelay, SLOW_STATUS;
 volatile uint8_t TIMERFLAG = FALSE, PRIPOWEROK = TRUE, FORCEOUT = FALSE, WORKERFLAG = FALSE,
@@ -170,11 +170,12 @@ volatile uint8_t TIMERFLAG = FALSE, PRIPOWEROK = TRUE, FORCEOUT = FALSE, WORKERF
 	WDT_TO = FALSE, EEP_ER = FALSE, TWEAK = FALSE, TEST_SPINNERS = FALSE;
 #pragma udata gpr4
 volatile uint32_t critc_count = 0;
+volatile struct ringBufS_t ring_buf4;
 #pragma udata gpr5
 
 int8_t sign = ' ';
 float lp_speed = 0.0, lp_x = 0.0;
-struct V_data V;
+struct V_data V={0};
 const rom int8_t *build_date = __DATE__, *build_time = __TIME__;
 #pragma udata gpr6
 
@@ -186,8 +187,9 @@ float ahfrak = 0.0;
 volatile uint8_t IDLEFLAG = FALSE, knob_to_pot = 0;
 int32_t iw = 0, ip = 0;
 #pragma udata gpr8
-volatile struct ringBufS_t ring_buf1, ring_buf2;
+volatile struct ringBufS_t ring_buf1;
 #pragma udata gpr9
+volatile struct ringBufS_t ring_buf2;
 volatile struct knobtype knob1, knob2;
 
 /* ADC voltage default calibration values  */
@@ -506,11 +508,19 @@ void main(void) // Lets Party
 		if (ringBufS_empty(L.rx1b)) {
 			if (!z++) {
 				voltfp(L.adc_val[adc_buf.map.index], f1);
-				sprintf(bootstr2, "S %sV,R %uC %d              ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index); // display Power info				
+				sprintf(bootstr2, "S %sV,R %uC %d              ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index);
 				bootstr2[20] = NULL0; // limit the string to 20 chars
 				DLED_4 = HIGH;
 				S_WriteCmdXLCD(0b10000000 | LL2); // SetDDRamAddr
 				putsXLCD(bootstr2);
+				sprintf(f1, "SPI int  %lu                          ", spi_link.count);
+				f1[20] = NULL0; // limit the string to 20 chars
+				S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
+				putsXLCD(f1);
+				sprintf(f1, "LCD char %lu                          ", V.lcd_count);
+				f1[20] = NULL0; // limit the string to 20 chars
+				S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
+				putsXLCD(f1);
 				DLED_4 = LOW;
 			}
 		} else {

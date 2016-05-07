@@ -10,6 +10,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	static union Timers timer;
 	static union adc_buf_type adc_buf;
 	static union lcd_buf_type lcd_buf;
+	static union spi_buf_type spi_buf;
 	static int8_t data, slow = 0;
 
 	_asm nop _endasm // asm code to disable compiler optimizations
@@ -52,7 +53,24 @@ void tick_handler(void) // This is the high priority ISR routine
 		 * send SPI data
 		 */
 		if (!ringBufS_empty(spi_link.tx1b)) { // SPI send 
-			SSP1BUF = ringBufS_get(spi_link.tx1b); // transfer the 8 bit data buffer
+			spi_buf.buf = ringBufS_get(spi_link.tx1b);
+			if (spi_buf.map.select) { // set device select pins
+				DAC_0_CS = HIGH;
+				DAC_1_CS = LOW;
+			} else {
+				DAC_0_CS = LOW;
+				DAC_1_CS = HIGH;
+			}
+			SSP1BUF = spi_buf.map.buf; // transfer the 8 bit data buffer
+			if (spi_buf.map.cs) { // dselect device after transfer
+				if (spi_buf.map.select) {
+					Nop();
+					DAC_1_CS = HIGH;
+				} else {
+					Nop();
+					DAC_0_CS = HIGH;
+				}
+			}
 		}
 
 		if (!ringBufS_empty(L.tx1b) || lcd_buf.map.state) { // LCD send, 4bit , upper nibble
@@ -96,6 +114,7 @@ void tick_handler(void) // This is the high priority ISR routine
 					DLED_5 = !DLED_5;
 					E_PIN = 0;
 					TRIS_DATA_PORT |= 0xf0;
+					V.lcd_count++;
 				}
 				/* fall-through to default people */
 			default:
@@ -120,7 +139,7 @@ void tick_handler(void) // This is the high priority ISR routine
 
 	if (PIE1bits.SSP1IE && PIR1bits.SSP1IF) { // get data from SPI bus 1
 		DLED_7 = HIGH;
-		spi_link.int_count++;
+		spi_link.count++;
 		PIR1bits.SSP1IF = LOW;
 		ringBufS_put(spi_link.rx1b, SSP1BUF);
 		DLED_7 = LOW;
