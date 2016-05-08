@@ -164,5 +164,5 @@ void start_pic(uint16_t hw_config)
 
 void start_workerthread(void)
 {
-	T2CONbits.TMR2ON = HIGH;
+//	T2CONbits.TMR2ON = HIGH;
 }
