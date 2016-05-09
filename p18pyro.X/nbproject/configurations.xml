@@ -13,7 +13,7 @@
       <itemPath>pyro_msg.h</itemPath>
       <itemPath>ringbufs.h</itemPath>
       <itemPath>pyro.h</itemPath>
-      <itemPath>../../mandm/mandm/xlcd.h</itemPath>
+      <itemPath>xlcd.h</itemPath>
     </logicalFolder>
     <logicalFolder name="f1" displayName="info" projectFiles="true">
       <itemPath>ET-BASE 8722 ICD2 ENG.pdf</itemPath>
@@ -140,7 +140,6 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>

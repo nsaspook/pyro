@@ -132,7 +132,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
+#include <math.h> 
 
 #include "pyro_defs.h"
 #include "pyro.h"
@@ -156,6 +156,7 @@ float smooth[LPCHANC];
 #pragma udata gpr2
 volatile struct L_data L;
 volatile struct spi_link_type spi_link = {0};
+union mcp4822_buf_type mcp4822;
 
 volatile struct ringBufS_t ring_buf5;
 #pragma udata gpr3

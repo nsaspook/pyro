@@ -140,19 +140,46 @@ extern "C" {
 		uint16_t buf;
 		struct A_data map;
 	};
-	
-	// SPI structs
+
+	// SPI structs, sends 8 bit data with upper/lower selects for 16 bit data
 
 	typedef struct S_data {
 		uint16_t buf : 8; // spi data
-		uint16_t cs : 1;  // set CS to disabled at end of command
-		uint16_t select : 1; //spi channel select
+		uint16_t bits16 : 1; // 16 bit data select
+		uint16_t upper : 1; // upper byte select for 16 bit data
+		uint16_t cs : 1; // set CS to disabled at end of command
+		uint16_t load : 1; // spi device load bit
+		uint16_t select : 2; //spi device select
+		uint16_t ab : 1; // chip software select
 	} S_data;
 
-	/* used to hold 16-bit spi buffer, index and control bits */
+	/* used to hold 8 bit spi buffer, index and control bits */
 	union spi_buf_type {
 		uint16_t buf;
 		struct S_data map;
+	};
+
+	/* upper/lower bytes to 16 bit word for ADC/DAC, etc ... */
+	union bytes2 {
+		uint16_t lt;
+		uint8_t bt[2];
+	};
+
+	// mcp4822 structs
+
+	typedef struct mcp4822_data {
+		uint16_t buf : 8; // spi data
+		uint16_t dummy4 : 4; // C18 limits bitmaps to 8
+		uint16_t shdn : 1; // power control 1= power on
+		uint16_t ga : 1; // gain select, 0=2x
+		uint16_t dont_care : 1;
+		uint16_t ab : 1; // DAC select, 0=DAC A
+	} mcp4822_data;
+
+	/* used to hold 12-bit spi dac word and control bits */
+	union mcp4822_buf_type {
+		uint16_t buf;
+		struct mcp4822_data map;
 	};
 
 	typedef struct L_data { // link state data
