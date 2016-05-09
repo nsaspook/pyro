@@ -89,9 +89,10 @@
  *
  * R: structure, real values from measurements
  * C: structure, calculated values from measurements or programs
- * V: structure, Volatile varables modified in the ISR in a possible non-atomic fashion
+ * V: structure, Volatile variables modified in the ISR in a possible non-atomic fashion
  * A: structure ADC buffer data
  * S: structure SPI buffer data 
+ * D: structure LCD buffer data
  *
  * USART1		Data Link channel 38400
  * USART2 		is the host comm port 38400
@@ -103,10 +104,8 @@
 
  * 0..11 analog channels are active
  * PORTA		analog inputs
- * adc0	systemvoltage	PIC Controller 5vdc supply voltage
- * adc1	motorvoltage	24vdv PS monitor for relay
  * PORTB		HID Qencoder and switch inputs
- * PORTC		HID leds
+ * PORTC		SPI master and select outputs
  * PORTD		configuration switch input
  * PORTE		relays
  * PORTF		analog inputs
