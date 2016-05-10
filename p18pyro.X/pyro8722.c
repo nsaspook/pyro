@@ -94,7 +94,6 @@
  * S: structure SPI buffer data 
  * D: structure LCD buffer data
  *
- * USART1		Data Link channel 38400
  * USART2 		is the host comm port 38400
  * Timer0		1 second clock
  * TImer1		Not used
@@ -105,7 +104,7 @@
  * 0..11 analog channels are active
  * PORTA		analog inputs
  * PORTB		HID Qencoder and switch inputs
- * PORTC		SPI master and select outputs
+ * PORTC		SPI master and load, select outputs
  * PORTD		configuration switch input
  * PORTE		relays
  * PORTF		analog inputs
@@ -175,7 +174,7 @@ volatile struct ringBufS_t ring_buf4;
 
 int8_t sign = ' ';
 float lp_speed = 0.0, lp_x = 0.0;
-struct V_data V={0};
+struct V_data V = {0};
 const rom int8_t *build_date = __DATE__, *build_time = __TIME__;
 #pragma udata gpr6
 
@@ -528,7 +527,7 @@ void main(void) // Lets Party
 			adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages
 			ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
 			// do something
-			SPI_Out_Update(rand(),0,0);
+			SPI_Out_Update(rand(), 0, 0);
 			//ringBufS_put(spi_link.tx1b, adc_buf.map.index); // send control data to SPI devices (DAC)
 			DLED_2 = LOW;
 		}

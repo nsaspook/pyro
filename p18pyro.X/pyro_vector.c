@@ -13,7 +13,6 @@ void tick_handler(void) // This is the high priority ISR routine
 	static union spi_buf_type spi_buf;
 	static int8_t data, slow = 0;
 
-	_asm nop _endasm // asm code to disable compiler optimizations
 	DLED_0 = HIGH;
 	V.highint_count++; // high int counter
 
@@ -36,6 +35,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	 * several khz state machine sequencer timer
 	 */
 	if (PIE3bits.TMR4IE && PIR3bits.TMR4IF) {
+
 		PIR3bits.TMR4IF = LOW;
 		PR4 = TIMER4_NORM;
 		V.pwm4int_count++;
@@ -54,7 +54,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		 */
 		if (!ringBufS_empty(spi_link.tx1b)) { // SPI send 
 			spi_buf.buf = ringBufS_get(spi_link.tx1b);
-			SPI_LOAD = 0;
+			SPI_LOAD = spi_buf.map.load;
 			switch (spi_buf.map.select) { // set device select options
 			case 0:
 				DAC_0_CS = LOW;
@@ -75,7 +75,7 @@ void tick_handler(void) // This is the high priority ISR routine
 			if (spi_buf.map.cs) { // dselect device after current transfer ?
 				switch (spi_buf.map.select) { // set device deselect options
 				case 0:
-					Nop();
+					Nop(); // a bit of extra delay
 					DAC_0_CS = HIGH;
 					break;
 				case 1:
@@ -238,23 +238,6 @@ void tick_handler(void) // This is the high priority ISR routine
 		V.timerint_count++; // set 1 second clock counter.
 	}
 
-	// Serial port communications to the host and terminal
-	//
-
-	/* Get the character received from the USART */
-	if (PIR1bits.RC1IF) { // is data from network  port
-		V.c1rx_int++; // total count
-		rx_tmp++; // count for 1 second
-		if (RCSTA1bits.OERR) {
-			RCSTA1bits.CREN = LOW; // clear overrun
-			RCSTA1bits.CREN = HIGH; // re-enable
-		}
-
-		/* clear com1 interrupt flag */
-		// a read clears the flag
-		c1 = RCREG1; // read data from port1 and clear PIR1bits.RC1IF
-	}
-
 	/* User terminal comm routines */
 	if (PIR3bits.RC2IF) { // is data from user command/dump terminal port
 		/* clear com2 interrupt flag */
@@ -323,12 +306,6 @@ void idle_loop(void) // idle processe to allow for better isr triggers and backg
 	IDLEFLAG = TRUE;
 	ClrWdt();
 	IDLEFLAG = FALSE;
-}
-
-void P1wait(void)
-{
-	while (!TXSTA1bits.TRMT) {
-	};
 }
 
 void P2wait(void)

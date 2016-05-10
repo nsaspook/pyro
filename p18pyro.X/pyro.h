@@ -145,8 +145,6 @@ extern "C" {
 
 	typedef struct S_data {
 		uint16_t buf : 8; // spi data
-		uint16_t bits16 : 1; // 16 bit data select
-		uint16_t upper : 1; // upper byte select for 16 bit data
 		uint16_t cs : 1; // set CS to disabled at end of command
 		uint16_t load : 1; // spi device load bit
 		uint16_t select : 2; //spi device select

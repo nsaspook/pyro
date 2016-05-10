@@ -62,8 +62,8 @@ void config_pic(uint16_t hw_config)
 		TRISCbits.TRISC4 = HIGH; // SDI
 		TRISCbits.TRISC5 = LOW; // SDO
 
-		OpenSPI1(SPI_FOSC_16, MODE_00, SMPEND); // 1MHz
-		SSP1CON1 |= SPI_FOSC_16;
+		OpenSPI1(SPI_FOSC_4, MODE_00, SMPEND); // 1MHz
+		SSP1CON1 |= SPI_FOSC_4;
 
 		/* clear SPI module possible flags */
 		PIE1bits.SSP1IE = HIGH;
@@ -74,16 +74,7 @@ void config_pic(uint16_t hw_config)
 		 * Open the USARTs configured as
 		 * 8N1, 38400,38400 baud, in send and receive INT mode
 		 */
-		BAUDCON1 |= 0x08; // 16 bit mode speed register
 		BAUDCON2 |= 0x08; // 16 bit mode speed register
-
-		Open1USART(USART_TX_INT_OFF & USART_RX_INT_ON & USART_ASYNCH_MODE & USART_EIGHT_BIT & USART_CONT_RX & USART_BRGH_LOW, 64); // 40mhz osc HS         38.4 kbaud, 16bit divider
-		SPBRGH1 = 0x00;
-		SPBRG1 = 0x40;
-
-		while (DataRdy1USART()) { // dump 1 rx data
-			z = Read1USART();
-		};
 
 		Open2USART(USART_TX_INT_OFF & USART_RX_INT_ON & USART_ASYNCH_MODE & USART_EIGHT_BIT & USART_CONT_RX & USART_BRGH_LOW, 64); // 40mhz osc HS         38.4 kbaud, 16bit divider
 		SPBRGH2 = 0x00;
@@ -102,7 +93,7 @@ void config_pic(uint16_t hw_config)
 		OpenTimer3(TIMER_INT_ON & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 &
 			T1_OSC1EN_OFF & T1_SYNC_EXT_OFF); // for lamp scanner
 		PR4 = TIMER4_NORM;
-		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16); 
+		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16);
 		IPR3bits.TMR4IP = HIGH; // make it high pri level
 		PIE3bits.TMR4IE = HIGH; // TIMER4 int enable bit
 
@@ -164,5 +155,5 @@ void start_pic(uint16_t hw_config)
 
 void start_workerthread(void)
 {
-//	T2CONbits.TMR2ON = HIGH;
+	//	T2CONbits.TMR2ON = HIGH;
 }

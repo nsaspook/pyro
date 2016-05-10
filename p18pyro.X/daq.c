@@ -32,23 +32,20 @@ int8_t SPI_Out_Update(uint16_t data, uint8_t device, uint8_t ab)
 		/*
 		 * setup the mcp4822 register
 		 */
-		mcp4822_buf.buf = data;
+		mcp4822_buf.buf = data & 0x0fff;
 		mcp4822_buf.map.ab = ab;
-		mcp4822_buf.map.ga = 1;
+		mcp4822_buf.map.ga = 0;
 		mcp4822_buf.map.shdn = 1;
 		upper_lower.ld = mcp4822_buf.buf;
 		/*
 		 * setup ring-buffer for transfer in two parts
 		 */
 		spi_buf.map.buf = upper_lower.bd[1];
-		spi_buf.map.bits16 = 1;
-		spi_buf.map.upper = 1;
 		spi_buf.map.select = device;
-		spi_buf.map.load=0;
+		spi_buf.map.load = 0;
 		spi_buf.map.cs = 0;
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		spi_buf.map.buf = upper_lower.bd[0];
-		spi_buf.map.upper = 0;
 		spi_buf.map.cs = 1;
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		break;
