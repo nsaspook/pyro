@@ -528,7 +528,8 @@ void main(void) // Lets Party
 			adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages
 			ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
 			// do something
-			ringBufS_put(spi_link.tx1b, adc_buf.map.index); // send control data to SPI devices (DAC)
+			SPI_Out_Update(rand(),0,0);
+			//ringBufS_put(spi_link.tx1b, adc_buf.map.index); // send control data to SPI devices (DAC)
 			DLED_2 = LOW;
 		}
 

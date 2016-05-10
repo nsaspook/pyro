@@ -54,30 +54,40 @@ void tick_handler(void) // This is the high priority ISR routine
 		 */
 		if (!ringBufS_empty(spi_link.tx1b)) { // SPI send 
 			spi_buf.buf = ringBufS_get(spi_link.tx1b);
+			SPI_LOAD = 0;
 			switch (spi_buf.map.select) { // set device select options
 			case 0:
-				DAC_0_CS = HIGH;
-				DAC_1_CS = LOW;
-				break;
-			case 1:
 				DAC_0_CS = LOW;
 				DAC_1_CS = HIGH;
+				break;
+			case 1:
+				DAC_0_CS = HIGH;
+				DAC_1_CS = LOW;
 				break;
 			case 2:
 			case 3:
 			default:
 				DAC_0_CS = HIGH;
-				DAC_1_CS = LOW;
+				DAC_1_CS = HIGH;
 				break;
 			}
 			SSP1BUF = spi_buf.map.buf; // transfer the 8 bit data buffer
-			if (spi_buf.map.cs) { // dselect device after transfer
-				if (spi_buf.map.select) {
-					Nop();
-					DAC_1_CS = HIGH;
-				} else {
+			if (spi_buf.map.cs) { // dselect device after current transfer ?
+				switch (spi_buf.map.select) { // set device deselect options
+				case 0:
 					Nop();
 					DAC_0_CS = HIGH;
+					break;
+				case 1:
+					Nop();
+					DAC_1_CS = HIGH;
+					break;
+				case 2:
+				case 3:
+				default:
+					Nop();
+					DAC_0_CS = HIGH;
+					break;
 				}
 			}
 		}

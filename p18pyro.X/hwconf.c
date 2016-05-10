@@ -26,8 +26,8 @@ void config_pic(uint16_t hw_config)
 		TRISBbits.TRISB5 = HIGH; // quad1 b
 		TRISBbits.TRISB6 = HIGH; // quad2 a
 		TRISBbits.TRISB7 = HIGH; // quad2 b
-		TRISC = 0x00; // LED outputs
-		LATC = 0x00; // all front display LEDs off
+		TRISC = 0x00; // SPI outputs
+		LATC = 0xff; // all devices disabled/HIGH
 
 		TRISD = 0xff; // dip switch inputs
 
@@ -62,8 +62,8 @@ void config_pic(uint16_t hw_config)
 		TRISCbits.TRISC4 = HIGH; // SDI
 		TRISCbits.TRISC5 = LOW; // SDO
 
-		OpenSPI1(SPI_FOSC_64, MODE_00, SMPEND); // 1MHz
-		SSP1CON1 |= SPI_FOSC_64; // set clock to low speed
+		OpenSPI1(SPI_FOSC_16, MODE_00, SMPEND); // 1MHz
+		SSP1CON1 |= SPI_FOSC_16;
 
 		/* clear SPI module possible flags */
 		PIE1bits.SSP1IE = HIGH;

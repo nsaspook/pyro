@@ -54,7 +54,10 @@ extern "C" {
 	/* spi select pins */
 #define DAC_0_CS	LATCbits.LATC0
 #define DAC_1_CS	LATCbits.LATC1
-	
+#define MISC_0_CS	LATCbits.LATC2
+#define MISC_1_CS	LATCbits.LATC6
+#define SPI_LOAD	LATCbits.LATC7
+
 #define DIPSW		PORTD
 #define	DIPSW1		PORTDbits.RD0
 #define	DIPSW2		PORTDbits.RD1

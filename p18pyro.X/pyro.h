@@ -150,7 +150,6 @@ extern "C" {
 		uint16_t cs : 1; // set CS to disabled at end of command
 		uint16_t load : 1; // spi device load bit
 		uint16_t select : 2; //spi device select
-		uint16_t ab : 1; // chip software select
 	} S_data;
 
 	/* used to hold 8 bit spi buffer, index and control bits */
@@ -161,8 +160,8 @@ extern "C" {
 
 	/* upper/lower bytes to 16 bit word for ADC/DAC, etc ... */
 	union bytes2 {
-		uint16_t lt;
-		uint8_t bt[2];
+		uint16_t ld;
+		uint8_t bd[2];
 	};
 
 	// mcp4822 structs
