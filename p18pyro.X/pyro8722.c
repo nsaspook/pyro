@@ -437,6 +437,7 @@ void main(void) // Lets Party
 
 	static uint16_t z;
 	static union adc_buf_type adc_buf;
+	uint16_t	dac1,dac2=5000;
 
 
 #ifdef	__18F8722
@@ -523,13 +524,21 @@ void main(void) // Lets Party
 				DLED_4 = LOW;
 			}
 		} else {
-			DLED_2 = HIGH;
-			adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages
-			ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
+//			DLED_2 = LOW;
+			while (!ringBufS_empty(L.rx1b)) {
+//				DLED_2 = HIGH;
+				adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages			
+				ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
+//				DLED_2 = LOW;
+			}
+
 			// do something
-			SPI_Out_Update(rand(), 0, 0);
-			//ringBufS_put(spi_link.tx1b, adc_buf.map.index); // send control data to SPI devices (DAC)
+			DLED_2 = HIGH;
+			SPI_Out_Update(dac1++, 0, 0);
+			SPI_Out_Update(dac2--, 0, 1);
 			DLED_2 = LOW;
+			Nop();
+			Nop();
 		}
 
 		if (SSPCON1bits.WCOL || SSPCON1bits.SSPOV) { // check for overruns/collisions

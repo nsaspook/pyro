@@ -44,9 +44,11 @@ int8_t SPI_Out_Update(uint16_t data, uint8_t device, uint8_t ab)
 		spi_buf.map.select = device;
 		spi_buf.map.load = 0;
 		spi_buf.map.cs = 0;
+		while (ringBufS_full(spi_link.tx1b));
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		spi_buf.map.buf = upper_lower.bd[0];
 		spi_buf.map.cs = 1;
+		while (ringBufS_full(spi_link.tx1b));
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		break;
 	default:
