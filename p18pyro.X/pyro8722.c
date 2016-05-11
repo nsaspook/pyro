@@ -528,22 +528,19 @@ void main(void) // Lets Party
 				dtime1 = V.clock20;
 			}
 		} else {
-			//			DLED_2 = LOW;
+			DLED_2 = HIGH;
 			while (!ringBufS_empty(L.rx1b)) {
-				//				DLED_2 = HIGH;
 				adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages			
 				ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
-				//				DLED_2 = LOW;
 			}
+			DLED_2 = LOW;
 			dac1++;
 			dac2--;
 
 			if (V.clock20 > dtime2) {
 				// do something
-				DLED_2 = HIGH;
 				SPI_Out_Update(dac1, 0, 0);
 				SPI_Out_Update(dac2, 0, 1);
-				DLED_2 = LOW;
 				dtime2 = V.clock20;
 			}
 			Nop();
