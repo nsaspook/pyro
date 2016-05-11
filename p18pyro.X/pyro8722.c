@@ -429,7 +429,6 @@ void init_lcd(void)
 	WriteCmdXLCD(0x1); // clear screen
 	wdtdelay(10000);
 	LCD_OK = TRUE;
-	lcd18 = 24;
 }
 
 void main(void) // Lets Party
@@ -539,8 +538,8 @@ void main(void) // Lets Party
 
 			if (V.clock20 > dtime2) {
 				// do something
-				SPI_Out_Update(dac1, 0, 0);
-				SPI_Out_Update(dac2, 0, 1);
+				SPI_Out_Update(dac1+rand(), 0, 0);
+				SPI_Out_Update(dac2+rand(), 0, 1);
 				dtime2 = V.clock20;
 			}
 			Nop();
