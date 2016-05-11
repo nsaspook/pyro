@@ -418,7 +418,7 @@ float lp_filter(float new, int16_t bn, int16_t slow) // low pass filter, slow ra
 void init_lcd(void)
 {
 	lcd18 = 200;
-	wdtdelay(10000); // delay for power related LCD setup glitch
+	wdtdelay(50000); // delay for power related LCD setup glitch
 	OpenXLCD(FOUR_BIT & LINES_5X7);
 	while (BusyXLCD());
 	wdtdelay(10000); // delay for power related LCD setup glitch
@@ -437,7 +437,8 @@ void main(void) // Lets Party
 
 	static uint16_t z;
 	static union adc_buf_type adc_buf;
-	uint16_t	dac1,dac2=5000;
+	uint16_t dac1, dac2 = 5000;
+	uint32_t dtime1, dtime2;
 
 
 #ifdef	__18F8722
@@ -502,11 +503,13 @@ void main(void) // Lets Party
 	srand((uint16_t) 1957); // set random seed
 	putrsXLCD("Pyro Control");
 
+	dtime1 = V.clock20;
+	dtime2 = V.clock20;
 	/* Loop forever */
 	while (TRUE) {
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
-			if (!z++) {
+			if (V.clock20 > dtime1) {
 				voltfp(L.adc_val[adc_buf.map.index], f1);
 				sprintf(bootstr2, "S %sV,R %uC %d              ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index);
 				bootstr2[20] = NULL0; // limit the string to 20 chars
@@ -522,21 +525,27 @@ void main(void) // Lets Party
 				S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
 				putsXLCD(f1);
 				DLED_4 = LOW;
+				dtime1 = V.clock20;
 			}
 		} else {
-//			DLED_2 = LOW;
+			//			DLED_2 = LOW;
 			while (!ringBufS_empty(L.rx1b)) {
-//				DLED_2 = HIGH;
+				//				DLED_2 = HIGH;
 				adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages			
 				ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
-//				DLED_2 = LOW;
+				//				DLED_2 = LOW;
 			}
+			dac1++;
+			dac2--;
 
-			// do something
-			DLED_2 = HIGH;
-			SPI_Out_Update(dac1++, 0, 0);
-			SPI_Out_Update(dac2--, 0, 1);
-			DLED_2 = LOW;
+			if (V.clock20 > dtime2) {
+				// do something
+				DLED_2 = HIGH;
+				SPI_Out_Update(dac1, 0, 0);
+				SPI_Out_Update(dac2, 0, 1);
+				DLED_2 = LOW;
+				dtime2 = V.clock20;
+			}
 			Nop();
 			Nop();
 		}
