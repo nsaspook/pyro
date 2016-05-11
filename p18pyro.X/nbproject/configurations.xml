@@ -55,7 +55,6 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>xlcd</Elem>
-    <Elem>../../mandm/mandm</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -115,7 +114,7 @@
         <property key="preprocessor-macros" value=""/>
         <property key="procedural-abstraction-passes" value="4"/>
         <property key="storage-class" value="sca"/>
-        <property key="verbose" value="true"/>
+        <property key="verbose" value="false"/>
         <property key="warning-level" value="2"/>
       </C18>
       <C18-AS>
