@@ -192,7 +192,7 @@ volatile struct ringBufS_t ring_buf2;
 volatile struct knobtype knob1, knob2;
 
 /* ADC voltage default calibration values  */
-uint8_t adc_cal[] = {128, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 0};
+uint8_t adc_cal[] = {128, 128, 128, 128, 128, 128, 128, 128, 128, 127, 127, 127, 127, 127, 127, 0};
 uint8_t CRITC = 0, LCD_OK = FALSE;
 
 volatile enum answer_t {
@@ -434,7 +434,7 @@ void init_lcd(void)
 void main(void) // Lets Party
 {
 
-	static uint16_t z;
+	static uint32_t z;
 	static union adc_buf_type adc_buf;
 	uint16_t dac1, dac2 = 5000;
 	uint32_t dtime1, dtime2;
@@ -508,7 +508,7 @@ void main(void) // Lets Party
 	while (TRUE) {
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
-			if (V.clock20 > dtime1) {
+			if (V.clock20 > dtime1 + 3) { // ~5hz display update freq
 				voltfp(L.adc_val[adc_buf.map.index], f1);
 				sprintf(bootstr2, "S %sV,R %uC %d              ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index);
 				bootstr2[20] = NULL0; // limit the string to 20 chars
@@ -519,7 +519,7 @@ void main(void) // Lets Party
 				f1[20] = NULL0; // limit the string to 20 chars
 				S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
 				putsXLCD(f1);
-				sprintf(f1, "LCD char %lu                          ", V.lcd_count);
+				sprintf(f1, "LCD char %lu %lu                         ", V.lcd_count, z);
 				f1[20] = NULL0; // limit the string to 20 chars
 				S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
 				putsXLCD(f1);
@@ -527,23 +527,23 @@ void main(void) // Lets Party
 				dtime1 = V.clock20;
 			}
 		} else {
-			DLED_2 = HIGH;
+			z = 0;
 			while (!ringBufS_empty(L.rx1b)) {
 				adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages			
 				ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
+				z++;
 			}
-			DLED_2 = LOW;
 			dac1++;
 			dac2--;
 
-			if (V.clock20 > dtime2) {
+			if (V.clock20 > dtime2 + 1) {
+				DLED_2 = HIGH;
 				// do something
-				SPI_Out_Update(dac1+rand(), 0, 0);
-				SPI_Out_Update(dac2+rand(), 0, 1);
+				if (SPI_Out_Update(dac1 + rand(), 0, 0)) DLED_6 = LOW;
+				if (SPI_Out_Update(dac2 + rand(), 0, 1)) DLED_6 = LOW;
 				dtime2 = V.clock20;
+				DLED_2 = LOW;
 			}
-			Nop();
-			Nop();
 		}
 
 		if (SSPCON1bits.WCOL || SSPCON1bits.SSPOV) { // check for overruns/collisions

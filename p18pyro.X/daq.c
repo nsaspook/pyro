@@ -7,8 +7,6 @@ void ADC_zero(void)
 	ClrWdt(); // reset the WDT timer
 	SetChanADC(ADC_CH8); // F3 grounded input
 	Delay10TCYx(ADC_CHAN_DELAY);
-	ConvertADC();
-	while (BusyADC());
 }
 
 void ADC_Update(uint16_t adc_val, uint8_t chan)
@@ -25,9 +23,12 @@ int8_t SPI_Out_Update(uint16_t data, uint8_t device, uint8_t ab)
 	static union bytes2 upper_lower = {0};
 	static union mcp4822_buf_type mcp4822_buf = {0};
 
-	if (ringBufS_full(spi_link.tx1b)) return(-1);
-
 	DLED_6 = HIGH;
+	if (ringBufS_full(spi_link.tx1b)) {
+		DLED_6 = LOW;
+		return(-1);
+	}
+
 	switch (device) {
 	case 0:
 	case 1:
