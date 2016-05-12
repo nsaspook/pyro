@@ -5,9 +5,8 @@
 
 void tick_handler(void) // This is the high priority ISR routine
 {
-	static uint8_t c1, c2, adc_trigger = FALSE, HID_IDLE_FLAG = TRUE, b_read = 0;
-	static int16_t rx_tmp = 0;
-	static union Timers timer;
+	static uint8_t adc_trigger = FALSE, HID_IDLE_FLAG = TRUE, b_read = 0;
+	union Timers timer;
 	static union adc_buf_type adc_buf;
 	static union lcd_buf_type lcd_buf;
 	static union spi_buf_type spi_buf;
@@ -92,10 +91,12 @@ void tick_handler(void) // This is the high priority ISR routine
 			}
 		}
 
+		/*
+		 * LCD data handler
+		 */
 		if (!ringBufS_empty(L.tx1b) || lcd_buf.map.state) { // LCD send, 4bit , upper nibble
 			switch (lcd_buf.map.state) {
 			case 0:
-				DLED_5 = HIGH;
 				lcd_buf.buf = ringBufS_get(L.tx1b);
 				data = lcd_buf.buf;
 				lcd_buf.map.state = 0;
@@ -112,25 +113,21 @@ void tick_handler(void) // This is the high priority ISR routine
 				lcd_buf.map.state++;
 				break;
 			case 1:
-				DLED_5 = !DLED_5;
 				E_PIN = 1; // Clock nibble into LCD
 				lcd_buf.map.state++;
 				break;
 			case 2:
-				DLED_5 = !DLED_5;
 				E_PIN = 0;
 				DATA_PORT &= 0x0f;
 				DATA_PORT |= ((data << 4)&0xf0);
 				lcd_buf.map.state++;
 				break;
 			case 3:
-				DLED_5 = !DLED_5;
 				E_PIN = 1; // Clock nibble into LCD
 				lcd_buf.map.state++;
 				break;
 			case 4:
 				if (!lcd_buf.map.skip) { // don't repeat if we're in slow time
-					DLED_5 = !DLED_5;
 					E_PIN = 0;
 					TRIS_DATA_PORT |= 0xf0;
 					V.lcd_count++;
@@ -145,7 +142,6 @@ void tick_handler(void) // This is the high priority ISR routine
 					}
 				} else {
 					lcd_buf.map.state = 0;
-					DLED_5 = LOW;
 				}
 				break;
 			}
@@ -248,8 +244,7 @@ void tick_handler(void) // This is the high priority ISR routine
 			RCSTA2bits.CREN = HIGH; // re-enable
 		}
 
-		c2 = RCREG2; // read from host port2 and clear PIR3bits.RC2IF
-		C2RAW = c2; // set terminal input char.
+		ringBufS_put(L.rx2b, RCREG2); // read from host port2 and clear PIR3bits.RC2IF
 	}
 
 	/* Control button routines */
@@ -286,7 +281,7 @@ void tick_handler(void) // This is the high priority ISR routine
 
 void work_handler(void) // This is the low priority ISR routine, the high ISR routine will be called during this code section
 { // projector lamp scan converter
-	static union Timers timerl;
+	union Timers timerl;
 
 	DLED_1 = HIGH;
 	V.lowint_count++; // low int trigger entropy counter

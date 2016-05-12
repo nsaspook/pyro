@@ -143,12 +143,9 @@
 #include "daq.h"
 #include "ringbufs.h"
 
-uint8_t spinners(uint8_t, uint8_t);
-
 #pragma udata gpr13
-far int8_t bootstr2[MESG_W + 1], f1[MESG_W];
+far int8_t bootstr2[MESG_W + 1], f1[MESG_W], f2[MESG_W];
 #pragma udata gpr1
-
 volatile struct ringBufS_t ring_buf3;
 uint8_t HCRIT[CRIT_8], LCRIT[CRIT_8];
 float smooth[LPCHANC];
@@ -156,33 +153,25 @@ float smooth[LPCHANC];
 volatile struct L_data L;
 volatile struct spi_link_type spi_link = {0};
 union mcp4822_buf_type mcp4822;
-
 volatile struct ringBufS_t ring_buf5;
 #pragma udata gpr3
 volatile struct ringBufS_t ring_buf6;
 far int8_t hms_string[16];
-volatile uint8_t critc_level = 0, KEYNUM = 0, C2RAW, glitch_count, cdelay, SLOW_STATUS;
-volatile uint8_t TIMERFLAG = FALSE, PRIPOWEROK = TRUE, FORCEOUT = FALSE, WORKERFLAG = FALSE,
-	FAILSAFE = FALSE, SYSTEM_STABLE = FALSE, HOLD_PROC = FALSE,
-	DISPLAY_MODE = FALSE, D_UPDATE = TRUE, GLITCH_CHECK = TRUE, COOLING = FALSE,
-	UPDATE_EEP = FALSE, RESET_ZEROS = FALSE, SYS_DATA = FALSE, MOD_DATA = FALSE, SYS_HELP = FALSE, SET_TLOG = FALSE,
-	WDT_TO = FALSE, EEP_ER = FALSE, TWEAK = FALSE, TEST_SPINNERS = FALSE;
+volatile uint8_t critc_level = 0;
+volatile uint8_t TIMERFLAG = FALSE, SYSTEM_STABLE = FALSE, D_UPDATE = FALSE, WDT_TO = FALSE, EEP_ER = FALSE;
 #pragma udata gpr4
 volatile uint32_t critc_count = 0;
 volatile struct ringBufS_t ring_buf4;
 #pragma udata gpr5
-
 int8_t sign = ' ';
 float lp_speed = 0.0, lp_x = 0.0;
 struct V_data V = {0};
 const rom int8_t *build_date = __DATE__, *build_time = __TIME__;
 #pragma udata gpr6
-
 float t1 = 0.0, t2 = 0.0, t3 = 0.0, t4 = 0.0, t5 = 0.0, t6 = 0.0, t7 = 0.0, t_time = 0.0;
 float voltfrak = 0.0;
 float ahfrak = 0.0;
 #pragma udata gpr7
-//uint32_t Vin = 0, chrg_v = 0, vbatol_t = 0, solar_t = 0, rawp[MAX_MFC], rawa[MAX_MFC];
 volatile uint8_t IDLEFLAG = FALSE, knob_to_pot = 0;
 int32_t iw = 0, ip = 0;
 #pragma udata gpr8
@@ -200,7 +189,6 @@ volatile enum answer_t {
 } YNKEY;
 
 volatile struct QuadEncoderType OldEncoder;
-
 #pragma idata gpr10
 uint8_t lcd18 = 200;
 volatile struct qeitype qei1;
@@ -273,10 +261,10 @@ void wdttime(uint32_t delay) // delay = ~ .05 seconds
 }
 
 /* Misc ACSII spinner character generator, stores position for each shape */
-uint8_t spinners(uint8_t shape, uint8_t reset)
+int8_t spinners(uint8_t shape, uint8_t reset)
 {
 	static uint8_t s[MAX_SHAPES], last_shape = 0;
-	uint8_t c;
+	int8_t c;
 
 	if (shape > (MAX_SHAPES - 1)) shape = 0;
 	if (reset) s[shape] = 0;
@@ -488,12 +476,12 @@ void main(void) // Lets Party
 	spi_link.tx1b = &ring_buf5;
 	spi_link.rx1b = &ring_buf6;
 
-	ringBufS_init(L.rx1b);
-	ringBufS_init(L.tx1b);
-	ringBufS_init(L.rx2b);
-	ringBufS_init(L.tx2b);
-	ringBufS_init(spi_link.tx1b);
-	ringBufS_init(spi_link.rx1b);
+	ringBufS_init(L.rx1b); // adc rx buffer
+	ringBufS_init(L.tx1b); // lcd tx buffer
+	ringBufS_init(L.rx2b); // rs232 rx buffer
+	ringBufS_init(L.tx2b); // rs232 tx buffer
+	ringBufS_init(spi_link.tx1b); // spi tx buffer
+	ringBufS_init(spi_link.rx1b); // spi rx buffer
 
 	/*      Work thread start */
 	start_workerthread();
@@ -509,13 +497,14 @@ void main(void) // Lets Party
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
 			if (V.clock20 > dtime1 + 3) { // ~5hz display update freq
-				voltfp(L.adc_val[adc_buf.map.index], f1);
-				sprintf(bootstr2, "S %sV,R %uC %d              ", f1, L.adc_raw[adc_buf.map.index], adc_buf.map.index);
+				voltfp(L.adc_val[0], f1);
+				voltfp(L.adc_val[1], f2);
+				sprintf(bootstr2, "V0 %sV, V1 %s                     ", f1, f2);
 				bootstr2[20] = NULL0; // limit the string to 20 chars
 				DLED_4 = HIGH;
 				S_WriteCmdXLCD(0b10000000 | LL2); // SetDDRamAddr
 				putsXLCD(bootstr2);
-				sprintf(f1, "SPI int  %lu                          ", spi_link.count);
+				sprintf(f1, "SPI int  %lu %c                          ", spi_link.count, spinners(5, 0));
 				f1[20] = NULL0; // limit the string to 20 chars
 				S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
 				putsXLCD(f1);
@@ -536,10 +525,10 @@ void main(void) // Lets Party
 			dac1++;
 			dac2--;
 
-			if (V.clock20 > dtime2 + 1) {
+			if (V.clock20 > dtime2 + 1) { // ~10hz update rate
 				DLED_2 = HIGH;
 				// do something
-				if (SPI_Out_Update(dac1 + rand(), 0, 0)) DLED_6 = LOW;
+				if (SPI_Out_Update(L.adc_raw[0]<<2, 0, 0)) DLED_6 = LOW;
 				if (SPI_Out_Update(dac2 + rand(), 0, 1)) DLED_6 = LOW;
 				dtime2 = V.clock20;
 				DLED_2 = LOW;

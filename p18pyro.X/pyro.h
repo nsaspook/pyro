@@ -194,6 +194,13 @@ extern "C" {
 		uint32_t count;
 	};
 
+	int8_t spinners(uint8_t, uint8_t);
+	float lp_filter(float, int16_t, int16_t);
+	int8_t* ahfp(int32_t, int8_t *);
+	int8_t* voltfpi(int32_t, int8_t *);
+	int8_t* voltfps(uint32_t, int8_t *);
+	int8_t* voltfp(uint32_t, int8_t *);
+
 #ifdef	__cplusplus
 }
 #endif
