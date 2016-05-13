@@ -156,7 +156,7 @@ union mcp4822_buf_type mcp4822;
 volatile struct ringBufS_t ring_buf5;
 #pragma udata gpr3
 volatile struct ringBufS_t ring_buf6;
-far int8_t hms_string[16];
+far int8_t hms_string[16], f3[MESG_W];
 volatile uint8_t critc_level = 0;
 volatile uint8_t TIMERFLAG = FALSE, SYSTEM_STABLE = FALSE, D_UPDATE = FALSE, WDT_TO = FALSE, EEP_ER = FALSE;
 #pragma udata gpr4
@@ -488,7 +488,7 @@ void main(void) // Lets Party
 
 	SYSTEM_STABLE = TRUE;
 	srand((uint16_t) 1957); // set random seed
-	putrsXLCD("Pyro Control");
+	putrsXLCD("Pyro MFC Control");
 
 	dtime1 = V.clock20;
 	dtime2 = V.clock20;
@@ -497,21 +497,22 @@ void main(void) // Lets Party
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
 			if (V.clock20 > dtime1 + 3) { // ~5hz display update freq
-				voltfp(L.adc_val[0], f1);
-				voltfp(L.adc_val[1], f2);
-				sprintf(bootstr2, "V0 %sV, V1 %s                     ", f1, f2);
+				voltfp(L.adc_val[0], f1); // analog control input 0
+				voltfp(L.adc_val[2], f2); // mfc readback 0
+				voltfp(L.adc_val[3], f3); // mfc setpoint 0
+				sprintf(bootstr2, "%sV %sV %sV                        ", f1, f3,f2);
 				bootstr2[20] = NULL0; // limit the string to 20 chars
 				DLED_4 = HIGH;
 				S_WriteCmdXLCD(0b10000000 | LL2); // SetDDRamAddr
 				putsXLCD(bootstr2);
-				sprintf(f1, "SPI int  %lu %c                          ", spi_link.count, spinners(5, 0));
-				f1[20] = NULL0; // limit the string to 20 chars
-				S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
-				putsXLCD(f1);
-				sprintf(f1, "LCD char %lu %lu                         ", V.lcd_count, z);
-				f1[20] = NULL0; // limit the string to 20 chars
-				S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
-				putsXLCD(f1);
+				//sprintf(f1, "SPI int  %lu %c                          ", spi_link.count, spinners(5, 0));
+				//f1[20] = NULL0; // limit the string to 20 chars
+				//S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
+				//putsXLCD(f1);
+				//sprintf(f1, "LCD char %lu %lu                         ", V.lcd_count, z);
+				//f1[20] = NULL0; // limit the string to 20 chars
+				//S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
+				//putsXLCD(f1);
 				DLED_4 = LOW;
 				dtime1 = V.clock20;
 			}
