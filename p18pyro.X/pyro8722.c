@@ -496,14 +496,18 @@ void main(void) // Lets Party
 	while (TRUE) {
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
-			if (V.clock20 > dtime1 + 3) { // ~5hz display update freq
+			if (V.clock20 > dtime1 + 10) { // ~5hz display update freq
 				voltfp(L.adc_val[0], f1); // analog control input 0
 				voltfp(L.adc_val[2], f2); // mfc readback 0
 				voltfp(L.adc_val[3], f3); // mfc setpoint 0
-				sprintf(bootstr2, "%sV %sV %sV                        ", f1, f3,f2);
+				sprintf(bootstr2, "%sV %sV %sV                        ", f1, f3, f2);
 				bootstr2[20] = NULL0; // limit the string to 20 chars
 				DLED_4 = HIGH;
 				S_WriteCmdXLCD(0b10000000 | LL2); // SetDDRamAddr
+				putsXLCD(bootstr2);
+				sprintf(bootstr2, "%u %u %u %d                          ", L.adc_raw[0], L.adc_raw[3], L.adc_raw[2], (int16_t) (L.adc_raw[3] - L.adc_raw[2]));
+				bootstr2[20] = NULL0; // limit the string to 20 chars
+				S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
 				putsXLCD(bootstr2);
 				//sprintf(f1, "SPI int  %lu %c                          ", spi_link.count, spinners(5, 0));
 				//f1[20] = NULL0; // limit the string to 20 chars
@@ -523,14 +527,15 @@ void main(void) // Lets Party
 				ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
 				z++;
 			}
-			dac1++;
-			dac2--;
 
-			if (V.clock20 > dtime2 + 1) { // ~10hz update rate
+
+			if (V.clock20 > dtime2 + 1) { // ~10hz DAC update rate
+				dac1 += 3;
+				dac2 -= 3;
 				DLED_2 = HIGH;
 				// do something
-				if (SPI_Out_Update(L.adc_raw[0]<<2, 0, 0)) DLED_6 = LOW;
-				if (SPI_Out_Update(dac2 + rand(), 0, 1)) DLED_6 = LOW;
+				if (SPI_Out_Update(dac1, 0, 0)) DLED_6 = LOW;
+				if (SPI_Out_Update(dac2, 0, 1)) DLED_6 = LOW;
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}

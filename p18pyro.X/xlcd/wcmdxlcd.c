@@ -5,7 +5,7 @@ void S_WriteCmdXLCD(unsigned char cmd)
 {
 	union lcd_buf_type lcd_buf;
 
-	while (ringBufS_full(L.tx1b));
+	while (ringBufS_full(L.tx1b)) DLED_7 = ON;
 	lcd_buf.buf = cmd;
 	lcd_buf.map.cmd = 1;
 	lcd_buf.map.slow = 0;

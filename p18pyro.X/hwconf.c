@@ -84,7 +84,7 @@ void config_pic(uint16_t hw_config)
 			z = Read2USART();
 		};
 
-		OpenADC(ADC_FOSC_32 & ADC_RIGHT_JUST & ADC_16_TAD, ADC_CH0 & ADC_REF_VDD_VSS & ADC_INT_ON, ADC_11ANA); // open ADC channels for current and voltage readings
+		OpenADC(ADC_FOSC_32 & ADC_RIGHT_JUST & ADC_4_TAD, ADC_CH0 & ADC_REF_VDD_VSS & ADC_INT_ON, ADC_11ANA); // open ADC channels for current and voltage readings
 		ADCON1 = 0x03; // adc [0..11] enable, the OpenADC ADC_11ANA sets this also
 		PIE1bits.ADIE = HIGH; // the ADC interrupt enable bit
 		IPR1bits.ADIP = HIGH; // ADC use high pri

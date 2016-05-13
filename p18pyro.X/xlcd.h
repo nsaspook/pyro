@@ -3,6 +3,7 @@
 #include "p18cxxx.h"
 #include "ringbufs.h"
 #include "pyro.h"
+#include "pyro_defs.h"
 /* PIC18 XLCD peripheral routines.
  *
  *   Notes:

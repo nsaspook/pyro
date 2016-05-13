@@ -153,11 +153,9 @@ void tick_handler(void) // This is the high priority ISR routine
 	}
 
 	if (PIE1bits.SSP1IE && PIR1bits.SSP1IF) { // get data from SPI bus 1
-		DLED_7 = HIGH;
 		spi_link.count++;
 		PIR1bits.SSP1IF = LOW;
 		ringBufS_put(spi_link.rx1b, SSP1BUF);
-		DLED_7 = LOW;
 	}
 
 	if (INTCON3bits.INT3IF) { // motor QEI input
@@ -232,6 +230,7 @@ void tick_handler(void) // This is the high priority ISR routine
 
 		MPULED = !MPULED; //  flash led
 		V.timerint_count++; // set 1 second clock counter.
+		DLED_7=OFF;
 	}
 
 	/* User terminal comm routines */

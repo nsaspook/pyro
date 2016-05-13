@@ -17,21 +17,25 @@ void ADC_Update(uint16_t adc_val, uint8_t chan)
 	L.adc_val[chan] = (adc_val * (ADC_5V_MV - ADC_NULL + adc_cal[chan])) / 100; //      voltage correction factor;
 }
 
+/*
+ * SPI 16 output driver
+ */
 int8_t SPI_Out_Update(uint16_t data, uint8_t device, uint8_t ab)
 {
 	static union spi_buf_type spi_buf = {0};
 	static union bytes2 upper_lower = {0};
 	static union mcp4822_buf_type mcp4822_buf = {0};
+	int8_t ret = -2; // preset fail code
 
 	DLED_6 = HIGH;
 	if (ringBufS_full(spi_link.tx1b)) {
-		DLED_6 = LOW;
-		return(-1);
+		ret = -3; // buffer full
+		goto err1;
 	}
 
 	switch (device) {
-	case 0:
-	case 1:
+	case 0: // DAC
+	case 1: // DAC
 		/*
 		 * setup the mcp4822 register
 		 */
@@ -50,17 +54,30 @@ int8_t SPI_Out_Update(uint16_t data, uint8_t device, uint8_t ab)
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		spi_buf.map.buf = upper_lower.bd[0]; // load low byte
 		spi_buf.map.cs = 1;
-		if (ringBufS_full(spi_link.tx1b)) return(-2); // second byte failed
+		if (ringBufS_full(spi_link.tx1b)) goto err1; // second byte failed
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
+		ret = 0;
 		break;
-	case 10: // retry second byte
-		if (ringBufS_full(spi_link.tx1b)) return(-2);
+	case 2: // shift register output
+		spi_buf.map.buf = data; // load high byte
+		spi_buf.map.select = device;
+		spi_buf.map.load = 0;
+		spi_buf.map.cs = 1;
+		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (shift register)
+		ret = 0;
+		break;
+	case 10: // retry second byte for DAC
+		if (ringBufS_full(spi_link.tx1b)) goto err1; // check again, buffer refilled quickly
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
+		ret = 0;
 		break;
 	default:
+		ret = -1; // invalid device
 		break;
-		return(-1);
 	}
+err1:
 	DLED_6 = LOW;
-	return 0;
+	if (ret)
+		DLED_7 = ON;
+	return ret;
 }
