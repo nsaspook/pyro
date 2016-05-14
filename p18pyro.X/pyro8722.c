@@ -419,6 +419,45 @@ void init_lcd(void)
 	LCD_OK = TRUE;
 }
 
+/*
+ * bit set/reset
+ */
+void bitmap_e(uint8_t slot, uint8_t state)
+{
+	if (state)
+		LATE |= 0x01 << slot;
+	else
+		LATE &= ~(0x01 << slot);
+}
+
+/*
+ * LEDS are ON with zero, ON=0, OFF=1
+ */
+void fade_up_leds(void)
+{
+	uint8_t numbers[] = {0, 1, 3, 7, 15, 31, 63, 127, 255}, l;
+	int16_t i, j, k;
+
+
+	for (l = 0; l <= 7; l++) {
+		k = 200;
+		j = 0;
+		while (j < 300 && k > 0) {
+			for (i = 0; i < j; i++) {
+				bitmap_e(l, ON);
+				wdtdelay(2); // short delay function
+			}
+			for (i = 0; i < k; i++) {
+				bitmap_e(l, OFF);
+				wdtdelay(2);
+			}
+			j++;
+			k--;
+		}
+		LATE = ~numbers[l + 1];
+	}
+}
+
 void main(void) // Lets Party
 {
 
@@ -437,6 +476,7 @@ void main(void) // Lets Party
 #endif
 
 	init_lcd();
+	fade_up_leds();
 
 #ifdef	__18F8722
 	if (STKPTRbits.STKFUL) {

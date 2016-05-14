@@ -32,7 +32,7 @@ void config_pic(uint16_t hw_config)
 		TRISD = 0xff; // dip switch inputs
 
 		TRISE = LOW; // motor relay outputs
-		LATE = R_ALL_OFF;
+		LATE = R_ALL_ON;
 
 		TRISF = 0xff; // all inputs for ADC inputs
 
