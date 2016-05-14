@@ -454,7 +454,7 @@ void fade_up_leds(void)
 			j++;
 			k--;
 		}
-		LATE = ~numbers[l + 1];
+		LATE = ~numbers[l + 1]; // flip the bits for my setup
 	}
 }
 
