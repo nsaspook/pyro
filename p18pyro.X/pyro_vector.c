@@ -52,25 +52,24 @@ void tick_handler(void) // This is the high priority ISR routine
 		 * send SPI data
 		 */
 		if (!ringBufS_empty(spi_link.tx1b)) { // SPI send 
+			SSP1CON1bits.SSPM = 0;
 			spi_buf.buf = ringBufS_get(spi_link.tx1b);
 			SPI_LOAD = spi_buf.map.load;
 			switch (spi_buf.map.select) { // set device select options
 			case 0:
-				SSP1CON1bits.SSPM = 0;
 				DAC_0_CS = LOW;
 				DAC_1_CS = HIGH;
 				SHF_2_CS = HIGH;
 				MISC_3_CS = HIGH;
 				break;
 			case 1:
-				SSP1CON1bits.SSPM = 0;
 				DAC_0_CS = HIGH;
 				DAC_1_CS = LOW;
 				SHF_2_CS = HIGH;
 				MISC_3_CS = HIGH;
 				break;
 			case 2:
-				SSP1CON1bits.SSPM = 1;
+				SSP1CON1bits.SSPM = 1; // slow spi speed down
 				DAC_0_CS = HIGH;
 				DAC_1_CS = HIGH;
 				SHF_2_CS = LOW;
@@ -83,7 +82,6 @@ void tick_handler(void) // This is the high priority ISR routine
 				MISC_3_CS = LOW;
 				break;
 			default:
-				SSP1CON1bits.SSPM = 0;
 				DAC_0_CS = HIGH;
 				DAC_1_CS = HIGH;
 				SHF_2_CS = HIGH;
