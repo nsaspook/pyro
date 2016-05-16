@@ -55,7 +55,7 @@ extern "C" {
 #define DAC_0_CS	LATCbits.LATC0
 #define DAC_1_CS	LATCbits.LATC1
 #define SHF_2_CS	LATCbits.LATC2
-#define MISC_3_CS	LATCbits.LATC6
+#define SHF_3_CS	LATCbits.LATC6
 #define SPI_LOAD	LATCbits.LATC7
 
 #define DIPSW		PORTD

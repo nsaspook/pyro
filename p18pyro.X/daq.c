@@ -58,8 +58,9 @@ int8_t SPI_Out_Update(uint16_t data, uint8_t device, uint8_t ab)
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		ret = 0;
 		break;
-	case 2: // shift register output
-		spi_buf.map.buf = data; // load high byte
+	case 2:
+	case 3: // shift register output
+		spi_buf.map.buf = data; // load byte
 		spi_buf.map.select = device;
 		spi_buf.map.load = 0;
 		spi_buf.map.cs = 1;

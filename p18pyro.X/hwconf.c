@@ -49,14 +49,6 @@ void config_pic(uint16_t hw_config)
 		TRISJ = 0; // internal diag LEDS
 		LATJ = 0xff;
 
-		// SPI pin setup
-		TRISCbits.TRISC3 = LOW; //outputs
-		TRISCbits.TRISC5 = LOW;
-		TRISDbits.TRISD4 = LOW;
-		TRISDbits.TRISD6 = LOW;
-		TRISCbits.TRISC4 = HIGH; // inputs
-		TRISDbits.TRISD5 = HIGH;
-
 		/* SPI pins setup */
 		TRISCbits.TRISC3 = LOW; // SCK 
 		TRISCbits.TRISC4 = HIGH; // SDI
@@ -83,6 +75,7 @@ void config_pic(uint16_t hw_config)
 		while (DataRdy2USART()) { // dump 2 rx data
 			z = Read2USART();
 		};
+		RCSTA1bits.SPEN = 0; // disable port 1
 
 		OpenADC(ADC_FOSC_32 & ADC_RIGHT_JUST & ADC_4_TAD, ADC_CH0 & ADC_REF_VDD_VSS & ADC_INT_ON, ADC_11ANA); // open ADC channels for current and voltage readings
 		ADCON1 = 0x03; // adc [0..11] enable, the OpenADC ADC_11ANA sets this also

@@ -578,8 +578,8 @@ void main(void) // Lets Party
 				if (SPI_Out_Update(dac2, 0, 1)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 1, 0)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 1, 1)) DLED_6 = LOW;
-				if (SPI_Out_Update(0b00000000, 2, 0)) DLED_6 = LOW;
-
+				if (SPI_Out_Update(0b10000000, 2, 0)) DLED_6 = LOW;
+				if (SPI_Out_Update(0b10000000, 3, 0)) DLED_6 = LOW;
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}

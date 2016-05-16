@@ -60,32 +60,31 @@ void tick_handler(void) // This is the high priority ISR routine
 				DAC_0_CS = LOW;
 				DAC_1_CS = HIGH;
 				SHF_2_CS = HIGH;
-				MISC_3_CS = HIGH;
+				SHF_3_CS = HIGH;
 				break;
 			case 1:
 				DAC_0_CS = HIGH;
 				DAC_1_CS = LOW;
 				SHF_2_CS = HIGH;
-				MISC_3_CS = HIGH;
+				SHF_3_CS = HIGH;
 				break;
 			case 2:
-				SSP1CON1bits.SSPM = 1; // slow spi speed down
 				DAC_0_CS = HIGH;
 				DAC_1_CS = HIGH;
 				SHF_2_CS = LOW;
-				MISC_3_CS = HIGH;
+				SHF_3_CS = HIGH;
 				break;
 			case 3:
 				DAC_0_CS = HIGH;
 				DAC_1_CS = HIGH;
 				SHF_2_CS = HIGH;
-				MISC_3_CS = LOW;
+				SHF_3_CS = LOW;
 				break;
 			default:
 				DAC_0_CS = HIGH;
 				DAC_1_CS = HIGH;
 				SHF_2_CS = HIGH;
-				MISC_3_CS = HIGH;
+				SHF_3_CS = HIGH;
 				break;
 			}
 			SSP1BUF = spi_buf.map.buf; // transfer the 8 bit data buffer
@@ -99,45 +98,16 @@ void tick_handler(void) // This is the high priority ISR routine
 					DAC_1_CS = HIGH;
 					break;
 				case 2:
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
-					Nop();
 					SHF_2_CS = HIGH;
 					break;
 				case 3:
-					MISC_3_CS = HIGH;
+					SHF_3_CS = HIGH;
 					break;
 				default:
 					DAC_0_CS = HIGH;
 					DAC_1_CS = HIGH;
 					SHF_2_CS = HIGH;
-					MISC_3_CS = HIGH;
+					SHF_3_CS = HIGH;
 					break;
 				}
 			}
