@@ -56,36 +56,90 @@ void tick_handler(void) // This is the high priority ISR routine
 			SPI_LOAD = spi_buf.map.load;
 			switch (spi_buf.map.select) { // set device select options
 			case 0:
+				SSP1CON1bits.SSPM = 0;
 				DAC_0_CS = LOW;
 				DAC_1_CS = HIGH;
+				SHF_2_CS = HIGH;
+				MISC_3_CS = HIGH;
 				break;
 			case 1:
+				SSP1CON1bits.SSPM = 0;
 				DAC_0_CS = HIGH;
 				DAC_1_CS = LOW;
+				SHF_2_CS = HIGH;
+				MISC_3_CS = HIGH;
 				break;
 			case 2:
-			case 3:
-			default:
+				SSP1CON1bits.SSPM = 1;
 				DAC_0_CS = HIGH;
 				DAC_1_CS = HIGH;
+				SHF_2_CS = LOW;
+				MISC_3_CS = HIGH;
+				break;
+			case 3:
+				DAC_0_CS = HIGH;
+				DAC_1_CS = HIGH;
+				SHF_2_CS = HIGH;
+				MISC_3_CS = LOW;
+				break;
+			default:
+				SSP1CON1bits.SSPM = 0;
+				DAC_0_CS = HIGH;
+				DAC_1_CS = HIGH;
+				SHF_2_CS = HIGH;
+				MISC_3_CS = HIGH;
 				break;
 			}
 			SSP1BUF = spi_buf.map.buf; // transfer the 8 bit data buffer
 			if (spi_buf.map.cs) { // dselect device after current transfer ?
+				Nop(); // a bit of extra delay
 				switch (spi_buf.map.select) { // set device deselect options
 				case 0:
-					Nop(); // a bit of extra delay
 					DAC_0_CS = HIGH;
 					break;
 				case 1:
-					Nop();
 					DAC_1_CS = HIGH;
 					break;
 				case 2:
-				case 3:
-				default:
 					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					Nop();
+					SHF_2_CS = HIGH;
+					break;
+				case 3:
+					MISC_3_CS = HIGH;
+					break;
+				default:
 					DAC_0_CS = HIGH;
+					DAC_1_CS = HIGH;
+					SHF_2_CS = HIGH;
+					MISC_3_CS = HIGH;
 					break;
 				}
 			}
@@ -230,7 +284,7 @@ void tick_handler(void) // This is the high priority ISR routine
 
 		MPULED = !MPULED; //  flash led
 		V.timerint_count++; // set 1 second clock counter.
-		DLED_7=OFF;
+		DLED_7 = OFF;
 	}
 
 	/* User terminal comm routines */
