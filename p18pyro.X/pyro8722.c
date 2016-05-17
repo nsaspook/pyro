@@ -463,7 +463,7 @@ void main(void) // Lets Party
 
 	static uint32_t z;
 	static union adc_buf_type adc_buf;
-	uint16_t dac1, dac2 = 5000;
+	uint16_t dac1, dac2 = 5000, shf;
 	uint32_t dtime1, dtime2;
 
 
@@ -572,14 +572,15 @@ void main(void) // Lets Party
 			if (V.clock20 > dtime2 + 1) { // ~10hz DAC update rate
 				dac1 += 3;
 				dac2 -= 3;
+				shf++;
 				DLED_2 = HIGH;
 				// do something
 				if (SPI_Out_Update(dac1, 0, 0)) DLED_6 = LOW;
 				if (SPI_Out_Update(dac2, 0, 1)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 1, 0)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 1, 1)) DLED_6 = LOW;
-				if (SPI_Out_Update(0b10000000, 2, 0)) DLED_6 = LOW;
-				if (SPI_Out_Update(0b10000000, 3, 0)) DLED_6 = LOW;
+				if (SPI_Out_Update(shf, 2, 0)) DLED_6 = LOW;
+				if (SPI_Out_Update(shf, 3, 0)) DLED_6 = LOW;
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}
