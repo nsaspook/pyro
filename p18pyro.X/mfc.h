@@ -27,7 +27,7 @@ extern "C" {
 	} volatile mfctype;
 
 	extern enum gas_t {
-		FLOW, SHUT, MASS
+		SHUT, FLOW, MASS
 	} gas_t;
 #ifdef	__cplusplus
 }

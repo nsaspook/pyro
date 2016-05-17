@@ -301,8 +301,9 @@ void tick_handler(void) // This is the high priority ISR routine
 #pragma interruptlow work_handler
 
 void work_handler(void) // This is the low priority ISR routine, the high ISR routine will be called during this code section
-{ // projector lamp scan converter
+{ // projector lamp scan converter, mfc totals
 	union Timers timerl;
+	uint8_t	i;
 
 	DLED_1 = HIGH;
 	V.lowint_count++; // low int trigger entropy counter
@@ -313,6 +314,19 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 		TMR3H = timerl.bt[HIGH]; // Write high byte to Timer3 High byte
 		TMR3L = timerl.bt[LOW]; // Write low byte to Timer3 Low byte
 		V.clock20++;
+
+		for (i = 0; i <= 3; i++) {
+			switch (mfc[i].gas_t) {
+			case FLOW:
+				break;
+			case MASS:
+				break;
+			case SHUT:
+				break;
+			default:
+				break;
+			}
+		}
 	}
 	DLED_1 = LOW;
 }
