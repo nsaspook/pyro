@@ -315,7 +315,7 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 		TMR3L = timerl.bt[LOW]; // Write low byte to Timer3 Low byte
 		V.clock20++;
 
-		for (i = 0; i <= 3; i++) {
+		for (i = AIR_MFC; i <= COLOR2_MFC; i++) {
 			switch (mfc[i].gas_t) {
 			case FLOW:
 				break;
