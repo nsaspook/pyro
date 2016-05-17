@@ -135,6 +135,10 @@ extern "C" {
 #define LL3		0x14
 #define	LL4		0x54
 
+#define AIR_MFC		0
+#define GAS_MFC		1
+#define COLOR1_MFC	2
+#define COLOR2_MFC	3
 
 #ifdef	__cplusplus
 }

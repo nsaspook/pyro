@@ -13,6 +13,7 @@
 #include <adc.h>
 #include "ringbufs.h"
 #include "xlcd.h"
+#include "mfc.h"
 
 void tick_handler(void);
 void work_handler(void);
@@ -44,6 +45,9 @@ extern volatile enum movement_t {
 extern volatile enum answer_t {
 	WAIT_M, YES_M, NO_M
 } YNKEY;
+
+/* BEGIN LOW ISR */
+extern mfctype mfc[4], *mfcptr;
 
 /* BEGIN IDLE_LOOP EXTRAS */
 extern volatile uint8_t IDLEFLAG;

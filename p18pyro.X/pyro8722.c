@@ -142,6 +142,9 @@
 #include "pyro_shared.h"
 #include "daq.h"
 #include "ringbufs.h"
+#include "mfc.h"
+
+extern mfctype mfc[4], *mfcptr;
 
 #pragma udata gpr13
 far int8_t bootstr2[MESG_W + 1], f1[MESG_W], f2[MESG_W];
@@ -445,11 +448,11 @@ void fade_up_leds(void)
 		while (j < 300 && k > 0) {
 			for (i = 0; i < j; i++) {
 				bitmap_e(l, ON);
-				wdtdelay(2); // short delay function
+				wdtdelay(1); // short delay function
 			}
 			for (i = 0; i < k; i++) {
 				bitmap_e(l, OFF);
-				wdtdelay(2);
+				wdtdelay(1);
 			}
 			j++;
 			k--;
@@ -523,6 +526,13 @@ void main(void) // Lets Party
 	ringBufS_init(spi_link.tx1b); // spi tx buffer
 	ringBufS_init(spi_link.rx1b); // spi rx buffer
 
+	/*
+	 * MFC setup
+	 */
+
+	mfcptr = &mfc[AIR_MFC];
+	mfc_config();
+
 	/*      Work thread start */
 	start_workerthread();
 
@@ -579,8 +589,8 @@ void main(void) // Lets Party
 				if (SPI_Out_Update(dac2, 0, 1)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 1, 0)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 1, 1)) DLED_6 = LOW;
-				if (SPI_Out_Update(shf, 2, 0)) DLED_6 = LOW;
-				if (SPI_Out_Update(shf, 3, 0)) DLED_6 = LOW;
+				if (SPI_Out_Update(rand(), 2, 0)) DLED_6 = LOW;
+				if (SPI_Out_Update(rand(), 3, 0)) DLED_6 = LOW;
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}
