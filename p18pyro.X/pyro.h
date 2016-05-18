@@ -179,6 +179,18 @@ extern "C" {
 		struct mcp4822_data map;
 	};
 
+	/* DAC chip A/B addressing */
+	typedef struct mcp4822_adr {
+		uint8_t ab : 1;
+		uint8_t device : 2;
+	} mcp4822_adr;
+
+	union mcp4822_adr_type {
+		uint8_t buf;
+		struct mcp4822_adr map;
+	};
+
+	/* SPI devices link state */
 	typedef struct L_data { // link state data
 		uint8_t boot_code : 1;
 		uint16_t adc_chan; // must be 16 bit value
@@ -193,6 +205,22 @@ extern "C" {
 		struct ringBufS_t *tx1b, *rx1b;
 		uint32_t count;
 	};
+
+	typedef struct mfctype {
+		uint8_t id;
+
+		enum gas_t {
+			SHUT, FLOW, MASS
+		} gas_t;
+		uint16_t mfc_flow_size, mfc_actual, mfc_set, error, mfc_actual_prev, mfc_change; // in ADC counts
+		float scale_out, scale_in; // scaling factor from actual to scaled and back
+		uint32_t mfc_integ_total_mass, mfc_integ_current_mass,
+		flow_time_total, flow_time_left;
+	} volatile mfctype;
+
+	extern enum gas_t {
+		SHUT, FLOW, MASS
+	} gas_t;
 
 	int8_t spinners(uint8_t, uint8_t);
 	float lp_filter(float, int16_t, int16_t);

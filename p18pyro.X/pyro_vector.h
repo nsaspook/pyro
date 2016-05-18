@@ -47,7 +47,7 @@ extern volatile enum answer_t {
 } YNKEY;
 
 /* BEGIN LOW ISR */
-extern mfctype mfc[4], *mfcptr;
+extern struct mfctype mfc[4], *mfcptr;
 
 /* BEGIN IDLE_LOOP EXTRAS */
 extern volatile uint8_t IDLEFLAG;

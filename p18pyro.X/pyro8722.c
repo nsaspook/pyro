@@ -144,7 +144,7 @@
 #include "ringbufs.h"
 #include "mfc.h"
 
-extern mfctype mfc[4], *mfcptr;
+extern struct mfctype mfc[4], *mfcptr;
 
 #pragma udata gpr13
 far int8_t bootstr2[MESG_W + 1], f1[MESG_W], f2[MESG_W];
@@ -586,7 +586,11 @@ void main(void) // Lets Party
 				DLED_2 = HIGH;
 				// do something
 				if (SPI_Out_Update(dac1, 0, 0)) DLED_6 = LOW;
-				if (SPI_Out_Update(dac2, 0, 1)) DLED_6 = LOW;
+
+				mfc[GAS_MFC].mfc_set = dac2;
+				mfc[GAS_MFC].gas_t = FLOW;
+				if (mfc_set(&mfc[GAS_MFC])) DLED_6 = LOW;
+
 				if (SPI_Out_Update(rand(), 1, 0)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 1, 1)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 2, 0)) DLED_6 = LOW;
