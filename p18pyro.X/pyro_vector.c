@@ -1,5 +1,6 @@
 /* High and Low ISR codes, some glue routines */
 #include "pyro_vector.h"
+#include "mfc.h"
 
 #pragma interrupt tick_handler
 
@@ -303,7 +304,8 @@ void tick_handler(void) // This is the high priority ISR routine
 void work_handler(void) // This is the low priority ISR routine, the high ISR routine will be called during this code section
 { // projector lamp scan converter, mfc totals
 	union Timers timerl;
-	uint8_t	i;
+	uint8_t i;
+	union mcp4822_adr_type mfc_dac_select;
 
 	DLED_1 = HIGH;
 	V.lowint_count++; // low int trigger entropy counter
@@ -316,12 +318,20 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 		V.clock20++;
 
 		for (i = AIR_MFC; i <= COLOR2_MFC; i++) {
+			mfc[i].mfc_integ_total_mass += L.adc_val[i];
+			mfc[i].mfc_integ_current_mass += L.adc_val[i];
+
 			switch (mfc[i].gas_t) {
-			case FLOW:
-				break;
-			case MASS:
+			case MASS: /* turn off the MFC at the total mass setpoint target */
+				if (mfc[i].mfc_integ_current_mass >= mfc[i].mfc_integ_target_mass) {
+					mfc[i].done = HIGH;
+					mfc_dac_select.buf = i;
+					mfc[i].mfc_set = 0;
+					SPI_Out_Update(mfc[i].mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
+				}
 				break;
 			case SHUT:
+			case FLOW:
 				break;
 			default:
 				break;

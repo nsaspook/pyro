@@ -181,8 +181,8 @@ extern "C" {
 
 	/* DAC chip A/B addressing */
 	typedef struct mcp4822_adr {
-		uint8_t ab : 1;
-		uint8_t device : 2;
+		uint8_t device : 1;
+		uint8_t cs : 2;
 	} mcp4822_adr;
 
 	union mcp4822_adr_type {
@@ -208,13 +208,16 @@ extern "C" {
 
 	typedef struct mfctype {
 		uint8_t id;
+		uint8_t	done:1;
+		uint8_t	timeout:1;
+		uint8_t	measure:1;
 
 		enum gas_t {
 			SHUT, FLOW, MASS
 		} gas_t;
 		uint16_t mfc_flow_size, mfc_actual, mfc_set, error, mfc_actual_prev, mfc_change; // in ADC counts
 		float scale_out, scale_in; // scaling factor from actual to scaled and back
-		uint32_t mfc_integ_total_mass, mfc_integ_current_mass,
+		uint32_t mfc_integ_total_mass, mfc_integ_current_mass, mfc_integ_target_mass,
 		flow_time_total, flow_time_left;
 	} volatile mfctype;
 

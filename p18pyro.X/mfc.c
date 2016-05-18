@@ -20,28 +20,37 @@ void mfc_config(void)
 	for (i = 0; i <= 3; i++) {
 		mfc[i].id = i;
 		mfc[i].gas_t = SHUT;
+		mfc[i].mfc_integ_total_mass = 1;
+		mfc[i].mfc_integ_current_mass = 1;
+		mfc[i].mfc_integ_target_mass = 1;
 	}
 }
 
 int8_t mfc_set(struct mfctype * mfc)
 {
-	int8_t ret;
+	int8_t ret = -1;
 	uint8_t mfc_id = mfc->id;
 	union mcp4822_adr_type mfc_dac_select;
 
 	switch (mfc->gas_t) {
 	case MASS:
-		break;
 	case FLOW:
+		if (!mfc->measure) {
+			mfc->measure = HIGH;
+			mfc_dac_select.buf = mfc_id;
+			ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
+		}
 		break;
 	case SHUT:
+		mfc->done = LOW;
+		mfc->measure = LOW;
 	default:
 		mfc->mfc_set = 0;
+		mfc_dac_select.buf = mfc_id;
+		ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
+		ret += -10; // add invalid gas_t error code
 		break;
 	}
-
-	mfc_dac_select.buf = mfc_id;
-	ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.device, mfc_dac_select.map.ab);
 
 	return ret;
 }

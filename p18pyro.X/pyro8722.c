@@ -559,10 +559,11 @@ void main(void) // Lets Party
 				bootstr2[20] = NULL0; // limit the string to 20 chars
 				S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
 				putsXLCD(bootstr2);
-				//sprintf(f1, "SPI int  %lu %c                          ", spi_link.count, spinners(5, 0));
-				//f1[20] = NULL0; // limit the string to 20 chars
-				//S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
-				//putsXLCD(f1);
+				sprintf(f1, "%lu %lu                                    ", mfc[COLOR1_MFC].mfc_integ_current_mass / 1200UL,
+					mfc[COLOR1_MFC].mfc_integ_total_mass / 1200UL);
+				f1[20] = NULL0; // limit the string to 20 chars
+				S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
+				putsXLCD(f1);
 				//sprintf(f1, "LCD char %lu %lu                         ", V.lcd_count, z);
 				//f1[20] = NULL0; // limit the string to 20 chars
 				//S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
@@ -590,8 +591,10 @@ void main(void) // Lets Party
 				mfc[GAS_MFC].mfc_set = dac2;
 				mfc[GAS_MFC].gas_t = FLOW;
 				if (mfc_set(&mfc[GAS_MFC])) DLED_6 = LOW;
+				mfc[COLOR1_MFC].mfc_set = dac2;
+				mfc[COLOR1_MFC].gas_t = FLOW;
+				if (mfc_set(&mfc[COLOR1_MFC])) DLED_6 = LOW;
 
-				if (SPI_Out_Update(rand(), 1, 0)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 1, 1)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 2, 0)) DLED_6 = LOW;
 				if (SPI_Out_Update(rand(), 3, 0)) DLED_6 = LOW;
