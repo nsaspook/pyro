@@ -23,7 +23,8 @@ extern "C" {
 		} gas_t;
 		uint16_t mfc_flow_size, mfc_actual, mfc_set, error, mfc_actual_prev, mfc_change; // in ADC counts
 		float scale_out, scale_in; // scaling factor from actual to scaled and back
-		uint32_t mfc_integ_total_mass, mfc_integ_current_mass;
+		uint32_t mfc_integ_total_mass, mfc_integ_current_mass,
+			flow_time_total, flow_time_left;
 	} volatile mfctype;
 
 	extern enum gas_t {
