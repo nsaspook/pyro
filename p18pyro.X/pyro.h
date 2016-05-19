@@ -194,7 +194,15 @@ extern "C" {
 	typedef struct tpic6b595_adr {
 		uint8_t o0 : 1;
 		uint8_t o1 : 1;
+
+		enum valve_t {
+			PURGE, AIR, GAS, COLOR1, COLOR2
+		} valve_t;
 	} tpic6b595_adr;
+
+	extern enum valve_t {
+		PURGE, AIR, GAS, COLOR1, COLOR2
+	} valve_t;
 
 	union tpic6b595_adr_type {
 		uint8_t buf;

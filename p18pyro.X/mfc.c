@@ -14,7 +14,7 @@ void mfc_config(void)
 
 	mfc[AIR_MFC].mfc_flow_size = 500; // 0.1 units 50SLM for 5 volts
 	mfc[GAS_MFC].mfc_flow_size = 150;
-	mfc[COLOR1_MFC].mfc_flow_size = 10;
+	mfc[COLOR1_MFC].mfc_flow_size = 500;
 	mfc[COLOR2_MFC].mfc_flow_size = 10;
 
 	/*

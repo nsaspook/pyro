@@ -15,6 +15,8 @@
       <itemPath>pyro.h</itemPath>
       <itemPath>xlcd.h</itemPath>
       <itemPath>mfc.h</itemPath>
+      <itemPath>valve.h</itemPath>
+      <itemPath>displays.h</itemPath>
     </logicalFolder>
     <logicalFolder name="f1" displayName="info" projectFiles="true">
       <itemPath>ET-BASE 8722 ICD2 ENG.pdf</itemPath>
@@ -22,6 +24,9 @@
       <itemPath>mcp4822.pdf</itemPath>
       <itemPath>50827300series.pdf</itemPath>
       <itemPath>mfc_pinout.png</itemPath>
+      <itemPath>tpic6b595.pdf</itemPath>
+      <itemPath>SEC400___2.pdf</itemPath>
+      <itemPath>Clippard Full-Line Catalog.pdf</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -49,6 +54,8 @@
       <itemPath>crit.c</itemPath>
       <itemPath>ringbufs.c</itemPath>
       <itemPath>mfc.c</itemPath>
+      <itemPath>valve.c</itemPath>
+      <itemPath>displays.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -151,6 +158,7 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>

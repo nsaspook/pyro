@@ -26,9 +26,9 @@ extern "C" {
 #define	Hpri		1
 #define	Lpri		2
 #define	HL		3
-#define	TIMEROFFSET		26474           // timer0 16bit counter value for 1 second to overflow
-#define	TIMER3REG		3048            // timer3 value for 20Hz clock, orig value 3048
-#define TIMER4_NORM	0x11
+#define	TIMEROFFSET	26474           // timer0 16bit counter value for 1 second to overflow
+#define	TIMER3REG	3048            // timer3 value for 20Hz clock, orig value 3048
+#define TIMER4_NORM	0x07		// 0x11 for slower SPS
 #define TIMER4_FAST	0x07
 #define LCD_SLOW	8		// timer ticks for slow commands
 #define	TIMEOFF		60      	// seconds in 1 min
@@ -59,7 +59,7 @@ extern "C" {
 #define SPI_LOAD	LATCbits.LATC7
 
 #define DIPSW		PORTD
-#define	DIPSW1		PORTDbits.RD0
+#define	PURGE_PSW	PORTDbits.RD0
 #define	DIPSW2		PORTDbits.RD1
 #define	DIPSW3		PORTDbits.RD2
 #define	DIPSW4		PORTDbits.RD3

@@ -143,6 +143,8 @@
 #include "daq.h"
 #include "ringbufs.h"
 #include "mfc.h"
+#include "valve.h"
+#include "displays.h"
 
 extern struct mfctype mfc[4], *mfcptr;
 
@@ -462,7 +464,6 @@ void fade_up_leds(void)
 
 void main(void) // Lets Party
 {
-
 	static uint32_t z;
 	static union adc_buf_type adc_buf;
 	uint16_t dac1, dac2 = 5000;
@@ -550,23 +551,13 @@ void main(void) // Lets Party
 				voltfp(L.adc_val[2], f2); // mfc readback 0
 				voltfp(L.adc_val[3], f3); // mfc setpoint 0
 				sprintf(bootstr2, "%sV %sV %sV                        ", f1, f3, f2);
-				bootstr2[20] = NULL0; // limit the string to 20 chars
 				DLED_4 = HIGH;
-				S_WriteCmdXLCD(0b10000000 | LL2); // SetDDRamAddr
-				putsXLCD(bootstr2);
+				lcd_display_line(bootstr2, LL2);
 				sprintf(bootstr2, "%u %u %u %d                          ", L.adc_raw[0], L.adc_raw[3], L.adc_raw[2], (int16_t) (L.adc_raw[3] - L.adc_raw[2]));
-				bootstr2[20] = NULL0; // limit the string to 20 chars
-				S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
-				putsXLCD(bootstr2);
-				sprintf(f1, "%lu %lu 0.1 SLM                                   ", mfc[COLOR1_MFC].mfc_integ_current_mass / MFC_INTEG,
+				lcd_display_line(bootstr2, LL3);
+				sprintf(f1, "%lu %lu SLM 0                              ", mfc[COLOR1_MFC].mfc_integ_current_mass / MFC_INTEG,
 					(uint32_t) ((float) (mfc[COLOR1_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[COLOR1_MFC].scale_out));
-				f1[20] = NULL0; // limit the string to 20 chars
-				S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
-				putsXLCD(f1);
-				//sprintf(f1, "LCD char %lu %lu                         ", V.lcd_count, z);
-				//f1[20] = NULL0; // limit the string to 20 chars
-				//S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
-				//putsXLCD(f1);
+				lcd_display_line(f1, LL4);
 				DLED_4 = LOW;
 				dtime1 = V.clock20;
 			}
@@ -585,13 +576,13 @@ void main(void) // Lets Party
 				DLED_2 = HIGH;
 				// do something
 				mfc_flow(&mfc[AIR_MFC], dac1);
-				
+
 				mfc_flow(&mfc[GAS_MFC], dac2);
-				
-				mfc_mass(&mfc[COLOR1_MFC], 2500, 50);
+
+				mfc_mass(&mfc[COLOR1_MFC], 3000, 25);
 				if (mfc_done(&mfc[COLOR1_MFC]))
 					mfc_shut(&mfc[COLOR1_MFC]);
-				
+
 				mfc_flow(&mfc[COLOR2_MFC], rand());
 
 				SPI_Daq_Update(rand(), SHIFT_565_0_7, 0);

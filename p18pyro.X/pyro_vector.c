@@ -17,6 +17,7 @@ void tick_handler(void) // This is the high priority ISR routine
 	V.highint_count++; // high int counter
 
 	if (PIE1bits.ADIE && PIR1bits.ADIF) { // ADC conversion complete flag
+		DLED_5 = LOW;
 		V.adc_count++; // just keep count
 		PIR1bits.ADIF = LOW;
 		adc_buf.buf = ADRES;
@@ -45,8 +46,10 @@ void tick_handler(void) // This is the high priority ISR routine
 		 */
 		if (!ADCON0bits.GO) {
 			ADCON0bits.CHS = L.adc_chan & ADC_CHAN_MASK; // set the current channel
-			if (adc_trigger++) // trigger the conversion on the next timer int so the channel mux can settle
+			if (adc_trigger++) { // trigger the conversion on the next timer int so the channel mux can settle
 				ADCON0bits.GO = HIGH; // and begin A/D conv, will set adc int flag when done.
+				DLED_5 = HIGH;
+			}
 		}
 
 		/*
