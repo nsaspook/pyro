@@ -140,6 +140,12 @@ extern "C" {
 #define COLOR1_MFC	2
 #define COLOR2_MFC	3
 
+#define MFC_INTEG	1200UL // sample updates per Min
+#define MFC_VOLTS	5000.0 // millivolts
+
+#define SHIFT_565_0_7	2
+#define SHIFT_565_8_15	3	
+
 #ifdef	__cplusplus
 }
 #endif

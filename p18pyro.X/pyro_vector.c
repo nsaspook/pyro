@@ -88,6 +88,7 @@ void tick_handler(void) // This is the high priority ISR routine
 				SHF_3_CS = HIGH;
 				break;
 			}
+			Nop();
 			SSP1BUF = spi_buf.map.buf; // transfer the 8 bit data buffer
 			if (spi_buf.map.cs) { // dselect device after current transfer ?
 				Nop(); // a bit of extra delay
@@ -253,6 +254,7 @@ void tick_handler(void) // This is the high priority ISR routine
 
 		MPULED = !MPULED; //  flash led
 		V.timerint_count++; // set 1 second clock counter.
+		DLED_6 = OFF;
 		DLED_7 = OFF;
 	}
 
@@ -331,6 +333,8 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 				}
 				break;
 			case SHUT:
+				mfc[i].mfc_integ_current_mass = 0;
+				break;
 			case FLOW:
 				break;
 			default:

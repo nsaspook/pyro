@@ -3,7 +3,7 @@
 
 void S_WriteDataXLCD(char data)
 {
-	while (ringBufS_full(L.tx1b)) DLED_7=ON; // normally there is plenty of space
+	while (ringBufS_full(L.tx1b)) DLED_7 = ON; // normally there is plenty of space
 	ringBufS_put(L.tx1b, data);
 	return;
 }

@@ -12,10 +12,10 @@ void mfc_config(void)
 {
 	uint8_t i;
 
-	mfc[AIR_MFC].mfc_flow_size = 5000; // 50SLM
-	mfc[GAS_MFC].mfc_flow_size = 1500;
-	mfc[COLOR1_MFC].mfc_flow_size = 100;
-	mfc[COLOR2_MFC].mfc_flow_size = 100;
+	mfc[AIR_MFC].mfc_flow_size = 500; // 0.1 units 50SLM for 5 volts
+	mfc[GAS_MFC].mfc_flow_size = 150;
+	mfc[COLOR1_MFC].mfc_flow_size = 10;
+	mfc[COLOR2_MFC].mfc_flow_size = 10;
 
 	for (i = 0; i <= 3; i++) {
 		mfc[i].id = i;
@@ -23,6 +23,7 @@ void mfc_config(void)
 		mfc[i].mfc_integ_total_mass = 1;
 		mfc[i].mfc_integ_current_mass = 1;
 		mfc[i].mfc_integ_target_mass = 1;
+		mfc[i].scale_out = ((float) mfc[i].mfc_flow_size) / MFC_VOLTS;
 	}
 }
 
@@ -32,14 +33,22 @@ int8_t mfc_set(struct mfctype * mfc)
 	uint8_t mfc_id = mfc->id;
 	union mcp4822_adr_type mfc_dac_select;
 
+	mfcptr = mfc;
+
 	switch (mfc->gas_t) {
 	case MASS:
-	case FLOW:
+		ret = 0;
 		if (!mfc->measure) {
 			mfc->measure = HIGH;
 			mfc_dac_select.buf = mfc_id;
+			mfc->mfc_integ_current_mass = 0;
 			ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
 		}
+		break;
+	case FLOW:
+		mfc->measure = HIGH;
+		mfc_dac_select.buf = mfc_id;
+		ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
 		break;
 	case SHUT:
 		mfc->done = LOW;
@@ -48,9 +57,9 @@ int8_t mfc_set(struct mfctype * mfc)
 		mfc->mfc_set = 0;
 		mfc_dac_select.buf = mfc_id;
 		ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
-		ret += -10; // add invalid gas_t error code
 		break;
 	}
+	if (ret) DLED_6 = ON;
 
 	return ret;
 }

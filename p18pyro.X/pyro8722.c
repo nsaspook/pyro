@@ -452,7 +452,6 @@ void fade_up_leds(void)
 			}
 			for (i = 0; i < k; i++) {
 				bitmap_e(l, OFF);
-				wdtdelay(1);
 			}
 			j++;
 			k--;
@@ -559,8 +558,8 @@ void main(void) // Lets Party
 				bootstr2[20] = NULL0; // limit the string to 20 chars
 				S_WriteCmdXLCD(0b10000000 | LL3); // SetDDRamAddr
 				putsXLCD(bootstr2);
-				sprintf(f1, "%lu %lu                                    ", mfc[COLOR1_MFC].mfc_integ_current_mass / 1200UL,
-					mfc[COLOR1_MFC].mfc_integ_total_mass / 1200UL);
+				sprintf(f1, "%lu %lu 0.1 SLM                                   ", mfc[COLOR1_MFC].mfc_integ_current_mass / MFC_INTEG,
+					(uint32_t) ((float) (mfc[COLOR1_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[COLOR1_MFC].scale_out));
 				f1[20] = NULL0; // limit the string to 20 chars
 				S_WriteCmdXLCD(0b10000000 | LL4); // SetDDRamAddr
 				putsXLCD(f1);
@@ -586,18 +585,30 @@ void main(void) // Lets Party
 				shf++;
 				DLED_2 = HIGH;
 				// do something
-				if (SPI_Out_Update(dac1, 0, 0)) DLED_6 = LOW;
+				mfc[AIR_MFC].mfc_set = dac1;
+				mfc[AIR_MFC].gas_t = FLOW;
+				mfc_set(&mfc[AIR_MFC]);
 
 				mfc[GAS_MFC].mfc_set = dac2;
 				mfc[GAS_MFC].gas_t = FLOW;
-				if (mfc_set(&mfc[GAS_MFC])) DLED_6 = LOW;
-				mfc[COLOR1_MFC].mfc_set = dac2;
-				mfc[COLOR1_MFC].gas_t = FLOW;
-				if (mfc_set(&mfc[COLOR1_MFC])) DLED_6 = LOW;
+				mfc_set(&mfc[GAS_MFC]);
 
-				if (SPI_Out_Update(rand(), 1, 1)) DLED_6 = LOW;
-				if (SPI_Out_Update(rand(), 2, 0)) DLED_6 = LOW;
-				if (SPI_Out_Update(rand(), 3, 0)) DLED_6 = LOW;
+				mfc[COLOR1_MFC].mfc_set = 4000; // millivolts
+				mfc[COLOR1_MFC].mfc_integ_target_mass = 10 * MFC_INTEG; // total volts
+				mfc[COLOR1_MFC].gas_t = MASS;
+				mfc_set(&mfc[COLOR1_MFC]);
+
+				if (mfc[COLOR1_MFC].done) {
+					mfc[COLOR1_MFC].gas_t = SHUT;
+					mfc_set(&mfc[COLOR1_MFC]);
+				}
+
+				mfc[COLOR2_MFC].mfc_set = rand();
+				mfc[COLOR2_MFC].gas_t = FLOW;
+				mfc_set(&mfc[COLOR2_MFC]);
+
+				SPI_Out_Update(rand(), SHIFT_565_0_7, 0);
+				SPI_Out_Update(rand(), SHIFT_565_8_15, 0);
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}

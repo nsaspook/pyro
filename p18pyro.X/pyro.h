@@ -182,7 +182,7 @@ extern "C" {
 	/* DAC chip A/B addressing */
 	typedef struct mcp4822_adr {
 		uint8_t device : 1;
-		uint8_t cs : 2;
+		uint8_t cs : 1;
 	} mcp4822_adr;
 
 	union mcp4822_adr_type {
@@ -208,9 +208,9 @@ extern "C" {
 
 	typedef struct mfctype {
 		uint8_t id;
-		uint8_t	done:1;
-		uint8_t	timeout:1;
-		uint8_t	measure:1;
+		uint8_t done : 1;
+		uint8_t timeout : 1;
+		uint8_t measure : 1;
 
 		enum gas_t {
 			SHUT, FLOW, MASS
