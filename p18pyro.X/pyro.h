@@ -190,6 +190,17 @@ extern "C" {
 		struct mcp4822_adr map;
 	};
 
+	/* tpic6b595 shift register bit addressing */
+	typedef struct tpic6b595_adr {
+		uint8_t o0 : 1;
+		uint8_t o1 : 1;
+	} tpic6b595_adr;
+
+	union tpic6b595_adr_type {
+		uint8_t buf;
+		struct tpic6b595_adr map;
+	};
+
 	/* SPI devices link state */
 	typedef struct L_data { // link state data
 		uint8_t boot_code : 1;
