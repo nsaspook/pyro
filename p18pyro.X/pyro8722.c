@@ -442,7 +442,7 @@ void fade_up_leds(void)
 	int16_t i, j, k;
 
 
-	for (l = 0; l <= 7; l++) {
+	for (l = 0; l <= 1; l++) {
 		k = 200;
 		j = 0;
 		while (j < 300 && k > 0) {
@@ -465,7 +465,7 @@ void main(void) // Lets Party
 
 	static uint32_t z;
 	static union adc_buf_type adc_buf;
-	uint16_t dac1, dac2 = 5000, shf;
+	uint16_t dac1, dac2 = 5000;
 	uint32_t dtime1, dtime2;
 
 
@@ -582,33 +582,20 @@ void main(void) // Lets Party
 			if (V.clock20 > dtime2 + 1) { // ~10hz DAC update rate
 				dac1 += 3;
 				dac2 -= 3;
-				shf++;
 				DLED_2 = HIGH;
 				// do something
-				mfc[AIR_MFC].mfc_set = dac1;
-				mfc[AIR_MFC].gas_t = FLOW;
-				mfc_set(&mfc[AIR_MFC]);
+				mfc_flow(&mfc[AIR_MFC], dac1);
+				
+				mfc_flow(&mfc[GAS_MFC], dac2);
+				
+				mfc_mass(&mfc[COLOR1_MFC], 2500, 50);
+				if (mfc_done(&mfc[COLOR1_MFC]))
+					mfc_shut(&mfc[COLOR1_MFC]);
+				
+				mfc_flow(&mfc[COLOR2_MFC], rand());
 
-				mfc[GAS_MFC].mfc_set = dac2;
-				mfc[GAS_MFC].gas_t = FLOW;
-				mfc_set(&mfc[GAS_MFC]);
-
-				mfc[COLOR1_MFC].mfc_set = 4000; // millivolts
-				mfc[COLOR1_MFC].mfc_integ_target_mass = 10 * MFC_INTEG; // total volts
-				mfc[COLOR1_MFC].gas_t = MASS;
-				mfc_set(&mfc[COLOR1_MFC]);
-
-				if (mfc[COLOR1_MFC].done) {
-					mfc[COLOR1_MFC].gas_t = SHUT;
-					mfc_set(&mfc[COLOR1_MFC]);
-				}
-
-				mfc[COLOR2_MFC].mfc_set = rand();
-				mfc[COLOR2_MFC].gas_t = FLOW;
-				mfc_set(&mfc[COLOR2_MFC]);
-
-				SPI_Out_Update(rand(), SHIFT_565_0_7, 0);
-				SPI_Out_Update(rand(), SHIFT_565_8_15, 0);
+				SPI_Daq_Update(rand(), SHIFT_565_0_7, 0);
+				SPI_Daq_Update(rand(), SHIFT_565_8_15, 0);
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}
@@ -618,6 +605,7 @@ void main(void) // Lets Party
 			SSPCON1bits.WCOL = (SSPCON1bits.SSPOV = LOW);
 			ringBufS_flush(spi_link.tx1b, 1); // dump the spi buffers
 			ringBufS_flush(spi_link.rx1b, 1);
+			DLED_6 = ON;
 		}
 	}
 }

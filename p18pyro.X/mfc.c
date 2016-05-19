@@ -17,6 +17,9 @@ void mfc_config(void)
 	mfc[COLOR1_MFC].mfc_flow_size = 10;
 	mfc[COLOR2_MFC].mfc_flow_size = 10;
 
+	/*
+	 * setup defaults
+	 */
 	for (i = 0; i <= 3; i++) {
 		mfc[i].id = i;
 		mfc[i].gas_t = SHUT;
@@ -42,13 +45,13 @@ int8_t mfc_set(struct mfctype * mfc)
 			mfc->measure = HIGH;
 			mfc_dac_select.buf = mfc_id;
 			mfc->mfc_integ_current_mass = 0;
-			ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
+			ret = SPI_Daq_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
 		}
 		break;
 	case FLOW:
 		mfc->measure = HIGH;
 		mfc_dac_select.buf = mfc_id;
-		ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
+		ret = SPI_Daq_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
 		break;
 	case SHUT:
 		mfc->done = LOW;
@@ -56,10 +59,40 @@ int8_t mfc_set(struct mfctype * mfc)
 	default:
 		mfc->mfc_set = 0;
 		mfc_dac_select.buf = mfc_id;
-		ret = SPI_Out_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
+		ret = SPI_Daq_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
 		break;
 	}
-	if (ret) DLED_6 = ON;
+	if (ret)
+		DLED_6 = ON;
 
 	return ret;
+}
+
+int8_t mfc_done(struct mfctype * mfc)
+{
+	if (mfc->done)
+		return 1;
+	else
+		return 0;
+}
+
+int8_t mfc_shut(struct mfctype * mfc)
+{
+	mfc->gas_t = SHUT;
+	return mfc_set(mfc);
+}
+
+int8_t mfc_flow(struct mfctype * mfc, uint16_t flow)
+{
+	mfc->mfc_set = flow;
+	mfc->gas_t = FLOW;
+	return mfc_set(mfc);
+}
+
+int8_t mfc_mass(struct mfctype * mfc, uint16_t flow, uint32_t mass)
+{
+	mfc->mfc_set = flow;
+	mfc->mfc_integ_target_mass = mass * MFC_INTEG; // total volts
+	mfc->gas_t = MASS;
+	return mfc_set(mfc);
 }

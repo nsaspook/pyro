@@ -329,7 +329,7 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 					mfc[i].done = HIGH;
 					mfc_dac_select.buf = i;
 					mfc[i].mfc_set = 0;
-					SPI_Out_Update(mfc[i].mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
+					SPI_Daq_Update(mfc[i].mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
 				}
 				break;
 			case SHUT:
@@ -343,19 +343,6 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 		}
 	}
 	DLED_1 = LOW;
-}
-
-void idle_loop(void) // idle processe to allow for better isr triggers and background networking
-{
-	IDLEFLAG = TRUE;
-	ClrWdt();
-	IDLEFLAG = FALSE;
-}
-
-void P2wait(void)
-{
-	while (!TXSTA2bits.TRMT) {
-	};
 }
 
 void Clear_All_Buttons(void)

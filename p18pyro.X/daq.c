@@ -20,7 +20,7 @@ void ADC_Update(uint16_t adc_val, uint8_t chan)
 /*
  * SPI 16 output driver
  */
-int8_t SPI_Out_Update(uint16_t data, uint8_t cs, uint8_t device)
+int8_t SPI_Daq_Update(uint16_t data, uint8_t cs, uint8_t device)
 {
 	static union spi_buf_type spi_buf = {0};
 	static union bytes2 upper_lower = {0};

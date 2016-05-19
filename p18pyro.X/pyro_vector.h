@@ -17,9 +17,6 @@
 
 void tick_handler(void);
 void work_handler(void);
-void idle_loop(void);
-void P1wait(void);
-void P2wait(void);
 void Clear_All_Buttons(void);
 
 /* BEGIN HIGH ISR */

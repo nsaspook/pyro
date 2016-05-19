@@ -17,6 +17,10 @@ extern "C" {
 
 	void mfc_config(void);
 	int8_t mfc_set(struct mfctype *);
+	int8_t mfc_done(struct mfctype *);
+	int8_t mfc_shut(struct mfctype *);
+	int8_t mfc_flow(struct mfctype *, uint16_t);
+	int8_t mfc_mass(struct mfctype *, uint16_t, uint32_t);
 
 #ifdef	__cplusplus
 }
