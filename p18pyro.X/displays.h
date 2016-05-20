@@ -11,10 +11,10 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-	
+
 #include "xlcd.h"
 
-	void lcd_display_line(int8_t *, uint8_t);
+	void lcd_display_line(int8_t *, const uint8_t);
 
 
 #ifdef	__cplusplus

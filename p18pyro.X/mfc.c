@@ -82,14 +82,14 @@ int8_t mfc_shut(struct mfctype * mfc)
 	return mfc_set(mfc);
 }
 
-int8_t mfc_flow(struct mfctype * mfc, uint16_t flow)
+int8_t mfc_flow(struct mfctype * mfc, const uint16_t flow)
 {
 	mfc->mfc_set = flow;
 	mfc->gas_t = FLOW;
 	return mfc_set(mfc);
 }
 
-int8_t mfc_mass(struct mfctype * mfc, uint16_t flow, uint32_t mass)
+int8_t mfc_mass(struct mfctype * mfc, const uint16_t flow, const uint32_t mass)
 {
 	mfc->mfc_set = flow;
 	mfc->mfc_integ_target_mass = mass * MFC_INTEG; // total volts

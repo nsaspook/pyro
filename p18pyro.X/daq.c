@@ -9,7 +9,7 @@ void ADC_zero(void)
 	Delay10TCYx(ADC_CHAN_DELAY);
 }
 
-void ADC_Update(uint16_t adc_val, uint8_t chan)
+void ADC_Update(const uint16_t adc_val, const uint8_t chan)
 {
 	if (chan >= ADC_INDEX)
 		return;
@@ -20,7 +20,7 @@ void ADC_Update(uint16_t adc_val, uint8_t chan)
 /*
  * SPI 16 output driver
  */
-int8_t SPI_Daq_Update(uint16_t data, uint8_t cs, uint8_t device)
+int8_t SPI_Daq_Update(const uint16_t data, const uint8_t cs, const uint8_t device)
 {
 	static union spi_buf_type spi_buf = {0};
 	static union bytes2 upper_lower = {0};

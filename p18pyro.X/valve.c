@@ -20,7 +20,7 @@ int8_t valve_set(struct valvetype * valves)
 	return SPI_Daq_Update(valves->buf.bd[1], SHIFT_565_8_15, 0);
 }
 
-int8_t valve_switch(uint8_t valve, uint8_t device, uint8_t state)
+int8_t valve_switch(const uint8_t valve, uint8_t device, const uint8_t state)
 {
 	device &= 0x01;
 	if (state) {

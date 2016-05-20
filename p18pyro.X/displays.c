@@ -1,6 +1,6 @@
 #include "displays.h"
 
-void lcd_display_line(int8_t * text, uint8_t row)
+void lcd_display_line(int8_t * text, const uint8_t row)
 {
 
 	text[20] = NULL0; // limit the string to 20 chars

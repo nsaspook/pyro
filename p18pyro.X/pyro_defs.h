@@ -143,7 +143,7 @@ extern "C" {
 
 #define BANK0		0
 #define BANK1		1
-	
+
 #define	PURGE		0
 #define AIR		1
 #define GAS		2 

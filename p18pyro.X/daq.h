@@ -8,8 +8,8 @@
 #include "pyro_vector.h"
 
 void ADC_zero(void);
-void ADC_Update(uint16_t, uint8_t);
-int8_t SPI_Daq_Update(uint16_t, uint8_t, uint8_t);
+void ADC_Update(const uint16_t, const uint8_t);
+int8_t SPI_Daq_Update(const uint16_t, const uint8_t, const uint8_t);
 
 extern uint8_t adc_cal[];
 extern volatile struct L_data L;
