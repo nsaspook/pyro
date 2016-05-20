@@ -140,6 +140,20 @@ extern "C" {
 #define COLOR1_MFC	2
 #define COLOR2_MFC	3
 
+
+#define BANK0		0
+#define BANK1		1
+	
+#define	PURGE		0
+#define AIR		1
+#define GAS		2 
+#define COLOR1		3
+#define COLOR2		4 
+#define V5		5 
+#define V6		6 
+#define V7		7
+
+
 #define MFC_INTEG	1200UL // sample updates per Min
 #define MFC_VOLTS	5000.0 // millivolts
 

@@ -147,6 +147,7 @@
 #include "displays.h"
 
 extern struct mfctype mfc[4], *mfcptr;
+extern struct valvetype valves;
 
 #pragma udata gpr13
 far int8_t bootstr2[MESG_W + 1], f1[MESG_W], f2[MESG_W];
@@ -526,6 +527,9 @@ void main(void) // Lets Party
 	ringBufS_init(spi_link.tx1b); // spi tx buffer
 	ringBufS_init(spi_link.rx1b); // spi rx buffer
 
+	/* valve setup */
+	valve_config();
+
 	/*
 	 * MFC setup
 	 */
@@ -585,8 +589,8 @@ void main(void) // Lets Party
 
 				mfc_flow(&mfc[COLOR2_MFC], rand());
 
-				SPI_Daq_Update(rand(), SHIFT_565_0_7, 0);
-				SPI_Daq_Update(rand(), SHIFT_565_8_15, 0);
+				valve_switch(V7, BANK0, R_ON);
+				valve_switch(V7, BANK1, R_OFF);
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}
