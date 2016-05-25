@@ -559,8 +559,8 @@ void main(void) // Lets Party
 				lcd_display_line(bootstr2, LL2);
 				sprintf(bootstr2, "%u %u %u %d                          ", L.adc_raw[0], L.adc_raw[3], L.adc_raw[2], (int16_t) (L.adc_raw[3] - L.adc_raw[2]));
 				lcd_display_line(bootstr2, LL3);
-				sprintf(f1, "%lu %lu SLM 0                              ", mfc[COLOR1_MFC].mfc_integ_current_mass / MFC_INTEG,
-					(uint32_t) ((float) (mfc[COLOR1_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[COLOR1_MFC].scale_out));
+				sprintf(f1, "%lu %lu SLM 0                              ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
+					(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out));
 				lcd_display_line(f1, LL4);
 				DLED_4 = LOW;
 				dtime1 = V.clock20;
@@ -579,18 +579,18 @@ void main(void) // Lets Party
 				dac2 -= 3;
 				DLED_2 = HIGH;
 				// do something
-				mfc_flow(&mfc[AIR_MFC], dac1);
+				mfc_flow(&mfc[COLOR1_MFC], dac1);
 
 				mfc_flow(&mfc[GAS_MFC], dac2);
 
-				mfc_mass(&mfc[COLOR1_MFC], 3000, 25);
-				if (mfc_done(&mfc[COLOR1_MFC]))
-					mfc_shut(&mfc[COLOR1_MFC]);
+				mfc_mass(&mfc[AIR_MFC], 4000, 10);
+				if (mfc_done(&mfc[AIR_MFC]))
+					mfc_shut(&mfc[AIR_MFC]);
 
 				mfc_flow(&mfc[COLOR2_MFC], rand());
 
 				valve_switch(V7, BANK0, R_ON);
-				valve_switch(V7, BANK1, R_OFF);
+				valve_switch(V7, BANK1, R_ON);
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}
