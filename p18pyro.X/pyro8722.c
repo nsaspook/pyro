@@ -583,7 +583,7 @@ void main(void) // Lets Party
 
 				mfc_flow(&mfc[GAS_MFC], dac2);
 
-				mfc_mass(&mfc[AIR_MFC], 4000, 10);
+				mfc_mass(&mfc[AIR_MFC], 1000, 50);
 				if (mfc_done(&mfc[AIR_MFC]))
 					mfc_shut(&mfc[AIR_MFC]);
 

@@ -13,8 +13,12 @@ void ADC_Update(const uint16_t adc_val, const uint8_t chan)
 {
 	if (chan >= ADC_INDEX)
 		return;
-	L.adc_raw[chan] = adc_val;
-	L.adc_val[chan] = (adc_val * (ADC_5V_MV - ADC_NULL + adc_cal[chan])) / 100; //      voltage correction factor;
+	if (adc_val > (L.adc_raw[chan] + 96))
+		L.adc_raw[chan] += 96;
+	else
+		L.adc_raw[chan] = adc_val;
+
+	L.adc_val[chan] = (L.adc_raw[chan] * (ADC_5V_MV - ADC_NULL + adc_cal[chan])) / 100; //      voltage correction factor;
 }
 
 /*
