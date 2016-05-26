@@ -22,13 +22,11 @@ int8_t valve_set(struct valvetype * valves)
 
 int8_t valve_switch(const uint8_t valve, uint8_t device, const uint8_t state)
 {
-	device &= 0x01;
-	if (state) {
-		valves.buf.bd[device] |= 0x01 << valve;
-		valves.buf.bd[device] |= 0x01 << valve;
+	device &= 0x01; // bank0 or bank1
+	if (state & 0x01) { // ON or OFF
+		valves.buf.bd[device] |= 0x01 << (valve & 0x07); // [0..7] valve positions
 	} else {
-		valves.buf.bd[device] &= ~(0x01 << valve);
-		valves.buf.bd[device] &= ~(0x01 << valve);
+		valves.buf.bd[device] &= ~(0x01 << (valve & 0x07));
 	}
 
 	return valve_set(&valves);

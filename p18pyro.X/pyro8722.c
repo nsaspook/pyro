@@ -469,6 +469,7 @@ void main(void) // Lets Party
 	static union adc_buf_type adc_buf;
 	uint16_t dac1, dac2 = 5000;
 	uint32_t dtime1, dtime2;
+	uint8_t V1_state = 0;
 
 
 #ifdef	__18F8722
@@ -583,14 +584,16 @@ void main(void) // Lets Party
 
 				mfc_flow(&mfc[GAS_MFC], dac2);
 
-				mfc_mass(&mfc[AIR_MFC], 1000, 50);
-				if (mfc_done(&mfc[AIR_MFC]))
+				mfc_mass(&mfc[AIR_MFC], 4000, 10);
+				if (mfc_done(&mfc[AIR_MFC])) {
+					valve_switch(V7, BANK1, V1_state++);
 					mfc_shut(&mfc[AIR_MFC]);
+				}
 
 				mfc_flow(&mfc[COLOR2_MFC], rand());
 
 				valve_switch(V7, BANK0, R_ON);
-				valve_switch(V7, BANK1, R_ON);
+				//				valve_switch(V7, BANK1, R_ON);
 				dtime2 = V.clock20;
 				DLED_2 = LOW;
 			}
