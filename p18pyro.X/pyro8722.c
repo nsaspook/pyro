@@ -512,6 +512,7 @@ void main(void) // Lets Party
 
 	/* state machine setups */
 	L.adc_chan = 0;
+	ADCON0bits.CHS = L.adc_chan & ADC_CHAN_MASK; // reset the ADC channel scanner
 
 	/* setup the link buffers first */
 	L.rx1b = &ring_buf1;
@@ -587,6 +588,7 @@ void main(void) // Lets Party
 				mfc_mass(&mfc[AIR_MFC], 4000, 10);
 				if (mfc_done(&mfc[AIR_MFC])) {
 					valve_switch(V7, BANK1, V1_state++);
+					valve_switch(PURGE, BANK0, V1_state);
 					mfc_shut(&mfc[AIR_MFC]);
 				}
 
