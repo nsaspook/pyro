@@ -35,6 +35,7 @@ extern "C" {
 #define	WORKSEC		10      	// run every this time seconds
 #define FT20		20              // default value for fast ticks
 #define SD_18		18
+#define WORK_TICKS_S	20*60
 
 #define LOW		(uint8_t)0        // digital output state levels, sink
 #define	HIGH            (uint8_t)1        // digital output state levels, source

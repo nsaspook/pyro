@@ -226,7 +226,7 @@ extern "C" {
 		enum gas_t {
 			SHUT, FLOW, MASS
 		} gas_t;
-		uint16_t mfc_flow_size, mfc_actual, mfc_set, error, mfc_actual_prev, mfc_change; // in ADC counts
+		uint16_t mfc_flow_size, mfc_actual, mfc_set, error, mfc_actual_prev, mfc_change, flow_time, flow_time_max; // in ADC counts
 		float scale_out, scale_in; // scaling factor from actual to scaled and back
 		uint32_t mfc_integ_total_mass, mfc_integ_current_mass, mfc_integ_target_mass,
 		flow_time_total, flow_time_left;

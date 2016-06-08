@@ -45,6 +45,8 @@ int8_t mfc_set(struct mfctype * mfc)
 			mfc->measure = HIGH;
 			mfc_dac_select.buf = mfc_id;
 			mfc->mfc_integ_current_mass = 0;
+			mfc->flow_time = 0;
+			mfc->flow_time_max = WORK_TICKS_S;
 			ret = SPI_Daq_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
 		}
 		break;
