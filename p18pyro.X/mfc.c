@@ -27,6 +27,7 @@ void mfc_config(void)
 		mfc[i].mfc_integ_current_mass = 1;
 		mfc[i].mfc_integ_target_mass = 1;
 		mfc[i].scale_out = ((float) mfc[i].mfc_flow_size) / MFC_VOLTS;
+		mfc[i].flow_time_max = WORK_TICKS_S;
 	}
 }
 
@@ -47,6 +48,7 @@ int8_t mfc_set(struct mfctype * mfc)
 			mfc->mfc_integ_current_mass = 0;
 			mfc->flow_time = 0;
 			mfc->flow_time_max = WORK_TICKS_S;
+			mfc->timeout = FALSE;
 			ret = SPI_Daq_Update(mfc->mfc_set, mfc_dac_select.map.cs, mfc_dac_select.map.device);
 		}
 		break;
@@ -76,6 +78,20 @@ int8_t mfc_done(struct mfctype * mfc)
 		return 1;
 	else
 		return 0;
+}
+
+/*
+ * return MFC timeout status and clear flag if TRUE
+ */
+int8_t mfc_timeout(struct mfctype * mfc)
+{
+	uint8_t ret = 0;
+
+	if (mfc->timeout) {
+		mfc->timeout = FALSE;
+		ret = 1;
+	}
+	return ret;
 }
 
 int8_t mfc_shut(struct mfctype * mfc)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.5.0">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -9247,10 +9247,10 @@ Source: AVX .. aphvc.pdf</description>
 <instance part="C2" gate="G$1" x="5.08" y="43.18" rot="R270"/>
 <instance part="C3" gate="G$1" x="101.6" y="27.94"/>
 <instance part="C4" gate="G$1" x="101.6" y="86.36"/>
-<instance part="C5" gate="G$1" x="78.74" y="-35.56"/>
-<instance part="C6" gate="G$1" x="-33.02" y="0" rot="R270"/>
-<instance part="SUPPLY25" gate="GND" x="78.74" y="-43.18"/>
-<instance part="SUPPLY26" gate="GND" x="-38.1" y="-7.62"/>
+<instance part="C5" gate="G$1" x="83.82" y="-40.64"/>
+<instance part="C6" gate="G$1" x="-38.1" y="-2.54"/>
+<instance part="SUPPLY25" gate="GND" x="83.82" y="-50.8"/>
+<instance part="SUPPLY26" gate="GND" x="-38.1" y="-15.24"/>
 <instance part="SUPPLY27" gate="GND" x="-2.54" y="43.18" rot="R270"/>
 <instance part="SUPPLY28" gate="GND" x="7.62" y="73.66" rot="R270"/>
 <instance part="SUPPLY29" gate="GND" x="101.6" y="91.44" rot="R180"/>
@@ -9330,11 +9330,12 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="C5" gate="G$1" pin="2"/>
 <pinref part="SUPPLY25" gate="GND" pin="GND"/>
+<wire x1="83.82" y1="-45.72" x2="83.82" y2="-48.26" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="C6" gate="G$1" pin="2"/>
 <pinref part="SUPPLY26" gate="GND" pin="GND"/>
-<wire x1="-38.1" y1="0" x2="-38.1" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="-38.1" y1="-7.62" x2="-38.1" y2="-12.7" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="C2" gate="G$1" pin="2"/>
@@ -9403,8 +9404,10 @@ Source: AVX .. aphvc.pdf</description>
 <pinref part="DIS1" gate="A" pin="VCC"/>
 <pinref part="SUPPLY14" gate="G$1" pin="VCC"/>
 <pinref part="C5" gate="G$1" pin="1"/>
-<junction x="78.74" y="-33.02"/>
+<junction x="83.82" y="-38.1"/>
 <pinref part="C5" gate="G$1" pin="1"/>
+<wire x1="83.82" y1="-38.1" x2="78.74" y2="-33.02" width="0.1524" layer="91"/>
+<junction x="78.74" y="-33.02"/>
 </segment>
 <segment>
 <pinref part="R3" gate="G$1" pin="2"/>
@@ -9443,9 +9446,9 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="-20.32" y1="-5.08" x2="-17.78" y2="-5.08" width="0.1524" layer="91"/>
 <pinref part="C6" gate="G$1" pin="1"/>
 <pinref part="C6" gate="G$1" pin="1"/>
-<wire x1="-30.48" y1="0" x2="-17.78" y2="0" width="0.1524" layer="91"/>
+<wire x1="-38.1" y1="0" x2="-17.78" y2="0" width="0.1524" layer="91"/>
 <junction x="-17.78" y="0"/>
-<junction x="-30.48" y="0"/>
+<junction x="-38.1" y="0"/>
 </segment>
 </net>
 <net name="VDD" class="0">
