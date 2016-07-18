@@ -190,7 +190,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		V.b3++;
 	}
 
-	if (INTCONbits.RBIF) { // PORT B int handler for Qencoder inputs A/B
+	if (INTCONbits.RBIF) { // PORT B int handler for QEIencoder inputs A/B
 		INTCONbits.RBIF = LOW;
 		b_read = EXTIO;
 		V.buttonint_count++;
@@ -307,7 +307,7 @@ void tick_handler(void) // This is the high priority ISR routine
 #pragma interruptlow work_handler
 
 void work_handler(void) // This is the low priority ISR routine, the high ISR routine will be called during this code section
-{ // projector lamp scan converter, mfc totals
+{ // lamp scan converter (future), mfc totals
 	union Timers timerl;
 	uint8_t i;
 	union mcp4822_adr_type mfc_dac_select;

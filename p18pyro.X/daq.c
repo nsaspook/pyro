@@ -1,4 +1,4 @@
-/* Read analog voltage and current inputs */
+/* Read/Write analog voltages and currents */
 #include "daq.h"
 
 /* switch to ADC chan 8 (shorted to ground) to reset ADC measurement cap to zero before next measurement */
@@ -46,7 +46,7 @@ int8_t SPI_Daq_Update(const uint16_t data, const uint8_t cs, const uint8_t devic
 		mcp4822_buf.map.ab = device;
 		mcp4822_buf.map.ga = 0;
 		mcp4822_buf.map.shdn = 1;
-		upper_lower.ld = mcp4822_buf.buf; // load HL selector var
+		upper_lower.ld = mcp4822_buf.buf; // load HL selector variable
 		/*
 		 * setup ring-buffer for transfer in two parts
 		 */
