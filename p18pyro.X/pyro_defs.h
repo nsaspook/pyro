@@ -16,7 +16,8 @@ extern "C" {
 #define CHECKMARK		0x59		// EEPROM checkmark
 #define CHECKMARK_CRC	0x59595959ul		// 32 bit crc checkmark
 
-#define MESG_W          80			// message string buffer
+#define MESG_W          80		// message string buffer
+#define VAR_W		21		// string var ascii buffer
 #define CRIT_8          8               // 8 levels
 #define CRITC1          1               // The first CRITC level
 #define MAX_MFC         3u               // number of MFC that will control
@@ -117,13 +118,13 @@ extern "C" {
 #define QENC2BITS	0b11000000	// PORTB 6..7
 
 	/*	ADC gain offsets	mV per bit step defines */
-#define ADC_5V_MV 	488UL             // 5vdc 
-#define ADC_24V_MV 	2350UL            // 24vdc
+#define ADC_5V_MV 	488UL		// 5vdc 
+#define ADC_24V_MV 	2350UL		// 24vdc
 #define	ADC_SLOTS	15		// 14 ADC data slots + 1 checksum at the end
 #define ADC_INDEX	8		// max adc array select number
 #define ADC_NULL	127             // zero offset value
 #define ADC_MASK	0x03ff		// 10 bits of real adc data
-#define ADC_CHAN_MASK	0x07		// number os scanned adc channels
+#define ADC_CHAN_MASK	0x07		// number of scanned adc channels
 	/* The number of samples must be high to sample several complete PWM cycles to get stable voltage and current measurements at lower ranges. */
 #define ADC_SAMP_F	16
 #define ADC_SAMP_S	64
@@ -131,7 +132,7 @@ extern "C" {
 
 #define	LPCHANC		8               // digital filter channels
 #define MAXSECONDS      315576000ul     // 10 years
-#define	LL1		0x00                    // LCD line addresses
+#define	LL1		0x00		// LCD line addresses
 #define	LL2		0x40
 #define LL3		0x14
 #define	LL4		0x54
@@ -140,6 +141,8 @@ extern "C" {
 #define GAS_MFC		1
 #define COLOR1_MFC	2
 #define COLOR2_MFC	3
+#define AIR_MFC_SP	2
+#define GAS_MFC_SP	3
 
 
 #define BANK0		0

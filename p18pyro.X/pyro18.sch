@@ -9102,9 +9102,9 @@ Source: AVX .. aphvc.pdf</description>
 <part name="U$2" library="mcp4822" deviceset="MCP4822-X/MS" device=""/>
 <part name="U1" library="SparkFun-DigitalIC" deviceset="TPIC6B595" device="PTH"/>
 <part name="U2" library="SparkFun-DigitalIC" deviceset="TPIC6B595" device="PTH"/>
-<part name="X1" library="con-garry" deviceset="332-10" device=""/>
-<part name="X2" library="con-garry" deviceset="332-10" device=""/>
-<part name="X3" library="con-garry" deviceset="332-10" device=""/>
+<part name="X1" library="con-garry" deviceset="332-10" device="" value="port c"/>
+<part name="X2" library="con-garry" deviceset="332-10" device="" value="analog I/O bus"/>
+<part name="X3" library="con-garry" deviceset="332-10" device="" value="port a"/>
 <part name="X4" library="con-garry" deviceset="332-10" device=""/>
 <part name="DIS1" library="display-hp" deviceset="HP5082" device=""/>
 <part name="SUPPLY1" library="supply2" deviceset="GND" device=""/>

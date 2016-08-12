@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.5.0">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -6648,8 +6648,8 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 </class>
 </classes>
 <parts>
-<part name="X1" library="con-wago255" deviceset="233-224" device=""/>
-<part name="X2" library="con-garry" deviceset="332-10" device=""/>
+<part name="X1" library="con-wago255" deviceset="233-224" device="" value="analog I/O connect"/>
+<part name="X2" library="con-garry" deviceset="332-10" device="" value="analog I/O bus"/>
 <part name="AGND1" library="supply1" deviceset="AGND" device=""/>
 <part name="C1" library="resistor" deviceset="C-US" device="025-024X044"/>
 <part name="C2" library="resistor" deviceset="C-US" device="025-024X044"/>

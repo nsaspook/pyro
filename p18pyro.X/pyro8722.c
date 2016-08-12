@@ -150,7 +150,7 @@ extern struct mfctype mfc[4], *mfcptr;
 extern struct valvetype valves;
 
 #pragma udata gpr13
-far int8_t bootstr2[MESG_W + 1], f1[MESG_W], f2[MESG_W];
+far int8_t bootstr2[MESG_W + 1], f0[VAR_W], f1[VAR_W];
 #pragma udata gpr1
 volatile struct ringBufS_t ring_buf3;
 uint8_t HCRIT[CRIT_8], LCRIT[CRIT_8];
@@ -162,7 +162,7 @@ union mcp4822_buf_type mcp4822;
 volatile struct ringBufS_t ring_buf5;
 #pragma udata gpr3
 volatile struct ringBufS_t ring_buf6;
-far int8_t hms_string[16], f3[MESG_W];
+far int8_t hms_string[16], f2[VAR_W], f3[VAR_W];
 volatile uint8_t critc_level = 0;
 volatile uint8_t TIMERFLAG = FALSE, SYSTEM_STABLE = FALSE, D_UPDATE = FALSE, WDT_TO = FALSE, EEP_ER = FALSE;
 #pragma udata gpr4
@@ -552,18 +552,19 @@ void main(void) // Lets Party
 	while (TRUE) {
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
-			if (V.clock20 > dtime1 + 10) { // ~5hz display update freq
-				voltfp(L.adc_val[0], f1); // analog control input 0
-				voltfp(L.adc_val[2], f2); // mfc readback 0
-				voltfp(L.adc_val[3], f3); // mfc setpoint 0
-				sprintf(bootstr2, "%sV %sV %sV                        ", f1, f3, f2);
+			if (V.clock20 > dtime1 + 2) { // ~5hz display update freq
+				voltfp(L.adc_val[AIR_MFC], f0); // mfc 0 readback
+				voltfp(L.adc_val[GAS_MFC], f1); // mfc 1 readback
+				voltfp(L.adc_val[AIR_MFC_SP], f2); // mfc 0 setpoint
+				voltfp(L.adc_val[GAS_MFC_SP], f3); // mfc 1 setpoint
+				sprintf(bootstr2, "%s %s %s %s V                       ", f0, f2, f1, f3);
 				DLED_4 = HIGH;
 				lcd_display_line(bootstr2, LL2);
 				sprintf(bootstr2, "%u %u %u %d                          ", L.adc_raw[0], L.adc_raw[3], L.adc_raw[2], (int16_t) (L.adc_raw[3] - L.adc_raw[2]));
 				lcd_display_line(bootstr2, LL3);
-				sprintf(f1, "%lu %lu SLM 0                              ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
+				sprintf(bootstr2, "%lu %lu SLM 0                              ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
 					(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out));
-				lcd_display_line(f1, LL4);
+				lcd_display_line(bootstr2, LL4);
 				DLED_4 = LOW;
 				dtime1 = V.clock20;
 			}
@@ -585,7 +586,7 @@ void main(void) // Lets Party
 
 				mfc_flow(&mfc[GAS_MFC], dac2);
 
-				mfc_mass(&mfc[AIR_MFC], 4000, 10);
+				mfc_mass(&mfc[AIR_MFC], 200, 150); // flow rate, flow mass required
 				if (mfc_done(&mfc[AIR_MFC])) {
 					valve_switch(V7, BANK1, V1_state++);
 					valve_switch(PURGE, BANK0, V1_state);

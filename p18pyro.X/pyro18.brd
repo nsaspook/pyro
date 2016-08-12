@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.5.0">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -2803,9 +2803,9 @@ design rules under a new name.</description>
 <element name="U$2" library="mcp4822" package="MSOP8_MC" value="MCP4822-X/MS" x="41.91" y="60.96"/>
 <element name="U1" library="SparkFun-DigitalIC" package="DIL20" value="TPIC6B595PTH" x="20.32" y="71.12" rot="R270"/>
 <element name="U2" library="SparkFun-DigitalIC" package="DIL20" value="TPIC6B595PTH" x="31.75" y="71.12" rot="R270"/>
-<element name="X1" library="con-garry" package="332-10" value="332-10" x="66.04" y="55.88"/>
-<element name="X2" library="con-garry" package="332-10" value="332-10" x="68.58" y="68.58" rot="R270"/>
-<element name="X3" library="con-garry" package="332-10" value="332-10" x="64.77" y="83.82"/>
+<element name="X1" library="con-garry" package="332-10" value="port c" x="66.04" y="55.88"/>
+<element name="X2" library="con-garry" package="332-10" value="analog I/O bus" x="68.58" y="68.58" rot="R270"/>
+<element name="X3" library="con-garry" package="332-10" value="port a" x="64.77" y="83.82"/>
 <element name="X4" library="con-garry" package="332-10" value="332-10" x="45.72" y="55.88"/>
 <element name="DIS1" library="display-hp" package="HP5082" value="HP5082" x="44.45" y="76.2">
 <attribute name="OC_FARNELL" value="unknown" x="44.45" y="76.2" size="1.778" layer="27" display="off"/>
