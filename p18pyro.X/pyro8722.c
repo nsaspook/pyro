@@ -560,7 +560,7 @@ void main(void) // Lets Party
 				sprintf(bootstr2, "%s %s %s %sV                       ", f0, f2, f1, f3);
 				DLED_4 = HIGH;
 				lcd_display_line(bootstr2, LL2);
-				sprintf(bootstr2, "%u %u %u %d                          ", L.adc_raw[0], L.adc_raw[3], L.adc_raw[2], (int16_t) (L.adc_raw[3] - L.adc_raw[2]));
+				sprintf(bootstr2, "%u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - L.adc_raw[AIR_MFC_SP]));
 				lcd_display_line(bootstr2, LL3);
 				sprintf(bootstr2, "%lu %lu SLM 0                        ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
 					(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out));
