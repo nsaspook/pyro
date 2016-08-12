@@ -557,7 +557,7 @@ void main(void) // Lets Party
 				voltfp(L.adc_val[GAS_MFC], f1); // mfc 1 readback
 				voltfp(L.adc_val[AIR_MFC_SP], f2); // mfc 0 setpoint
 				voltfp(L.adc_val[GAS_MFC_SP], f3); // mfc 1 setpoint
-				sprintf(bootstr2, "%s %s %s %s V                       ", f0, f2, f1, f3);
+				sprintf(bootstr2, "%s %s %s %sV                       ", f0, f2, f1, f3);
 				DLED_4 = HIGH;
 				lcd_display_line(bootstr2, LL2);
 				sprintf(bootstr2, "%u %u %u %d                          ", L.adc_raw[0], L.adc_raw[3], L.adc_raw[2], (int16_t) (L.adc_raw[3] - L.adc_raw[2]));
