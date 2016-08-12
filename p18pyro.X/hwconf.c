@@ -10,11 +10,11 @@ void config_pic(uint16_t hw_config)
 		/* Configure all PORT  pins  */
 
 		TRISAbits.TRISA4 = LOW; // output
-		TRISAbits.TRISA0 = HIGH; // an0	systemvoltage
-		TRISAbits.TRISA1 = HIGH; // an1 motorvoltage
-		TRISAbits.TRISA2 = HIGH; // an2 current_x
-		TRISAbits.TRISA3 = HIGH; // VREF input
-		TRISAbits.TRISA5 = HIGH; // an4 current_z
+		TRISAbits.TRISA0 = HIGH; // an0 mfc0 R
+		TRISAbits.TRISA1 = HIGH; // an1 mfc1 R
+		TRISAbits.TRISA2 = HIGH; // an2 mfc0 S
+		TRISAbits.TRISA3 = HIGH; // an3 mfc1 S
+		TRISAbits.TRISA5 = HIGH; // an4 
 
 		TRISB = 0x00; // all outputs first
 		LATB = 0xFF;
