@@ -378,15 +378,15 @@ void term_time(void)
 }
 
 /*	lp_filters
-	0
-	1
-	2
-	3	current
-	4	currentin
-	5	currentcharger
-	6
-	7
-	8
+    0
+    1
+    2
+    3	current
+    4	currentin
+    5	currentcharger
+    6
+    7
+    8
  *	9
  */
 float lp_filter(float new, int16_t bn, int16_t slow) // low pass filter, slow rate of change for new, LPCHANC channels, slow/fast select (1) to zero channel
@@ -562,8 +562,9 @@ void main(void) // Lets Party
 				lcd_display_line(bootstr2, LL2);
 				sprintf(bootstr2, "%u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - L.adc_raw[AIR_MFC_SP]));
 				lcd_display_line(bootstr2, LL3);
-				sprintf(bootstr2, "%lu %lu SLM 0                        ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
-					(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out));
+				sprintf(bootstr2, "%lu %lu SLM 0  %u %u %u                     ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
+					(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out), 
+					V.t4_prev, V.t4_now, PORTGbits.RG0);
 				lcd_display_line(bootstr2, LL4);
 				DLED_4 = LOW;
 				dtime1 = V.clock20;

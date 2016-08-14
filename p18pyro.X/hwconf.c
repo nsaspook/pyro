@@ -36,13 +36,12 @@ void config_pic(uint16_t hw_config)
 
 		TRISF = 0xff; // all inputs for ADC inputs
 
-		LATGbits.LATG0 = LOW; // output latch to zero Alarm signal
+		LATGbits.LATG0 = HIGH; // output latch to DIAG jumper signal
 		LATGbits.LATG3 = LOW; // output latch to zero Voice1 signal
 		LATGbits.LATG4 = LOW; // output latch to zero Voice2 signal
 		TRISGbits.TRISG4 = HIGH; //
 		TRISGbits.TRISG3 = HIGH; // set to input for OFF and output for ON
-		TRISGbits.TRISG0 = LOW; // output
-
+		TRISGbits.TRISG0 = LOW; // output 
 		TRISH = LOW; // mpuled and LCD
 		LATH = 0xff;
 
@@ -86,7 +85,7 @@ void config_pic(uint16_t hw_config)
 		OpenTimer3(TIMER_INT_ON & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 &
 			T1_OSC1EN_OFF & T1_SYNC_EXT_OFF); // for lamp scanner
 		PR4 = TIMER4_NORM;
-		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16);
+		OpenTimer4(TIMER_INT_ON & T4_PS_1_16 & T4_POST_1_16); // state machine timer
 		IPR3bits.TMR4IP = HIGH; // make it high pri level
 		PIE3bits.TMR4IE = HIGH; // TIMER4 int enable bit
 
@@ -114,7 +113,7 @@ void config_pic(uint16_t hw_config)
 		INTCON2bits.RBPU = LOW; // enable input pullup. 0=on
 
 		WriteTimer0(TIMEROFFSET); // start timer0 at 1 second ticks
-		WriteTimer3(TIMER3REG); // worker thread timer about 20hz                                                           //
+		WriteTimer3(TIMER3REG); // worker thread timer about 20hz
 
 		/*      work int thread setup */
 		IPR2bits.TMR3IP = LOW; // make it low pri level

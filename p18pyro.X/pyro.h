@@ -108,6 +108,7 @@ extern "C" {
 		volatile uint32_t buttonint_count, timerint_count, eeprom_count, highint_count, lowint_count, c1_int, c2_int;
 		volatile uint32_t pwm4int_count, worker_count, b0, b1, b2, b3, display_count, lcdhits, lcdhits_18tcy, adc_count;
 		volatile uint32_t clock20, commint_count, status_count, c1rx_int, lcd_count;
+        volatile uint16_t t4_prev, t4_now;
 	} V_data;
 
 	// LCD structs
