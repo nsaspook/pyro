@@ -97,6 +97,7 @@ void tick_handler(void) // This is the high priority ISR routine
 			}
 			Nop();
 			SSP1BUF = spi_buf.map.buf; // transfer the 8 bit data buffer
+			V.spi_count++;
 			if (spi_buf.map.cs) { // dselect device after current transfer ?
 				Nop(); // a bit of extra delay
 				switch (spi_buf.map.select) { // set device deselect options
@@ -126,6 +127,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		 * LCD data handler
 		 */
 		if (!ringBufS_empty(L.tx1b) || lcd_buf.map.state) { // LCD send, 4bit , upper nibble
+			V.display_count++;
 			switch (lcd_buf.map.state) {
 			case 0:
 				lcd_buf.buf = ringBufS_get(L.tx1b);

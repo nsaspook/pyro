@@ -465,12 +465,12 @@ void fade_up_leds(void)
 
 void process_stats(void)
 {
-	DLED_4 = HIGH;	
-	sprintf(bootstr2, "                       ");
+	DLED_4 = HIGH;
+	sprintf(bootstr2, "%lu %lu %lu                 ", V.timerint_count, V.highint_count, V.lowint_count);
 	lcd_display_line(bootstr2, LL2);
-	sprintf(bootstr2, "                       ");
+	sprintf(bootstr2, "%lu %lu                     ", V.tmr4int_count, V.adc_count);
 	lcd_display_line(bootstr2, LL3);
-	sprintf(bootstr2, "                       ");
+	sprintf(bootstr2, "%lu %lu                     ", V.spi_count, V.display_count);
 	lcd_display_line(bootstr2, LL4);
 	DLED_4 = LOW;
 }
