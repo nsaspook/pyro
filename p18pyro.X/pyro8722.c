@@ -463,6 +463,18 @@ void fade_up_leds(void)
 	}
 }
 
+void process_stats(void)
+{
+	DLED_4 = HIGH;	
+	sprintf(bootstr2, "                       ");
+	lcd_display_line(bootstr2, LL2);
+	sprintf(bootstr2, "                       ");
+	lcd_display_line(bootstr2, LL3);
+	sprintf(bootstr2, "                       ");
+	lcd_display_line(bootstr2, LL4);
+	DLED_4 = LOW;
+}
+
 void main(void) // Lets Party
 {
 	static uint32_t z;
@@ -470,7 +482,6 @@ void main(void) // Lets Party
 	uint16_t dac1, dac2 = 5000;
 	uint32_t dtime1, dtime2;
 	uint8_t V1_state = 0;
-
 
 #ifdef	__18F8722
 	config_pic(PIC_8722); // configure all controller hardware to the correct settings and ports
@@ -553,21 +564,25 @@ void main(void) // Lets Party
 		ClrWdt(); // reset the WDT timer
 		if (ringBufS_empty(L.rx1b)) {
 			if (V.clock20 > dtime1 + 2) { // ~5hz display update freq
-				voltfp(L.adc_val[AIR_MFC], f0); // mfc 0 readback
-				voltfp(L.adc_val[GAS_MFC], f1); // mfc 1 readback
-				voltfp(L.adc_val[AIR_MFC_SP], f2); // mfc 0 setpoint
-				voltfp(L.adc_val[GAS_MFC_SP], f3); // mfc 1 setpoint
-				sprintf(bootstr2, "%s %s %s %sV                       ", f0, f2, f1, f3);
-				DLED_4 = HIGH;
-				lcd_display_line(bootstr2, LL2);
-				sprintf(bootstr2, "%u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - L.adc_raw[AIR_MFC_SP]));
-				lcd_display_line(bootstr2, LL3);
-				sprintf(bootstr2, "%lu %lu SLM : %u %u %u                     ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
-					(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out), 
-					V.t4_prev, V.t4_now, PORTGbits.RG0);
-				lcd_display_line(bootstr2, LL4);
-				DLED_4 = LOW;
-				dtime1 = V.clock20;
+				if (PORTGbits.RG0) {
+					voltfp(L.adc_val[AIR_MFC], f0); // mfc 0 readback
+					voltfp(L.adc_val[GAS_MFC], f1); // mfc 1 readback
+					voltfp(L.adc_val[AIR_MFC_SP], f2); // mfc 0 setpoint
+					voltfp(L.adc_val[GAS_MFC_SP], f3); // mfc 1 setpoint
+					sprintf(bootstr2, "%s %s %s %sV                       ", f0, f2, f1, f3);
+					DLED_4 = HIGH;
+					lcd_display_line(bootstr2, LL2);
+					sprintf(bootstr2, "%u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - L.adc_raw[AIR_MFC_SP]));
+					lcd_display_line(bootstr2, LL3);
+					sprintf(bootstr2, "%lu %lu SLM : %u %u %u                     ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
+						(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out),
+						V.t4_prev, V.t4_now, PORTGbits.RG0);
+					lcd_display_line(bootstr2, LL4);
+					DLED_4 = LOW;
+					dtime1 = V.clock20;
+				} else {
+					process_stats();
+				}
 			}
 		} else {
 			z = 0;

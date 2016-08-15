@@ -39,11 +39,12 @@ void tick_handler(void) // This is the high priority ISR routine
 	if (PIE3bits.TMR4IE && PIR3bits.TMR4IF) {
 
 		PIR3bits.TMR4IF = LOW;
-		DLED_6 = !DLED_6;
+		DLED_6 = HIGH;
 		PR4 = V.t4_match;
 		V.t4_prev = TMR4; // counter was reset to zero at match but is still counting up here so it's not zero when read usually
 		V.t4_now = V.t4_prev; // set the register count at the ISR service time
 		V.tmr4int_count++;
+		DLED_6 = LOW;
 
 		/*
 		 *  scan ADC channels
