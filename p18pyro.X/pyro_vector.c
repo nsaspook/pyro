@@ -40,9 +40,10 @@ void tick_handler(void) // This is the high priority ISR routine
 
 		PIR3bits.TMR4IF = LOW;
 		DLED_6 = !DLED_6;
-		PR4 = TIMER4_NORM;
-		V.t4_prev = TIMER4_NORM;
-		V.pwm4int_count++;
+		PR4 = V.t4_match;
+		V.t4_prev = TMR4; // counter was reset to zero at match but is still counting up here so it's not zero when read usually
+		V.t4_now = V.t4_prev; // set the register count at the ISR service time
+		V.tmr4int_count++;
 
 		/*
 		 *  scan ADC channels
@@ -304,7 +305,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		HID_IDLE_FLAG = FALSE;
 	}
 
-	V.t4_now = V.t4_prev;
+	V.t4_now = TMR4; // update current timer register counter
 	DLED_0 = LOW;
 }
 

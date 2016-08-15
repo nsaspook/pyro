@@ -562,7 +562,7 @@ void main(void) // Lets Party
 				lcd_display_line(bootstr2, LL2);
 				sprintf(bootstr2, "%u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - L.adc_raw[AIR_MFC_SP]));
 				lcd_display_line(bootstr2, LL3);
-				sprintf(bootstr2, "%lu %lu SLM 0  %u %u %u                     ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
+				sprintf(bootstr2, "%lu %lu SLM : %u %u %u                     ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
 					(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out), 
 					V.t4_prev, V.t4_now, PORTGbits.RG0);
 				lcd_display_line(bootstr2, LL4);
