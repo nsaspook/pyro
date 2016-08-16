@@ -23,9 +23,9 @@ void mfc_config(void)
 	for (i = 0; i <= 3; i++) {
 		mfc[i].id = i;
 		mfc[i].gas_t = SHUT;
-		mfc[i].mfc_integ_total_mass = 1;
-		mfc[i].mfc_integ_current_mass = 1;
-		mfc[i].mfc_integ_target_mass = 1;
+		mfc[i].mfc_integ_total_mass = 0;
+		mfc[i].mfc_integ_current_mass = 0;
+		mfc[i].mfc_integ_target_mass = 0;
 		mfc[i].scale_out = ((float) mfc[i].mfc_flow_size) / MFC_VOLTS;
 		mfc[i].flow_time_max = WORK_TICKS_S;
 	}

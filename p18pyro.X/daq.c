@@ -13,12 +13,20 @@ void ADC_Update(const uint16_t adc_val, const uint8_t chan)
 {
 	if (chan >= ADC_INDEX)
 		return;
+
+	INTCONbits.GIEL = LOW; // critical section for variable updated in LOW ISR using this value
 	if (adc_val > (L.adc_raw[chan] + 96))
-		L.adc_raw[chan] += 96;
+		L.adc_raw[chan] += 16;
 	else
 		L.adc_raw[chan] = adc_val;
 
-	L.adc_val[chan] = (L.adc_raw[chan] * (ADC_5V_MV - ADC_NULL + adc_cal[chan])) / 100; //      voltage correction factor;
+	if (L.adc_raw[chan] < 48) {// remove zero jumps
+		L.adc_raw[chan] = 0;
+		L.adc_val[chan] = 0;
+	} else {
+		L.adc_val[chan] = (L.adc_raw[chan] * ((ADC_5V_MV - ADC_NULL) + adc_cal[chan])) / 100; //      voltage correction factor;
+	}
+	INTCONbits.GIEL = HIGH;
 }
 
 /*

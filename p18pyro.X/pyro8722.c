@@ -187,7 +187,7 @@ volatile struct ringBufS_t ring_buf2;
 volatile struct knobtype knob1, knob2;
 
 /* ADC voltage default calibration values  */
-uint8_t adc_cal[] = {128, 128, 128, 128, 128, 128, 128, 128, 128, 127, 127, 127, 127, 127, 127, 0};
+uint8_t adc_cal[] = {127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 0};
 uint8_t CRITC = 0, LCD_OK = FALSE;
 
 volatile enum answer_t {
@@ -572,7 +572,7 @@ void main(void) // Lets Party
 					sprintf(bootstr2, "%s %s %s %sV                      ", f0, f2, f1, f3);
 					DLED_4 = HIGH;
 					lcd_display_line(bootstr2, LL2);
-					sprintf(bootstr2, "%u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - L.adc_raw[AIR_MFC_SP]));
+					sprintf(bootstr2, "%u %u %d                          ", L.adc_val[AIR_MFC], L.adc_val[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - L.adc_raw[AIR_MFC_SP]));
 					lcd_display_line(bootstr2, LL3);
 					sprintf(bootstr2, "%lu %lu SLM : %u %u %u            ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
 						(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out),

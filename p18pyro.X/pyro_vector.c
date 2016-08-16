@@ -319,6 +319,7 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 	union Timers timerl;
 	uint8_t i;
 	union mcp4822_adr_type mfc_dac_select;
+	uint32_t adc_value_temp;
 
 	DLED_1 = HIGH; //low ISR period flag
 	V.lowint_count++; // low int trigger entropy counter
@@ -331,8 +332,9 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 		V.clock20++;
 
 		for (i = AIR_MFC; i <= COLOR2_MFC; i++) {
-			mfc[i].mfc_integ_total_mass += L.adc_val[i];
-			mfc[i].mfc_integ_current_mass += L.adc_val[i];
+			adc_value_temp = L.adc_val[i];
+			mfc[i].mfc_integ_total_mass += adc_value_temp;
+			mfc[i].mfc_integ_current_mass += adc_value_temp;
 
 			switch (mfc[i].gas_t) {
 			case MASS: /* turn off the MFC at the total mass setpoint target */
