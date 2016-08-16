@@ -1,6 +1,9 @@
-#include  <string.h>
-#include  "ringbufs.h"
-#include "pyro.h"
+#include <p18f8722.h>
+#include <string.h>
+#include "ringbufs.h"
+#include "pyro_defs.h"
+
+extern struct V_data V;
 
 /*
  * general ring buffer fuctions from the internet
@@ -51,7 +54,9 @@ uint16_t ringBufS_get(ringBufS_t *_this)
 		_this->tail = modulo_inc(_this->tail, RBUF_SIZE);
 		--_this->count;
 	} else {
+		DLED_7 = HIGH;
 		c = 0; // return null with empty buffer
+		DLED_7 = LOW;
 	}
 	return(c);
 }

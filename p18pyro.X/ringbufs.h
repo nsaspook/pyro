@@ -8,6 +8,8 @@
 #ifndef RINGBUFS_H
 #define	RINGBUFS_H
 
+#include "pyro.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -40,7 +42,6 @@ extern "C" {
 	void ringBufS_put(ringBufS_t *_this, const uint16_t c);
 	void ringBufS_flush(ringBufS_t *_this, const int8_t clearBuffer);
 
-	extern struct V_data V;
 #ifdef	__cplusplus
 }
 #endif

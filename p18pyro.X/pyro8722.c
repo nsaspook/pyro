@@ -152,16 +152,13 @@ extern struct valvetype valves;
 #pragma udata gpr13
 far int8_t bootstr2[MESG_W + 1], f0[VAR_W], f1[VAR_W];
 #pragma udata gpr1
-volatile struct ringBufS_t ring_buf3;
 uint8_t HCRIT[CRIT_8], LCRIT[CRIT_8];
 float smooth[LPCHANC];
 #pragma udata gpr2
 volatile struct L_data L;
 volatile struct spi_link_type spi_link = {0};
 union mcp4822_buf_type mcp4822;
-volatile struct ringBufS_t ring_buf5;
 #pragma udata gpr3
-volatile struct ringBufS_t ring_buf6;
 far int8_t hms_string[16], f2[VAR_W], f3[VAR_W];
 volatile uint8_t critc_level = 0;
 volatile uint8_t TIMERFLAG = FALSE, SYSTEM_STABLE = FALSE, D_UPDATE = FALSE, WDT_TO = FALSE, EEP_ER = FALSE;
@@ -177,15 +174,15 @@ const rom int8_t *build_date = __DATE__, *build_time = __TIME__;
 float t1 = 0.0, t2 = 0.0, t3 = 0.0, t4 = 0.0, t5 = 0.0, t6 = 0.0, t7 = 0.0, t_time = 0.0;
 float voltfrak = 0.0;
 float ahfrak = 0.0;
+volatile struct ringBufS_t ring_buf2;
 #pragma udata gpr7
 volatile uint8_t IDLEFLAG = FALSE, knob_to_pot = 0;
 int32_t iw = 0, ip = 0;
+volatile struct ringBufS_t ring_buf5;
 #pragma udata gpr8
 volatile struct ringBufS_t ring_buf1;
 #pragma udata gpr9
-volatile struct ringBufS_t ring_buf2;
 volatile struct knobtype knob1, knob2;
-
 /* ADC voltage default calibration values  */
 uint8_t adc_cal[] = {127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 0};
 uint8_t CRITC = 0, LCD_OK = FALSE;
@@ -195,11 +192,17 @@ volatile enum answer_t {
 } YNKEY;
 
 volatile struct QuadEncoderType OldEncoder;
+#pragma udata gpr11
+volatile struct ringBufS_t ring_buf6;
+#pragma udata gpr12
+volatile struct ringBufS_t ring_buf3;
+
 #pragma idata gpr10
 uint8_t lcd18 = 200;
 volatile struct qeitype qei1;
 volatile int32_t slow_timer = 0;
 volatile struct buttontype button;
+
 
 /* ISR vectors */
 #pragma code tick_interrupt = HIGH_VECTOR
@@ -463,22 +466,40 @@ void fade_up_leds(void)
 	}
 }
 
+uint8_t get_analog_buffer(void)
+{
+	static uint8_t z;
+	static union adc_buf_type adc_buf;
+	z = 0;
+	while (!ringBufS_empty(L.rx1b)) {
+		adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages			
+		ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
+		z++;
+	}
+	return z;
+}
+
 void process_stats(void)
 {
 	DLED_4 = HIGH;
 	sprintf(bootstr2, "%lu %lu %lu                 ", V.timerint_count, V.highint_count, V.lowint_count);
+	get_analog_buffer();
 	lcd_display_line(bootstr2, LL2);
+	get_analog_buffer();
 	sprintf(bootstr2, "%lu %lu                     ", V.tmr4int_count, V.adc_count);
+	get_analog_buffer();
 	lcd_display_line(bootstr2, LL3);
-	sprintf(bootstr2, "%lu %lu                     ", V.spi_count, V.display_count);
+	get_analog_buffer();
+	sprintf(bootstr2, "%lu %lu %lu                 ", V.spi_count, V.display_count, V.buf_count);
+	get_analog_buffer();
 	lcd_display_line(bootstr2, LL4);
 	DLED_4 = LOW;
 }
 
 void main(void) // Lets Party
 {
-	static uint32_t z;
-	static union adc_buf_type adc_buf;
+	//	static uint32_t z;
+	//	static union adc_buf_type adc_buf;
 	uint16_t dac1, dac2 = 5000;
 	uint32_t dtime1, dtime2;
 	uint8_t V1_state = 0;
@@ -562,6 +583,7 @@ void main(void) // Lets Party
 	/* Loop forever */
 	while (TRUE) {
 		ClrWdt(); // reset the WDT timer
+		get_analog_buffer();
 		if (ringBufS_empty(L.rx1b)) {
 			if (V.clock20 > dtime1 + 2) { // ~5hz display update freq
 				if (PORTGbits.RG0) {
@@ -569,30 +591,23 @@ void main(void) // Lets Party
 					voltfp(L.adc_val[GAS_MFC], f1); // mfc 1 readback
 					voltfp(L.adc_val[AIR_MFC_SP], f2); // mfc 0 setpoint
 					voltfp(L.adc_val[GAS_MFC_SP], f3); // mfc 1 setpoint
+					get_analog_buffer();
 					sprintf(bootstr2, "%s %s %s %sV                      ", f0, f2, f1, f3);
 					DLED_4 = HIGH;
 					lcd_display_line(bootstr2, LL2);
-					sprintf(bootstr2, " %u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - (int16_t)L.adc_raw[AIR_MFC_SP]));
+					sprintf(bootstr2, " %u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - (int16_t) L.adc_raw[AIR_MFC_SP]));
 					lcd_display_line(bootstr2, LL3);
 					sprintf(bootstr2, "%lu %lu SLM : %u %u %u            ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
 						(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out),
 						V.t4_prev, V.t4_now, PORTGbits.RG0);
 					lcd_display_line(bootstr2, LL4);
 					DLED_4 = LOW;
-					dtime1 = V.clock20;
 				} else {
 					process_stats();
 				}
+				dtime1 = V.clock20;
 			}
 		} else {
-			z = 0;
-			while (!ringBufS_empty(L.rx1b)) {
-				adc_buf.buf = ringBufS_get(L.rx1b); // get the analog voltages			
-				ADC_Update(adc_buf.buf & ADC_MASK, adc_buf.map.index);
-				z++;
-			}
-
-
 			if (V.clock20 > dtime2 + 1) { // ~10hz DAC update rate
 				dac1 += 3;
 				dac2 -= 3;

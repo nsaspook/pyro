@@ -30,7 +30,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		}
 		L.adc_chan++; // next ADC channel
 		ADCON0bits.CHS = L.adc_chan & ADC_CHAN_MASK; // set the current channel
-		adc_trigger = FALSE; // reset the skip flag
+		adc_trigger = 0; // reset the skip flag
 	}
 
 	/*
@@ -50,7 +50,7 @@ void tick_handler(void) // This is the high priority ISR routine
 		 *  scan ADC channels
 		 */
 		if (!ADCON0bits.GO) {
-			if (adc_trigger++) { // trigger the conversion on the next timer int
+			if (adc_trigger++ > ADC_SAMPLE_RATE) { // trigger the conversion on X timer int
 				ADCON0bits.GO = HIGH; // and begin A/D conv, will set adc int flag when done.
 				DLED_5 = HIGH;
 			}

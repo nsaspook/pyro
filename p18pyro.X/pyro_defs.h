@@ -125,6 +125,7 @@ extern "C" {
 #define ADC_NULL	127             // zero offset value
 #define ADC_MASK	0x03ff		// 10 bits of real adc data
 #define ADC_CHAN_MASK	0x07		// number of scanned adc channels
+#define ADC_SAMPLE_RATE	16		// trigger conversion after this many ticks
 	/* The number of samples must be high to sample several complete PWM cycles to get stable voltage and current measurements at lower ranges. */
 #define ADC_SAMP_F	16
 #define ADC_SAMP_S	64
