@@ -1,5 +1,6 @@
 #include  <string.h>
 #include  "ringbufs.h"
+#include "pyro.h"
 
 /*
  * general ring buffer fuctions from the internet
@@ -61,6 +62,8 @@ void ringBufS_put(ringBufS_t *_this, const uint16_t c)
 		_this->buf[_this->head] = c;
 		_this->head = modulo_inc(_this->head, RBUF_SIZE);
 		++_this->count;
+	} else {
+		V.buf_count++;
 	}
 }
 
