@@ -20,7 +20,7 @@ void ADC_Update(const uint16_t adc_val, const uint8_t chan)
 	else
 		L.adc_raw[chan] = adc_val;
 
-	if (L.adc_raw[chan] < 48) {// remove zero jumps
+	if (L.adc_raw[chan] < 8) {// remove zero jumps
 		L.adc_raw[chan] = 0;
 		L.adc_val[chan] = 0;
 	} else {

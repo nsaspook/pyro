@@ -13,10 +13,5 @@
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
         </data>
-        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
-            <word>dselect</word>
-            <word>int</word>
-            <word>mfc</word>
-        </spellchecker-wordlist>
     </configuration>
 </project>

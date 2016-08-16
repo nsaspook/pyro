@@ -572,7 +572,7 @@ void main(void) // Lets Party
 					sprintf(bootstr2, "%s %s %s %sV                      ", f0, f2, f1, f3);
 					DLED_4 = HIGH;
 					lcd_display_line(bootstr2, LL2);
-					sprintf(bootstr2, "%u %u %d                          ", L.adc_val[AIR_MFC], L.adc_val[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - L.adc_raw[AIR_MFC_SP]));
+					sprintf(bootstr2, " %u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - (int16_t)L.adc_raw[AIR_MFC_SP]));
 					lcd_display_line(bootstr2, LL3);
 					sprintf(bootstr2, "%lu %lu SLM : %u %u %u            ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
 						(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out),
@@ -602,7 +602,7 @@ void main(void) // Lets Party
 
 				mfc_flow(&mfc[GAS_MFC], dac2);
 
-				mfc_mass(&mfc[AIR_MFC], 200, 150); // flow rate, flow mass required
+				mfc_mass(&mfc[AIR_MFC], 2000, 50); // flow rate, flow mass required
 				if (mfc_done(&mfc[AIR_MFC])) {
 					valve_switch(V7, BANK1, V1_state++);
 					valve_switch(PURGE, BANK0, V1_state);
