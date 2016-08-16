@@ -14,7 +14,7 @@ extern "C" {
 
 #include "xlcd.h"
 
-	void lcd_display_line(int8_t *, const uint8_t);
+    void lcd_display_line(int8_t *, const uint8_t);
 
 
 #ifdef	__cplusplus

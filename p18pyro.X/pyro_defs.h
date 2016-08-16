@@ -17,7 +17,7 @@ extern "C" {
 #define CHECKMARK_CRC	0x59595959ul		// 32 bit crc checkmark
 
 #define MESG_W          80		// message string buffer
-#define VAR_W		21		// string var ascii buffer
+#define VAR_W           21		// string var ascii buffer
 #define CRIT_8          8               // 8 levels
 #define CRITC1          1               // The first CRITC level
 #define MAX_MFC         3u               // number of MFC that will control
@@ -26,7 +26,7 @@ extern "C" {
 #endif
 #define	Hpri		1
 #define	Lpri		2
-#define	HL		3
+#define	HL          3
 #define	TIMEROFFSET	26474           // timer0 16bit counter value for 1 second to overflow
 #define	TIMER3REG	3048            // timer3 value for 20Hz clock, orig value 3048
 #define TIMER4_NORM	0x07		// 0x11 for slower SPS
@@ -38,22 +38,22 @@ extern "C" {
 #define SD_18		18
 #define WORK_TICKS_S	20L*60L
 
-#define LOW		(uint8_t)0        // digital output state levels, sink
+#define LOW             (uint8_t)0        // digital output state levels, sink
 #define	HIGH            (uint8_t)1        // digital output state levels, source
-#define	ON		LOW       		//
-#define OFF		HIGH			//
+#define	ON              LOW       		//
+#define OFF             HIGH			//
 #define	S_ON            LOW       		// low select/on for chip/led
 #define S_OFF           HIGH			// high deselect/off chip/led
 #define	R_ON            HIGH       		// control relay states, relay is on when output gate is high, uln2803,omron relays need the CPU at 5.5vdc to drive 
 #define R_OFF           LOW			// control relay states
 #define R_ALL_OFF       0x00
-#define R_ALL_ON	0xff
-#define NO		LOW
-#define YES		HIGH
+#define R_ALL_ON        0xff
+#define NO              LOW
+#define YES             HIGH
 #define LOW_VECTOR      0x18                // ISR low address
 #define HIGH_VECTOR     0x8                 // ISR high address
 
-	/* spi select pins */
+    /* spi select pins */
 #define DAC_0_CS	LATCbits.LATC0
 #define DAC_1_CS	LATCbits.LATC1
 #define SHF_2_CS	LATCbits.LATC2
@@ -117,7 +117,7 @@ extern "C" {
 #define QENC1BITS	0b00110000	// PORTB 4..5
 #define QENC2BITS	0b11000000	// PORTB 6..7
 
-	/*	ADC gain offsets	mV per bit step defines */
+    /*	ADC gain offsets	mV per bit step defines */
 #define ADC_5V_MV 	488UL		// 5vdc 
 #define ADC_24V_MV 	2350UL		// 24vdc
 #define	ADC_SLOTS	15		// 14 ADC data slots + 1 checksum at the end
@@ -126,7 +126,7 @@ extern "C" {
 #define ADC_MASK	0x03ff		// 10 bits of real adc data
 #define ADC_CHAN_MASK	0x07		// number of scanned adc channels
 #define ADC_SAMPLE_RATE	16		// trigger conversion after this many ticks
-	/* The number of samples must be high to sample several complete PWM cycles to get stable voltage and current measurements at lower ranges. */
+    /* The number of samples must be high to sample several complete PWM cycles to get stable voltage and current measurements at lower ranges. */
 #define ADC_SAMP_F	16
 #define ADC_SAMP_S	64
 #define ADC_CHAN_DELAY	100		// delay in 10X chip cycles after switching ADC channels
@@ -150,13 +150,13 @@ extern "C" {
 #define BANK1		1
 
 #define	PURGE		0
-#define AIR		1
-#define GAS		2 
+#define AIR         1
+#define GAS         2 
 #define COLOR1		3
 #define COLOR2		4 
-#define V5		5 
-#define V6		6 
-#define V7		7
+#define V5          5 
+#define V6          6 
+#define V7          7
 
 
 #define MFC_INTEG	1200UL // sample updates per Min

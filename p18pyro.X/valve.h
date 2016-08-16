@@ -15,10 +15,10 @@ extern "C" {
 #include "pyro.h"
 #include "daq.h"
 
-	void valve_config(void);
-	int8_t valve_interlock(void);
-	int8_t valve_set(struct valvetype *);
-	int8_t valve_switch(const uint8_t, uint8_t, const uint8_t);
+    void valve_config(void);
+    int8_t valve_interlock(void);
+    int8_t valve_set(struct valvetype *);
+    int8_t valve_switch(const uint8_t, uint8_t, const uint8_t);
 
 
 #ifdef	__cplusplus

@@ -22,8 +22,8 @@ void Clear_All_Buttons(void);
 /* BEGIN HIGH ISR */
 
 extern volatile uint8_t TIMERFLAG, SYSTEM_STABLE, COOLING,
-	almctr, WORKERFLAG, DISPLAY_MODE, dsi, C2RAW, FAILSAFE, SYS_HELP, SYS_DATA,
-	HOLD_PROC, RESET_ZEROS, SET_TLOG, TWEAK, KEYNUM, SET_BATT, D_UPDATE, SLOW_STATUS;
+        almctr, WORKERFLAG, DISPLAY_MODE, dsi, C2RAW, FAILSAFE, SYS_HELP, SYS_DATA,
+        HOLD_PROC, RESET_ZEROS, SET_TLOG, TWEAK, KEYNUM, SET_BATT, D_UPDATE, SLOW_STATUS;
 extern volatile uint8_t GLITCH_CHECK, cdelay, knob_to_pot;
 extern volatile int32_t slow_timer;
 
@@ -36,11 +36,11 @@ extern volatile struct QuadEncoderType OldEncoder;
 extern volatile struct spi_link_type spi_link;
 
 extern volatile enum movement_t {
-	CW, STOP, CCW
+    CW, STOP, CCW
 } movement;
 
 extern volatile enum answer_t {
-	WAIT_M, YES_M, NO_M
+    WAIT_M, YES_M, NO_M
 } YNKEY;
 
 /* BEGIN LOW ISR */

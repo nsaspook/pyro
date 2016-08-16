@@ -418,7 +418,7 @@ void init_lcd(void)
 	wdtdelay(50000); // delay for power related LCD setup glitch
 	OpenXLCD(FOUR_BIT & LINES_5X7);
 	while (BusyXLCD());
-	wdtdelay(10000); // delay for power related LCD setup glitch
+	wdtdelay(40000); // delay for power related LCD setup glitch
 	OpenXLCD(FOUR_BIT & LINES_5X7);
 	while (BusyXLCD());
 	WriteCmdXLCD(0xc); // blink, cursor off
@@ -477,6 +477,25 @@ uint8_t get_analog_buffer(void)
 		z++;
 	}
 	return z;
+}
+
+void process_info(void)
+{
+	voltfp(L.adc_val[AIR_MFC], f0); // mfc 0 readback
+	voltfp(L.adc_val[GAS_MFC], f1); // mfc 1 readback
+	voltfp(L.adc_val[AIR_MFC_SP], f2); // mfc 0 setpoint
+	voltfp(L.adc_val[GAS_MFC_SP], f3); // mfc 1 setpoint
+	get_analog_buffer();
+	sprintf(bootstr2, "%s %s %s %sV                      ", f0, f2, f1, f3);
+	DLED_4 = HIGH;
+	lcd_display_line(bootstr2, LL2);
+	sprintf(bootstr2, " %u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - (int16_t) L.adc_raw[AIR_MFC_SP]));
+	lcd_display_line(bootstr2, LL3);
+	sprintf(bootstr2, "%lu %lu SLM : %u %u %u            ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
+		(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out),
+		V.t4_prev, V.t4_now, PORTGbits.RG0);
+	lcd_display_line(bootstr2, LL4);
+	DLED_4 = LOW;
 }
 
 void process_stats(void)
@@ -587,21 +606,7 @@ void main(void) // Lets Party
 		if (ringBufS_empty(L.rx1b)) {
 			if (V.clock20 > dtime1 + 2) { // ~5hz display update freq
 				if (PORTGbits.RG0) {
-					voltfp(L.adc_val[AIR_MFC], f0); // mfc 0 readback
-					voltfp(L.adc_val[GAS_MFC], f1); // mfc 1 readback
-					voltfp(L.adc_val[AIR_MFC_SP], f2); // mfc 0 setpoint
-					voltfp(L.adc_val[GAS_MFC_SP], f3); // mfc 1 setpoint
-					get_analog_buffer();
-					sprintf(bootstr2, "%s %s %s %sV                      ", f0, f2, f1, f3);
-					DLED_4 = HIGH;
-					lcd_display_line(bootstr2, LL2);
-					sprintf(bootstr2, " %u %u %d                          ", L.adc_raw[AIR_MFC], L.adc_raw[AIR_MFC_SP], (int16_t) (L.adc_raw[AIR_MFC] - (int16_t) L.adc_raw[AIR_MFC_SP]));
-					lcd_display_line(bootstr2, LL3);
-					sprintf(bootstr2, "%lu %lu SLM : %u %u %u            ", mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG,
-						(uint32_t) ((float) (mfc[AIR_MFC].mfc_integ_current_mass / MFC_INTEG) * mfc[AIR_MFC].scale_out),
-						V.t4_prev, V.t4_now, PORTGbits.RG0);
-					lcd_display_line(bootstr2, LL4);
-					DLED_4 = LOW;
+					process_info();
 				} else {
 					process_stats();
 				}
@@ -618,12 +623,15 @@ void main(void) // Lets Party
 				mfc_flow(&mfc[GAS_MFC], dac2);
 
 				mfc_mass(&mfc[AIR_MFC], 2000, 50); // flow rate, flow mass required
+				
+				// check for flag after MFC shutdown
 				if (mfc_done(&mfc[AIR_MFC])) {
+					mfc_shut(&mfc[AIR_MFC]);
+					
 					valve_switch(V7, BANK1, V1_state++);
 					valve_switch(PURGE, BANK0, V1_state);
 					valve_switch(AIR, BANK0, V1_state);
 					valve_switch(GAS, BANK0, ~V1_state);
-					mfc_shut(&mfc[AIR_MFC]);
 				}
 
 				mfc_flow(&mfc[COLOR2_MFC], rand());

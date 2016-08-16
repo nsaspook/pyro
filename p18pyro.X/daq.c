@@ -14,7 +14,7 @@ void ADC_Update(const uint16_t adc_val, const uint8_t chan)
 	if (chan >= ADC_INDEX)
 		return;
 
-	INTCONbits.GIEL = LOW; // critical section for variable updated in LOW ISR using this value
+	s_crit(HL); // critical section for variable updated in LOW ISR using this value
 	if (adc_val > (L.adc_raw[chan] + 96))
 		L.adc_raw[chan] += 16;
 	else
@@ -26,7 +26,7 @@ void ADC_Update(const uint16_t adc_val, const uint8_t chan)
 	} else {
 		L.adc_val[chan] = (L.adc_raw[chan] * ((ADC_5V_MV - ADC_NULL) + adc_cal[chan])) / 100; //      voltage correction factor;
 	}
-	INTCONbits.GIEL = HIGH;
+	e_crit();
 }
 
 /*
