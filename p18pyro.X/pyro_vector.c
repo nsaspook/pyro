@@ -339,9 +339,8 @@ void work_handler(void) // This is the low priority ISR routine, the high ISR ro
 			switch (mfc[i].gas_t) {
 			case MASS: /* turn off the MFC at the total mass setpoint target */
 				if (mfc[i].mfc_integ_current_mass >= mfc[i].mfc_integ_target_mass || (mfc[i].flow_time++ >mfc[i].flow_time_max)) {
-					if (mfc[i].flow_time++ >mfc[i].flow_time_max) {
+					if (mfc[i].flow_time++ > mfc[i].flow_time_max)
 						mfc->timeout = TRUE;
-					}
 
 					mfc[i].done = HIGH;
 					mfc_dac_select.buf = i;

@@ -622,7 +622,7 @@ void main(void) // Lets Party
 
 				mfc_flow(&mfc[GAS_MFC], dac2);
 
-				mfc_mass(&mfc[AIR_MFC], 2000, 50); // flow rate, flow mass required
+				mfc_mass(&mfc[AIR_MFC], 500, 25); // flow rate, flow mass required
 
 				// check for flag after MFC shutdown
 				if (mfc_done(&mfc[AIR_MFC])) {
