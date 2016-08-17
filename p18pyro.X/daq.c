@@ -65,7 +65,8 @@ int8_t SPI_Daq_Update(const uint16_t data, const uint8_t cs, const uint8_t devic
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		spi_buf.map.buf = upper_lower.bd[0]; // load low byte
 		spi_buf.map.cs = 1;
-		if (ringBufS_full(spi_link.tx1b)) goto err1; // second byte failed
+		if (ringBufS_full(spi_link.tx1b)) 
+			goto err1; // second byte failed
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		ret = 0;
 		break;
@@ -79,7 +80,8 @@ int8_t SPI_Daq_Update(const uint16_t data, const uint8_t cs, const uint8_t devic
 		ret = 0;
 		break;
 	case 10: // retry second byte for DAC
-		if (ringBufS_full(spi_link.tx1b)) goto err1; // check again, buffer refilled quickly
+		if (ringBufS_full(spi_link.tx1b)) 
+			goto err1; // check again, buffer refilled quickly
 		ringBufS_put(spi_link.tx1b, spi_buf.buf); // send data/control data to SPI devices (DAC)
 		ret = 0;
 		break;
