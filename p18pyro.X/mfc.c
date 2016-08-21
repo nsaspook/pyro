@@ -60,6 +60,7 @@ int8_t mfc_set(struct mfctype * mfc)
 	case SHUT:
 		mfc->done = LOW;
 		mfc->measure = LOW;
+		mfc->timeout = FALSE;
 	default:
 		mfc->mfc_set = 0;
 		mfc_dac_select.buf = mfc_id;
@@ -81,16 +82,14 @@ int8_t mfc_done(struct mfctype * mfc)
 }
 
 /*
- * return MFC timeout status and clear flag if TRUE
+ * return MFC timeout status
  */
 int8_t mfc_timeout(struct mfctype * mfc)
 {
 	uint8_t ret = FALSE;
 
-	if (mfc->timeout) {
-		mfc->timeout = FALSE;
+	if (mfc->timeout)
 		ret = TRUE;
-	}
 	return ret;
 }
 
