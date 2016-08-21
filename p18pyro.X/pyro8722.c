@@ -415,10 +415,10 @@ float lp_filter(float new, int16_t bn, int16_t slow) // low pass filter, slow ra
 void init_lcd(void)
 {
 	lcd18 = 200;
-	wdtdelay(50000); // delay for power related LCD setup glitch
+	wdtdelay(120000); // delay for power related LCD setup glitch
 	OpenXLCD(FOUR_BIT & LINES_5X7);
 	while (BusyXLCD());
-	wdtdelay(40000); // delay for power related LCD setup glitch
+	wdtdelay(10000); // delay for power related LCD setup glitch
 	OpenXLCD(FOUR_BIT & LINES_5X7);
 	while (BusyXLCD());
 	WriteCmdXLCD(0xc); // blink, cursor off
