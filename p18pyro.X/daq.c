@@ -16,7 +16,7 @@ void ADC_Update(const uint16_t adc_val, const uint8_t chan)
 
 	s_crit(HL); // critical section for variable updated in LOW ISR using this value
 	if (adc_val > (L.adc_raw[chan] + 96))
-		L.adc_raw[chan] += 16;
+		L.adc_raw[chan] += 64;
 	else
 		L.adc_raw[chan] = adc_val;
 
