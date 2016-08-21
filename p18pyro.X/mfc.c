@@ -85,11 +85,11 @@ int8_t mfc_done(struct mfctype * mfc)
  */
 int8_t mfc_timeout(struct mfctype * mfc)
 {
-	uint8_t ret = 0;
+	uint8_t ret = FALSE;
 
 	if (mfc->timeout) {
 		mfc->timeout = FALSE;
-		ret = 1;
+		ret = TRUE;
 	}
 	return ret;
 }
